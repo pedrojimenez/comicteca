@@ -1,8 +1,7 @@
 """Models for the comicteca project."""
 from django.db import models
 from django_countries.fields import CountryField
-# Create your models here.
-
+from django.template.defaultfilters import slugify
 
 class Artist(models.Model):
     """Artists model."""
@@ -12,10 +11,15 @@ class Artist(models.Model):
     birthdate = models.DateField(blank=True, null=True)
     deathdate = models.DateField(blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
+    slug = models.SlugField()
 
     def __unicode__(self):
         """str/unicode function of Artists class."""
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Artist, self).save(*args, **kwargs)
 
     class Meta:
         """Meta class for Artist model."""
