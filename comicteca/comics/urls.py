@@ -6,6 +6,6 @@ from comics import views
 
 urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
+    url(r'^artist/(?P<artist_name_slug>[\w\-]+)/$', views.artist, name='artist'),
     #url(r'^about/$', views.about, name='about'),
-    #url(r'^category/(?P<category_name_slug>[\w\-]+)/$', views.category, name='category'),
 )
