@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca</title>
+    </head>
+
+    <body>
+        <h1>Comicteca says...hello world!</h1>
+
+        {% if artists %}
+            <ul>
+                {% for artist in artists %}
+                  <li>{{ artist.name }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no artists present yet.</strong>
+        {% endif %}
+
+        <a href="/comics/about/">About</a>
+    </body>
+</html>
