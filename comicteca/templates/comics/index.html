@@ -10,7 +10,7 @@
         {% if artists %}
             <ul>
                 {% for artist in artists %}
-                  <li>{{ artist.name }}</li>
+                  <li><a href="/comicteca/artist/{{ artist.slug }}">{{ artist.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
