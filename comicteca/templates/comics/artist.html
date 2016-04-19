@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca - Artists</title>
+    </head>
+
+    <body>
+        {% if artist %}
+        <h1>{{ artist_name }}</h1>
+	<ul>
+	  <li><u>Name:</u><strong>{{ artist.name }} </strong></li>
+	  <li><u>Nationality:</u><strong>{{ artist.nationality }} </strong></li>
+	  <li><u>Birthdate:</u><strong>{{ artist.birthdate }} </strong></li>
+	  {% if artist.deathdate %}
+	    <li><u>Deathdate:</u><strong>{{ artist.deathdate }} </strong></li>
+	  {% endif %}
+	  </br>
+	  <li><u>Bio</u><strong>{{ artist.biography }} </strong></li>
+	</ul>
+        {% else %}
+            The Artist {{ artist_name }} does not exist!
+        {% endif %}
+    </body>
+</html>
