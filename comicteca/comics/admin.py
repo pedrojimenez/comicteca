@@ -4,4 +4,8 @@ from comics.models import Artist
 
 # Register your models here.
 
-admin.site.register(Artist)
+class ArtistAdmin(admin.ModelAdmin):
+    prepopulated_fields = {'slug':('name',)}
+
+
+admin.site.register(Artist, ArtistAdmin)
