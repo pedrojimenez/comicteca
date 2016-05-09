@@ -26,3 +26,42 @@ class Artist(models.Model):
 
         db_table = 'artists'
         verbose_name_plural = "artists"
+
+
+class Colection(models.Model):
+    """Colection model."""
+
+    name = models.CharField(max_length=50)
+    subname = models.CharField(max_length=50, blank=True)
+    volume = models.IntegerField(default=1)
+    max_numbers = models.IntegerField(default=0)
+    numbers = models.IntegerField(default=0)
+    pub_date = models.DateField(blank=True, null=True)
+    slug = models.SlugField()
+
+    def __unicode__(self):
+        """str/unicode function of Colection class."""
+        str_temp = self.name
+        if self.subname:
+            str_temp = str_temp + " - " + self.subname
+        str_temp = str_temp + " - Vol " + str(self.volume)
+        return str_temp
+
+    def save(self, *args, **kwargs):
+        """Overwriting of save function in Colection class."""
+        self.slug = slugify(self.name)
+        super(Colection, self).save(*args, **kwargs)
+
+
+    def colection_list(self):
+        """Admin site method."""
+        if (self.max_numbers != 0) and (self.max_numbers == self.numbers):
+            return "Complete"
+        else:
+            return str(self.numbers) + "/" + str(self.max_numbers)
+
+    class Meta:
+        """Meta class for Colection model."""
+
+        db_table = 'colections'
+        verbose_name_plural = "colections"
