@@ -2,13 +2,15 @@
 
 from django.shortcuts import render
 from comics.models import Artist
+from comics.models import Colection
 
 
 def index(request):
     """Index view."""
 
     artists_list = Artist.objects.order_by('-name')[:5]
-    context_dict = {'artists': artists_list}
+    colection_list = Colection.objects.order_by('-name')[:5]
+    context_dict = {'artists': artists_list,'colections': colection_list}
 
     # Render the response and send it back!
     return render(request, 'comics/index.html', context_dict)
@@ -37,3 +39,18 @@ def artist(request, artist_name_slug):
 
     # Go render the response and return it to the client.
     return render(request, 'comics/artist.html', context_dict)
+
+
+def colection(request, colection_name_slug):
+    context_dict = {}
+    try:
+        colection = Colection.objects.get(slug=colection_name_slug)
+        context_dict['colection_name'] = colection.name
+        context_dict['colection'] = colection
+    except Colection.DoesNotExist:
+        # We get here if we didn't find the specified Colection
+        # Don't do anything - the template displays the "no colection" message for us.
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'comics/colection.html', context_dict)
