@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca - Colections</title>
+    </head>
+
+    <body>
+        {% if colection %}
+        <h1>{{ colection_name }}</h1>
+	<ul>
+	  <li><u>Name:</u><strong>{{ colection.name }} </strong></li>
+	  {% if colection.subname  %}
+	      <li><u>Subname:</u><strong>{{ colection.subname }} </strong></li>
+	  {% endif  %}
+	  <li><u>Volume:</u><strong>{{ colection.volume }} </strong></li>
+	  <li><u>Max Numbers:</u><strong>{{ colection.max_numbers }} </strong></li>
+	  <li><u>Current Numbers:</u><strong>{{ colection.numbers }} </strong></li>
+	  <li><u>Pub Date:</u><strong>{{ colection.pub_date }} </strong></li>
+	  </br>
+	</ul>
+        {% else %}
+            The Colection {{ colection_name }} does not exist!
+        {% endif %}
+    </body>
+</html>
