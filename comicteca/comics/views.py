@@ -3,6 +3,7 @@
 from django.shortcuts import render
 from comics.models import Artist
 from comics.models import Colection
+from comics.models import Publisher
 from comics.forms import ArtistForm
 from comics.forms import ColectionForm
 
@@ -11,7 +12,9 @@ def index(request):
     """Index view."""
     artists_list = Artist.objects.order_by('-name')[:5]
     colection_list = Colection.objects.order_by('-name')[:5]
-    context_dict = {'artists': artists_list, 'colections': colection_list}
+    publisher_list = Publisher.objects.order_by('-name')[:5]
+    context_dict = {'artists': artists_list, 'colections': colection_list,
+                    'publishers': publisher_list}
 
     # Render the response and send it back!
     return render(request, 'comics/index.html', context_dict)
@@ -98,6 +101,23 @@ def add_colection(request):
         # If the request was not a POST, display the form to enter details.
         form = ColectionForm()
     return render(request, 'comics/add_colection.html', {'form': form})
+
+
+def publisher(request, publisher_name_slug):
+    context_dict = {}
+    try:
+        publisher = Publisher.objects.get(slug=publisher_name_slug)
+        context_dict['publisher_name'] = publisher.name
+        context_dict['publisher'] = publisher
+    except Publisher.DoesNotExist:
+        # We get here if we didn't find the specified Publisher
+        # Don't do anything - the template displays the "no colection"
+        # message for us.
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'comics/publisher.html', context_dict)
+
 
 
 def about(request):
