@@ -11,7 +11,7 @@
         {% if artists %}
             <ul>
                 {% for artist in artists %}
-                  <li><a href="/comicteca/artist/{{ artist.slug }}">{{ artist.name }}</a></li>
+                  <li><a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -22,7 +22,7 @@
         {% if colections %}
             <ul>
                 {% for colection in colections %}
-                  <li><a href="/comicteca/colection/{{ colection.slug }}">{{ colection.name }}</a></li>
+                  <li><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
