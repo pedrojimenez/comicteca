@@ -15,11 +15,11 @@ class ArtistForm(forms.ModelForm):
                            help_text="Please enter the Artist name.")
     nationality = CountryField(blank_label='(select country)',
                                 help_text="Nationality")
-    birthdate = forms.DateField(label="Birth Date",
+    birthdate = forms.DateField(label="Birth Date", required=False,
                                 help_text="Author birth date")
-    deathdate = forms.DateField(label="Death Date",
+    deathdate = forms.DateField(label="Death Date", required=False,
                                 help_text="Author Death date")
-    biography = forms.CharField(max_length=128, label="Biography",
+    biography = forms.CharField(max_length=128, label="Biography", required=False,
                                 help_text="Author Biography")
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
