@@ -50,7 +50,7 @@ class Colection(models.Model):
 
     def save(self, *args, **kwargs):
         """Overwriting of save function in Colection class."""
-        self.slug = slugify(self.name)
+        self.slug = slugify(self.name + ' v' + str(self.volume))
         super(Colection, self).save(*args, **kwargs)
 
 
