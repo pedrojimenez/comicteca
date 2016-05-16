@@ -36,6 +36,7 @@ class Colection(models.Model):
     volume = models.IntegerField(default=1)
     max_numbers = models.IntegerField(default=0)
     numbers = models.IntegerField(default=0)
+    language = CountryField(blank_label='(select country)', default='ES')
     pub_date = models.DateField(blank=True, null=True)
     slug = models.SlugField()
 
