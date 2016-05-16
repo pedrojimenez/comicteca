@@ -29,6 +29,17 @@
             <strong>There are no colections present yet.</strong>
         {% endif %}
 
+	<h2><p>Editoriales:</p></h2>
+        {% if publishers %}
+            <ul>
+                {% for publisher in publishers %}
+                  <li><a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no publishers present yet.</strong>
+        {% endif %}
+
 	<hr>
         <a href="/comicteca/about/">About</a><br />
 	<a href="/comicteca/add_artist/">Add a New Artist</a><br />
