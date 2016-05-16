@@ -4,6 +4,7 @@ from django import forms
 # from rango.models import Page, Category, UserProfile
 
 from comics.models import Artist
+from comics.models import Colection
 from django_countries.fields import CountryField
 
 
@@ -28,3 +29,28 @@ class ArtistForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
         model = Artist
         fields = ('name', 'nationality', 'birthdate', 'deathdate', 'biography')
+
+
+class ColectionForm(forms.ModelForm):
+    """Colection form."""
+
+    name = forms.CharField(max_length=128, label="Name",
+                           help_text="Please enter the Colection name")
+    subname = forms.CharField(max_length=128, label="Name", required=False,
+                           help_text="Please enter the Colection subname")
+    volume = forms.IntegerField(label="Volume", min_value=1, help_text='Volume')
+    max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
+                                     help_text='Total numbers')
+
+    language = CountryField(blank_label='(select country)',
+                                help_text="Colection Language")
+    pub_date = forms.DateField(label="Publication Date",
+                                help_text="Colection publication date")
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        """Meta class for Colection Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Colection
+        fields = ('name', 'subname', 'volume', 'max_numbers', 'language', 'pub_date')
