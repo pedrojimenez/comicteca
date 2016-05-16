@@ -10,5 +10,6 @@ urlpatterns = patterns('',
     url(r'^add_artist/$', views.add_artist, name='add_artist'),
     url(r'^colection/(?P<colection_name_slug>[\w\-]+)/$', views.colection, name='colection'),
     url(r'^add_colection/$', views.add_colection, name='add_colection'),
+    url(r'^publishers/(?P<publisher_name_slug>[\w\-]+)/$', views.publisher, name='publisher'),
     url(r'^about/$', views.about, name='about'),
 )
