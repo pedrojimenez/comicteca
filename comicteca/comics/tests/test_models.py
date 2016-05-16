@@ -3,6 +3,7 @@
 from django.test import TestCase
 from comics.models import Artist
 from comics.models import Colection
+from comics.models import Publisher
 
 class ArtistTest(TestCase):
     """Artist class tests."""
@@ -22,6 +23,9 @@ class ArtistTest(TestCase):
         a1 = self.create_artist('Frank Miller','US')
         a2 = self.create_artist('Salvador Larroca','ES')
 
+        print
+        print "Artists creation tests . . ."
+        print
         print "Artist 1: <{}> from <{}>".format(a1.name, a1.nationality.name) 
         print "     Bio: {}".format(a1.biography)
         print "Artist 2: <{}> from <{}>".format(a2.name, a2.nationality.name) 
@@ -46,8 +50,28 @@ class ColectionTest(TestCase):
         c1 = self.create_colection('Xmen','children of the atom',2,50,30)
         c2 = self.create_colection('Alpha Flight','canada heroes',1,60,50)
 
-
+        print
+        print "Colection creation tests . . ."
+        print
         self.assertTrue(isinstance(c1, Colection))
         self.assertTrue(isinstance(c2, Colection))
         #self.assertEqual(a1.nationality.name, 'United States of America')
         #self.assertEqual(a2.nationality.name, 'Spain')
+
+
+class PublisherTest(TestCase):
+    """Publisher class tests."""
+
+    def create_publisher(self, name='Test Publisher', history='My test history'):
+        return Publisher.objects.create(name=name, history=history)
+
+
+    def test_publisher_creation(self):
+        p1 = self.create_publisher('Marvel','the big factory')
+        p2 = self.create_publisher('DC','second on flight')
+
+        print
+        print "Publisher creation tests . . ."
+        print
+        self.assertTrue(isinstance(p1, Publisher))
+        self.assertTrue(isinstance(p2, Publisher))
