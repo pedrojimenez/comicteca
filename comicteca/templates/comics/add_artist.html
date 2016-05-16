@@ -7,7 +7,7 @@
     <body>
         <h1>Add a new Artist</h1>
 
-        <form id="artist_form" method="post" action="/comics/add_artist/">
+        <form id="artist_form" method="post" action="/comicteca/add_artist/">
 
             {% csrf_token %}
             {% for hidden in form.hidden_fields %}
