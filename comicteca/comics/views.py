@@ -4,6 +4,7 @@ from django.shortcuts import render
 from comics.models import Artist
 from comics.models import Colection
 from comics.forms import ArtistForm
+from comics.forms import ColectionForm
 
 
 def index(request):
@@ -46,6 +47,17 @@ def artist(request, artist_name_slug):
 def add_artist(request):
     if request.method == 'POST':
         form = ArtistForm(request.POST)
+        if form.is_valid():
+            # Save the new category to the database.
+            form.save(commit=True)
+
+            # Now call the index() view.
+            # The user will be shown the homepage.
+            return index(request)
+        else:
+            # The supplied form contained errors - just print them to the terminal.
+            print form.errors
+
     else:
         # If the request was not a POST, display the form to enter details.
         form = ArtistForm()
@@ -66,6 +78,26 @@ def colection(request, colection_name_slug):
 
     # Go render the response and return it to the client.
     return render(request, 'comics/colection.html', context_dict)
+
+
+def add_colection(request):
+    if request.method == 'POST':
+        form = ColectionForm(request.POST)
+
+        if form.is_valid():
+            # Save the new category to the database.
+            form.save(commit=True)
+
+            # Now call the index() view.
+            # The user will be shown the homepage.
+            return index(request)
+        else:
+            # The supplied form contained errors - just print them to the terminal.
+            print form.errors
+    else:
+        # If the request was not a POST, display the form to enter details.
+        form = ColectionForm()
+    return render(request, 'comics/add_colection.html', {'form': form})
 
 
 def about(request):
