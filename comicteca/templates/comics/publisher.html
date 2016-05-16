@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca - Publishers</title>
+    </head>
+
+    <body>
+        {% if publisher %}
+        <h1>{{ publisher_name }}</h1>
+	<ul>
+	  <li><u>Name:</u><strong>{{ publisher.name }} </strong></li>
+	  {% if publisher.end_date %}
+	  	<li><u>Start date:</u><strong>{{ publisher.start_date }} </strong></li>
+	  {% endif %}
+	  {% if publisher.end_date %}
+	  	<li><u>Deathdate:</u><strong>{{ publisher.end_date }} </strong></li>
+	  {% endif %}
+	  </br>
+	  <li><u>Publisher History</u><strong>{{ publisher.history }} </strong></li>
+	</ul>
+        {% else %}
+            The Publiser {{ publisher_name }} does not exist!
+        {% endif %}
+
+        <a href="/comicteca/">Back to Index</a>
+
+    </body>
+</html>
