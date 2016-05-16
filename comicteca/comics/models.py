@@ -66,3 +66,22 @@ class Colection(models.Model):
 
         db_table = 'colections'
         verbose_name_plural = "colections"
+
+
+class Publisher(models.Model):
+    """Pubisher model."""
+
+    name = models.CharField(max_length=128,primary_key=True)
+    history = models.TextField(blank=True,default='')
+    start_date = models.DateField('Comienzo de Editorial',blank=True,null=True)
+    end_date = models.DateField('Fin de Publicaciones',blank=True,null=True)
+    slug = models.SlugField()
+
+    def __unicode__(self):
+        """str/unicode function of Publisher class."""
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """Overwriting of save function in Publisher class."""
+        self.slug = slugify(self.name)
+        super(Publisher, self).save(*args, **kwargs)
