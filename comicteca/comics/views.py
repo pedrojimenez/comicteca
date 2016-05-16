@@ -66,3 +66,8 @@ def colection(request, colection_name_slug):
 
     # Go render the response and return it to the client.
     return render(request, 'comics/colection.html', context_dict)
+
+
+def about(request):
+    return render(request, 'comics/about.html')
+    
