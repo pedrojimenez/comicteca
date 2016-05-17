@@ -118,6 +118,24 @@ def publisher(request, publisher_name_slug):
     # Go render the response and return it to the client.
     return render(request, 'comics/publisher.html', context_dict)
 
+def add_publisher(request):
+    if request.method == 'POST':
+        form = PublisherForm(request.POST)
+
+        if form.is_valid():
+            # Save the new category to the database.
+            form.save(commit=True)
+
+            # Now call the index() view.
+            # The user will be shown the homepage.
+            return index(request)
+        else:
+            # The supplied form contained errors - just print them to the terminal.
+            print form.errors
+    else:
+        # If the request was not a POST, display the form to enter details.
+        form = PublisherForm()
+    return render(request, 'comics/add_publisher.html', {'form': form})
 
 
 def about(request):
