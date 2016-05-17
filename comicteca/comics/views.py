@@ -6,6 +6,7 @@ from comics.models import Colection
 from comics.models import Publisher
 from comics.forms import ArtistForm
 from comics.forms import ColectionForm
+from comics.forms import PublisherForm
 
 
 def index(request):
