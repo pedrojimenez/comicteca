@@ -9,11 +9,11 @@
         <h1>{{ publisher_name }}</h1>
 	<ul>
 	  <li><u>Name:</u><strong>{{ publisher.name }} </strong></li>
-	  {% if publisher.end_date %}
+	  {% if publisher.start_date %}
 	  	<li><u>Start date:</u><strong>{{ publisher.start_date }} </strong></li>
 	  {% endif %}
 	  {% if publisher.end_date %}
-	  	<li><u>Deathdate:</u><strong>{{ publisher.end_date }} </strong></li>
+	  	<li><u>End date:</u><strong>{{ publisher.end_date }} </strong></li>
 	  {% endif %}
 	  </br>
 	  <li><u>Publisher History</u><strong>{{ publisher.history }} </strong></li>
