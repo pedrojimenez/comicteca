@@ -5,6 +5,7 @@ from django import forms
 
 from comics.models import Artist
 from comics.models import Colection
+from comics.models import Publisher
 from django_countries.fields import CountryField
 
 
@@ -60,13 +61,13 @@ class PublisherForm(forms.ModelForm):
     """Publisher form."""
 
     name = forms.CharField(max_length=128, label="Name",
-                           help_text="Please enter the Colection name")
+                           help_text="Please enter the Publisher name")
     history = forms.CharField(max_length=128, label="Publisher history", required=False,
                               help_text="Author Biography")
-    start_date = forms.DateField(label="Publication Date", required=False,
+    start_date = forms.DateField(label="Beginning of Publication Date", required=False,
                                 help_text="Beginning of publications date")
     end_date = forms.DateField(label="End of publications date", required=False,
-                                help_text="Colection publication date")
+                                help_text="end of publications date")
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
