@@ -54,3 +54,24 @@ class ColectionForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
         model = Colection
         fields = ('name', 'subname', 'volume', 'max_numbers', 'language', 'pub_date')
+
+
+class PublisherForm(forms.ModelForm):
+    """Publisher form."""
+
+    name = forms.CharField(max_length=128, label="Name",
+                           help_text="Please enter the Colection name")
+    history = forms.CharField(max_length=128, label="Publisher history", required=False,
+                              help_text="Author Biography")
+    start_date = forms.DateField(label="Publication Date", required=False,
+                                help_text="Beginning of publications date")
+    end_date = forms.DateField(label="End of publications date", required=False,
+                                help_text="Colection publication date")
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        """Meta class for Publisher Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Publisher
+        fields = ('name', 'history', 'start_date', 'end_date')
