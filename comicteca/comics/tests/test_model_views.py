@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from django.conf import settings as mysettings
 from comics.models import Publisher
 from comics.models import Colection
+from comics.models import Artist
 
 proj_name = mysettings.PROJECT_NAME
 
@@ -57,3 +58,28 @@ class ColectionViewsTest(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response,
                                     template_name='comics/colection.html')
+
+
+class ArtistViewsTest(TestCase):
+    """Artist Views class tests."""
+
+    def test_artist_view(self):
+            """Test for checking publisher views."""
+            artist_name = "Stan Lee"
+            artist_nationality = "US"
+            artist_name_slug = slugify(artist_name)
+            a1 = Artist.objects.create(name=artist_name,
+                                       nationality=artist_nationality)
+            a1_url = '/{}/artists/{}/'.format(proj_name,
+                                              artist_name_slug)
+            response = self.client.get(a1_url)
+
+            print
+            print "Artist view tests . . ."
+            print "    getting <{}> view page . . .".format(a1)
+            print "    checking {}".format(a1_url)
+            print "    response: {}".format(response.status_code)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response,
+                                    template_name='comics/artist.html')
