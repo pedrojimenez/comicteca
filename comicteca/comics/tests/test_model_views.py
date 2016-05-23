@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.template.defaultfilters import slugify
 from django.conf import settings as mysettings
 from comics.models import Publisher
+from comics.models import Colection
 
 proj_name = mysettings.PROJECT_NAME
 
@@ -33,3 +34,26 @@ class PublisherViewsTest(TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertTemplateUsed(response,
                                     template_name='comics/publisher.html')
+
+
+class ColectionViewsTest(TestCase):
+    """Publisher Views class tests."""
+
+    def test_colection_view(self):
+            """Test for checking publisher views."""
+            colection_name = "The amazing Spiderman"
+            colection_name_slug = slugify(colection_name)
+            c1 = Colection.objects.create(name=colection_name)
+            c1_url = '/{}/colections/{}/'.format(proj_name,
+                                                 colection_name_slug)
+            response = self.client.get(c1_url)
+
+            print
+            print "Colection view tests . . ."
+            print "    getting <{}> view page . . .".format(c1)
+            print "    checking {}".format(c1_url)
+            print "    response: {}".format(response.status_code)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertTemplateUsed(response,
+                                    template_name='comics/colection.html')
