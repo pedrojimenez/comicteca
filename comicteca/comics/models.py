@@ -3,6 +3,7 @@ from django.db import models
 from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
 
+
 class Artist(models.Model):
     """Artists model."""
 
@@ -18,6 +19,7 @@ class Artist(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        """Overwriting of save method for Artist model."""
         self.slug = slugify(self.name)
         super(Artist, self).save(*args, **kwargs)
 
@@ -41,8 +43,12 @@ class Colection(models.Model):
     slug = models.SlugField()
 
     # Relations
-    distributors = models.ManyToManyField('Publisher',related_name='Distributors',through='Distributor')
-    editors = models.ManyToManyField('Publisher',related_name='Publishers',through='Editor')
+    distributors = models.ManyToManyField('Publisher',
+                                          related_name='Distributors',
+                                          through='Distributor')
+    editors = models.ManyToManyField('Publisher',
+                                     related_name='Publishers',
+                                     through='Editor')
 
     def __unicode__(self):
         """str/unicode function of Colection class."""
@@ -56,7 +62,6 @@ class Colection(models.Model):
         """Overwriting of save function in Colection class."""
         self.slug = slugify(self.name + ' v' + str(self.volume))
         super(Colection, self).save(*args, **kwargs)
-
 
     def colection_list(self):
         """Admin site method."""
@@ -75,10 +80,12 @@ class Colection(models.Model):
 class Publisher(models.Model):
     """Pubisher model."""
 
-    name = models.CharField(max_length=128,primary_key=True)
-    history = models.TextField(blank=True,default='')
-    start_date = models.DateField('Comienzo de Editorial',blank=True,null=True)
-    end_date = models.DateField('Fin de Publicaciones',blank=True,null=True)
+    name = models.CharField(max_length=128, primary_key=True)
+    history = models.TextField(blank=True, default='')
+    start_date = models.DateField('Comienzo de Editorial', blank=True,
+                                  null=True)
+    end_date = models.DateField('Fin de Publicaciones', blank=True,
+                                null=True)
     slug = models.SlugField()
 
     def __unicode__(self):
@@ -92,15 +99,28 @@ class Publisher(models.Model):
 
 
 class Distributor(models.Model):
-    colection = models.ForeignKey(Colection,default=4)
+    """Distributor intermediate model."""
+
+    colection = models.ForeignKey(Colection, default=4)
     editorial = models.ForeignKey(Publisher)
-    extrainfo = models.CharField(max_length=128,blank=True,null=True)
-    principal = models.BooleanField('Principal',default=True)
+    extrainfo = models.CharField(max_length=128, blank=True, null=True)
+    principal = models.BooleanField('Principal', default=True)
+
+    class Meta:
+        """Meta class for intermediate Distributor model."""
+
+        auto_created = True
 
 
 class Editor(models.Model):
-    colection = models.ForeignKey(Colection,default=4)
-    editorial = models.ForeignKey(Publisher)
-    extrainfo = models.CharField(max_length=128,blank=True,null=True)
-    principal = models.BooleanField('Principal',default=True)
+    """Editor intermediate model."""
 
+    colection = models.ForeignKey(Colection, default=4)
+    editorial = models.ForeignKey(Publisher)
+    extrainfo = models.CharField(max_length=128, blank=True, null=True)
+    principal = models.BooleanField('Principal', default=True)
+
+    class Meta:
+        """Meta class for intermediate Editor model."""
+
+        auto_created = True
