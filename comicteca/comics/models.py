@@ -40,6 +40,10 @@ class Colection(models.Model):
     pub_date = models.DateField(blank=True, null=True)
     slug = models.SlugField()
 
+    # Relations
+    distributors = models.ManyToManyField('Publisher',related_name='Distributors',through='Distributor')
+    editors = models.ManyToManyField('Publisher',related_name='Publishers',through='Editor')
+
     def __unicode__(self):
         """str/unicode function of Colection class."""
         str_temp = self.name
@@ -85,3 +89,18 @@ class Publisher(models.Model):
         """Overwriting of save function in Publisher class."""
         self.slug = slugify(self.name)
         super(Publisher, self).save(*args, **kwargs)
+
+
+class Distributor(models.Model):
+    colection = models.ForeignKey(Colection,default=4)
+    editorial = models.ForeignKey(Publisher)
+    extrainfo = models.CharField(max_length=128,blank=True,null=True)
+    principal = models.BooleanField('Principal',default=True)
+
+
+class Editor(models.Model):
+    colection = models.ForeignKey(Colection,default=4)
+    editorial = models.ForeignKey(Publisher)
+    extrainfo = models.CharField(max_length=128,blank=True,null=True)
+    principal = models.BooleanField('Principal',default=True)
+
