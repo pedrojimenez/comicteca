@@ -41,6 +41,13 @@ class ColectionForm(forms.ModelForm):
                               help_text="Please enter the Colection subname")
     volume = forms.IntegerField(label="Volume", min_value=1,
                                 help_text='Volume')
+    editors = forms.ModelMultipleChoiceField(
+        queryset=Publisher.objects.all(),  # empty_label="select publisher",
+        help_text="Editors",
+        label="Publishers responsible of the edition")
+    distributors = forms.ModelMultipleChoiceField(
+        queryset=Publisher.objects.all(), help_text="Distributors",
+        label="Publishers responsible of the distribution", required=True)
     max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
                                      help_text='Total numbers')
     language = CountryField(blank_label='(select country)',
@@ -54,8 +61,8 @@ class ColectionForm(forms.ModelForm):
 
         # Provide an association between the ModelForm and a model
         model = Colection
-        fields = ('name', 'subname', 'volume', 'max_numbers', 'language',
-                  'pub_date')
+        fields = ('name', 'subname', 'volume', 'editors', 'distributors',
+                  'max_numbers', 'language', 'pub_date')
 
 
 class PublisherForm(forms.ModelForm):
