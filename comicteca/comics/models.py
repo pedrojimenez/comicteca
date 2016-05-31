@@ -75,6 +75,7 @@ class Colection(models.Model):
 
         db_table = 'colections'
         verbose_name_plural = "colections"
+        unique_together = ("name", "volume")
 
 
 class Publisher(models.Model):
