@@ -1,5 +1,6 @@
 """Models for the comicteca project."""
 from django.db import models
+from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
 
@@ -13,6 +14,11 @@ class Artist(models.Model):
     deathdate = models.DateField(blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
     slug = models.SlugField()
+
+    def get_absolute_url(self):
+        """."""
+        # return reverse('artist-detail', kwargs={'pk': self.pk})
+        return reverse('artist-detail', kwargs={'artist_name_slug': self.slug})
 
     def __unicode__(self):
         """str/unicode function of Artists class."""
@@ -28,6 +34,7 @@ class Artist(models.Model):
 
         db_table = 'artists'
         verbose_name_plural = "artists"
+        unique_together = ("name", "nationality", "birthdate")
 
 
 class Colection(models.Model):
