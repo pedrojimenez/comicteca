@@ -5,7 +5,7 @@
     </head>
 
     <body>
-        <h1>Add a new Artist</h1>
+        <h1>Add a new Artist updated</h1>
 
         <form id="artist_form" method="post" action="/comicteca/add_artist/">
 
@@ -16,7 +16,13 @@
 
             {% for field in form.visible_fields %}
                 {{ field.errors }}
-                {{ field.help_text }}
+
+                {% if form.help_text %}
+                    {{ field.help_text }}
+                {% else %}
+                    {{ field.name }}
+                {% endif %}
+
                 {{ field }}
 		</br>
             {% endfor %}
