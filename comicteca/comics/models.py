@@ -49,7 +49,7 @@ class Colection(models.Model):
     pub_date = models.DateField(blank=True, null=True)
     slug = models.SlugField()
 
-    pub_list = models.TextField(blank=True, null=True, default='')
+    # pub_list = models.TextField(blank=True, null=True, default='')
 
     # Relations
     distributors = models.ManyToManyField('Publisher',
@@ -70,7 +70,7 @@ class Colection(models.Model):
     def save(self, *args, **kwargs):
         """Overwriting of save function in Colection class."""
         self.slug = slugify(self.name + ' v' + str(self.volume))
-        self.pub_list = Distributor.objects.filter(colection=self)
+        # self.pub_list = Distributor.objects.filter(colection=self)
 
         super(Colection, self).save(*args, **kwargs)
 
