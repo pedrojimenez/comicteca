@@ -1,6 +1,9 @@
 """Comic App views."""
 
 from django.shortcuts import render
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.core.urlresolvers import reverse_lazy
+
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
@@ -22,6 +25,7 @@ def index(request):
 
 
 def artist(request, artist_name_slug):
+    """."""
     context_dict = {}
     try:
         artist = Artist.objects.get(slug=artist_name_slug)
@@ -49,6 +53,7 @@ def artist(request, artist_name_slug):
 
 
 def add_artist(request):
+    """."""
     if request.method == 'POST':
         form = ArtistForm(request.POST)
         if form.is_valid():
@@ -59,7 +64,7 @@ def add_artist(request):
             # The user will be shown the homepage.
             return index(request)
         else:
-            # The supplied form contained errors - just print them to the terminal.
+            # The supplied form contained errors - just print them to the term
             print form.errors
 
     else:
@@ -68,7 +73,44 @@ def add_artist(request):
     return render(request, 'comics/add_artist.html', {'form': form})
 
 
+class ArtistCreate(CreateView):
+    """."""
+
+    model = Artist
+    template_name = "comics/add_artist.html"
+    fields = ['name', 'nationality', 'birthdate', 'deathdate',
+              'biography']
+
+
+class ArtistUpdate(UpdateView):
+    """."""
+
+    model = Artist
+    template_name = "comics/artist_update_form.html"
+    fields = ['name', 'nationality', 'birthdate', 'deathdate',
+              'biography']
+
+
+class ArtistDelete(DeleteView):
+    """."""
+
+    model = Artist
+    # success_url = reverse_lazy('artist-list')
+    success_url = reverse_lazy('index')
+
+
+class ColectionCreate(CreateView):
+    """."""
+
+    model = Colection
+    template_name = "comics/add_colection.html"
+    success_url = reverse_lazy('index')
+    fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
+              'pub_date', 'distributors', 'editors']
+
+
 def colection(request, colection_name_slug):
+    """."""
     context_dict = {}
     try:
         colection = Colection.objects.get(slug=colection_name_slug)
@@ -85,6 +127,7 @@ def colection(request, colection_name_slug):
 
 
 def add_colection(request):
+    """."""
     if request.method == 'POST':
         form = ColectionForm(request.POST)
 
@@ -96,7 +139,7 @@ def add_colection(request):
             # The user will be shown the homepage.
             return index(request)
         else:
-            # The supplied form contained errors - just print them to the terminal.
+            # The supplied form contained errors - just print them to the term
             print form.errors
     else:
         # If the request was not a POST, display the form to enter details.
@@ -105,6 +148,7 @@ def add_colection(request):
 
 
 def publisher(request, publisher_name_slug):
+    """."""
     context_dict = {}
     try:
         publisher = Publisher.objects.get(slug=publisher_name_slug)
@@ -119,7 +163,9 @@ def publisher(request, publisher_name_slug):
     # Go render the response and return it to the client.
     return render(request, 'comics/publisher.html', context_dict)
 
+
 def add_publisher(request):
+    """."""
     if request.method == 'POST':
         form = PublisherForm(request.POST)
 
@@ -131,7 +177,7 @@ def add_publisher(request):
             # The user will be shown the homepage.
             return index(request)
         else:
-            # The supplied form contained errors - just print them to the terminal.
+            # The supplied form contained errors - just print them to the term
             print form.errors
     else:
         # If the request was not a POST, display the form to enter details.
@@ -140,5 +186,5 @@ def add_publisher(request):
 
 
 def about(request):
+    """."""
     return render(request, 'comics/about.html')
-    
