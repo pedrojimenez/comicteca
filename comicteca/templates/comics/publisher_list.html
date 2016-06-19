@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca</title>
+    </head>
+
+    <body>
+
+        <h2><p>Listado de Editoriales:</p></h2>
+        {% if publisher_list %}
+            <ul>
+                {% for publisher in publisher_list %}
+		<li><a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no artists present yet.</strong>
+        {% endif %}
+
+
+        <hr>
+        <br />
+        <a href="/comicteca/publishers/add/">Add new publisher</a><br />
+        <a href="/comicteca/">Back to Index</a>
+    </body>
+</html>
