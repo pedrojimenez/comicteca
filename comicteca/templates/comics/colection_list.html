@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca</title>
+    </head>
+
+    <body>
+
+        <h2><p>Listado de Colecciones:</p></h2>
+        {% if colection_list %}
+	    <table>
+                {% for colection in colection_list %}
+		    <tr>
+	              <td><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a></td>
+		      {% if colection.numbers == colection.max_numbers %}
+		        <td>Complete ({{ colection.max_numbers }})</td>
+		      {% else %}
+		        <td>{{ colection.numbers }} / {{colection.max_numbers}} </td>
+		      {% endif %}
+		    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <strong>There are no colections present yet.</strong>
+        {% endif %}
+
+
+        <hr>
+        <br />
+        <a href="/comicteca/colections/add/">Add new colection</a><br />
+        <a href="/comicteca/">Back to Index</a>
+    </body>
+</html>
