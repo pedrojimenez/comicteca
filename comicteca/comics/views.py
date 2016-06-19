@@ -24,7 +24,11 @@ def index(request):
     # Render the response and send it back!
     return render(request, 'comics/index.html', context_dict)
 
-
+# ------------------------------------------------------------------ #
+#
+#                           Artist Views
+#
+# ------------------------------------------------------------------ #
 def artist(request, artist_name_slug):
     """."""
     context_dict = {}
@@ -248,7 +252,11 @@ class PublisherListView(ListView):
 
         return context
 
-
+# ------------------------------------------------------------------ #
+#
+#                           Util Views
+#
+# ------------------------------------------------------------------ #
 def about(request):
     """."""
     return render(request, 'comics/about.html')
