@@ -100,6 +100,12 @@ class Publisher(models.Model):
                                 null=True)
     slug = models.SlugField()
 
+    def get_absolute_url(self):
+        """."""
+        # return reverse('artist-detail', kwargs={'pk': self.pk})
+        return reverse('publisher_detail', kwargs={'publisher_name_slug': self.slug})
+
+
     def __unicode__(self):
         """str/unicode function of Publisher class."""
         return self.name
