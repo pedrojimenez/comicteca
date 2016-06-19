@@ -2,6 +2,7 @@
 
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic import ListView
 from django.core.urlresolvers import reverse_lazy
 
 from comics.models import Artist
@@ -71,6 +72,25 @@ def add_artist(request):
         # If the request was not a POST, display the form to enter details.
         form = ArtistForm()
     return render(request, 'comics/add_artist.html', {'form': form})
+
+
+class ArtistListView(ListView):
+    """Generic class view for all Artists models."""
+
+    model = Artist
+    template_name = "comics/artist_list.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+
+        # Call the base implementation first to get a context
+        context = super(ArtistListView, self).get_context_data(**kwargs)
+
+        # Add in a QuerySet of all the Artists ordered by slug name
+        context['artist_list'] = Artist.objects.order_by('slug')
+
+        # TODO: count of comics for each artist ==> Annotate this count
+        return context
 
 
 class ArtistCreate(CreateView):
