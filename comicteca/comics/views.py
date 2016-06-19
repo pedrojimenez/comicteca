@@ -188,7 +188,11 @@ def add_colection(request):
         form = ColectionForm()
     return render(request, 'comics/add_colection.html', {'form': form})
 
-
+# ------------------------------------------------------------------ #
+#
+#                         Publisher Views
+#
+# ------------------------------------------------------------------ #
 def publisher(request, publisher_name_slug):
     """."""
     context_dict = {}
@@ -225,6 +229,24 @@ def add_publisher(request):
         # If the request was not a POST, display the form to enter details.
         form = PublisherForm()
     return render(request, 'comics/add_publisher.html', {'form': form})
+
+
+class PublisherListView(ListView):
+    """Generic class view for all Publisher models."""
+
+    model = Publisher
+    template_name = "comics/publisher_list.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+
+        # Call the base implementation first to get a context
+        context = super(PublisherListView, self).get_context_data(**kwargs)
+
+        # Add in a QuerySet of all the Artists ordered by slug name
+        context['publisher_list'] = Publisher.objects.order_by('slug')
+
+        return context
 
 
 def about(request):
