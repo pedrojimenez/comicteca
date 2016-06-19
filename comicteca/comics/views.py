@@ -252,6 +252,21 @@ class PublisherListView(ListView):
 
         return context
 
+class PublisherCreate(CreateView):
+    """."""
+
+    model = Publisher
+    template_name = "comics/add_publisher.html"
+    fields = ['name', 'history', 'start_date', 'end_date']
+
+
+class PublisherUpdate(UpdateView):
+    """."""
+
+    model = Publisher
+    template_name = "comics/update_publisher_form.html"
+    fields = ['name', 'history', 'start_date', 'end_date']
+
 # ------------------------------------------------------------------ #
 #
 #                           Util Views
