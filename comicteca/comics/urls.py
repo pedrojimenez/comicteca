@@ -8,6 +8,7 @@ from comics.views import ArtistCreate, ArtistUpdate  # , ArtistDelete
 from comics.views import ArtistListView
 from comics.views import ColectionCreate
 from comics.views import ColectionListView
+from comics.views import PublisherListView
 
 urlpatterns = patterns(
     '',
@@ -32,6 +33,7 @@ urlpatterns = patterns(
     url(r'^publishers/(?P<publisher_name_slug>[\w\-]+)/$', views.publisher,
         name='publisher_detail'),
     url(r'^add_publisher/$', views.add_publisher, name='add_publisher'),
+    url(r'publishers/$', PublisherListView.as_view(), name='publisher_list'),
 
     # utils
     url(r'^about/$', views.about, name='about'),
