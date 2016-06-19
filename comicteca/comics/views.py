@@ -118,7 +118,11 @@ class ArtistDelete(DeleteView):
     # success_url = reverse_lazy('artist-list')
     success_url = reverse_lazy('index')
 
-
+# ------------------------------------------------------------------ #
+#
+#                         Colection Views
+#
+# ------------------------------------------------------------------ #
 class ColectionCreate(CreateView):
     """."""
 
@@ -127,6 +131,24 @@ class ColectionCreate(CreateView):
     success_url = reverse_lazy('index')
     fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
               'pub_date', 'distributors', 'editors']
+
+class ColectionListView(ListView):
+    """Generic class view for all Colection models."""
+
+    model = Colection
+    template_name = "comics/colection_list.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+
+        # Call the base implementation first to get a context
+        context = super(ColectionListView, self).get_context_data(**kwargs)
+
+        # Add in a QuerySet of all the Artists ordered by slug name
+        context['colection_list'] = Colection.objects.order_by('slug')
+
+        # TODO: count of money for each colection ==> Annotate this count
+        return context
 
 
 def colection(request, colection_name_slug):
