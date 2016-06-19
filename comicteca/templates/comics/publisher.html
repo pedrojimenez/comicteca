@@ -19,7 +19,13 @@
 	  <li><u>Publisher History</u><strong>{{ publisher.history }} </strong></li>
 	</ul>
         {% else %}
-            The Publiser {{ publisher_name }} does not exist!
+            The Publisher {{ publisher_name }} does not exist!
+        {% endif %}
+
+
+	<hr>
+        {% if publisher %}
+	  <a href="/comicteca/publishers/{{ publisher.slug }}/edit/">Edit information about this Publisher</a><br />
         {% endif %}
 
         <a href="/comicteca/">Back to Index</a>
