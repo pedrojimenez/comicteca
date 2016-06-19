@@ -7,6 +7,7 @@ from comics import views
 from comics.views import ArtistCreate, ArtistUpdate  # , ArtistDelete
 from comics.views import ArtistListView
 from comics.views import ColectionCreate
+from comics.views import ColectionListView
 
 urlpatterns = patterns(
     '',
@@ -25,6 +26,7 @@ urlpatterns = patterns(
     url(r'^colections/(?P<colection_name_slug>[\w\-]+)/$', views.colection,
         name='colection_detail'),
     url(r'^add_colection/$', views.add_colection, name='add_colection'),
+    url(r'colections/$', ColectionListView.as_view(), name='colection_list'),
 
     # publishers
     url(r'^publishers/(?P<publisher_name_slug>[\w\-]+)/$', views.publisher,
