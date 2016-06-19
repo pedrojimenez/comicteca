@@ -5,6 +5,7 @@ from django.conf.urls import patterns, url
 
 from comics import views
 from comics.views import ArtistCreate, ArtistUpdate  # , ArtistDelete
+from comics.views import ArtistListView
 from comics.views import ColectionCreate
 
 urlpatterns = patterns(
@@ -17,6 +18,7 @@ urlpatterns = patterns(
     url(r'^artists/(?P<slug>[\w\-]+)/edit/$',
         ArtistUpdate.as_view(), name='artist_update'),
     url(r'^add_artist/$', views.add_artist, name='add_artist'),
+    url(r'artists/$', ArtistListView.as_view(), name='artist_list'),
 
     # colections
     url(r'colections/add/$', ColectionCreate.as_view(), name='colection_add'),
