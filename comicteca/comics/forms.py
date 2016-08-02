@@ -45,7 +45,7 @@ class ColectionForm(forms.ModelForm):
         queryset=Publisher.objects.all(),  # empty_label="select publisher",
         help_text="Editors",
         label="Publishers responsible of the edition")
-    distributors = forms.ModelMultipleChoiceField(
+    distributors = forms.ModelChoiceField(
         queryset=Publisher.objects.all(), help_text="Distributors",
         label="Publishers responsible of the distribution", required=True)
     max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
@@ -53,7 +53,8 @@ class ColectionForm(forms.ModelForm):
     language = CountryField(blank_label='(select country)',
                             help_text="Colection Language")
     pub_date = forms.DateField(label="Publication Date",
-                               help_text="Colection publication date")
+                               help_text="Colection publication date",
+                               required=False)
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
