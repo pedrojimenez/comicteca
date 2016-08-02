@@ -6,11 +6,13 @@
 
     <body>
 
-        <h2><p>Listado de Autores (from view):</p></h2>
+        <h2><p>Listado de Autores:</p></h2>
         {% if artist_list %}
             <ul>
                 {% for artist in artist_list %}
-		<li><a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a> ({{artist.nationality}})</li>
+		          <li>
+                        <a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a> ({{ artist.nationality }})
+                  </li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -19,8 +21,8 @@
 
 
         <hr>
-        <br />
-        <a href="/comicteca/artists/add/">Add new artist</a><br />
+        <br/>
+        <a href="/comicteca/artists/add/">Add new artist</a><br/>
         <a href="/comicteca/">Back to Index</a>
     </body>
 </html>

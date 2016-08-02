@@ -8,27 +8,29 @@
         {% if publisher %}
         <h1>{{ publisher_name }}</h1>
 	<ul>
-	  <li><u>Name:</u><strong>{{ publisher.name }} </strong></li>
+	  <li><u>Name:</u> <strong>{{ publisher.name }} </strong></li>
 	  {% if publisher.start_date %}
-	  	<li><u>Start date:</u><strong>{{ publisher.start_date }} </strong></li>
+	  	<li><u>Start date:</u> <strong>{{ publisher.start_date }} </strong></li>
 	  {% endif %}
 	  {% if publisher.end_date %}
-	  	<li><u>End date:</u><strong>{{ publisher.end_date }} </strong></li>
+	  	<li><u>End date:</u> <strong>{{ publisher.end_date }} </strong></li>
 	  {% endif %}
 	  </br>
-	  <li><u>Publisher History</u><strong>{{ publisher.history }} </strong></li>
+	  <li><u>Publisher History:</u> <strong>{{ publisher.history }} </strong></li>
 	</ul>
         {% else %}
+	    <h1>Publisher Unknown</h1>
             The Publisher {{ publisher_name }} does not exist!
         {% endif %}
 
 
 	<hr>
         {% if publisher %}
-	  <a href="/comicteca/publishers/{{ publisher.slug }}/edit/">Edit information about this Publisher</a><br />
+	  <a href="/comicteca/publishers/{{ publisher.slug }}/edit/">Edit Publisher</a><br />
+	  <a href="/comicteca/publishers/{{ publisher.slug }}/delete/">Delete Publisher</a><br />
         {% endif %}
-
-        <a href="/comicteca/">Back to Index</a>
+        <a href="/comicteca/publishers/">Back to Publishers</a><br/>
+	<a href="/comicteca/">Back to Index</a><br/>
 
     </body>
 </html>

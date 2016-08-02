@@ -22,7 +22,11 @@
         {% if colections %}
             <ul>
                 {% for colection in colections %}
-                  <li><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a></li>
+                  <li><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a>
+                  (v{{ colection.volume }})
+                  ({{ colection.distributors }})
+                  ({{ colection.numbers }})
+                  </li>
                 {% endfor %}
             </ul>
         {% else %}

@@ -9,9 +9,25 @@
         <h2><p>Listado de Colecciones:</p></h2>
         {% if colection_list %}
 	    <table>
+		    <tr>
+     		      <th>Name</th>
+     		      <th>Volume</th>
+     		      <th>Language</th>
+     		      <th>Pub Date</th>
+     		      <th>Numbers</th>
+		    </tr>
                 {% for colection in colection_list %}
 		    <tr>
 	              <td><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a></td>
+	              <td>Volume {{ colection.volume }}</td>
+	              <td>{{ colection.language }}</td>
+
+		      {% if colection.pub_date %}
+		        <td>{{ colection.pub_date }}</td>
+		      {% else %}
+		        <td>N/A</td>
+		      {% endif %}
+
 		      {% if colection.numbers == colection.max_numbers %}
 		        <td>Complete ({{ colection.max_numbers }})</td>
 		      {% else %}
@@ -26,7 +42,7 @@
 
 
         <hr>
-        <br />
+        <br/>
         <a href="/comicteca/colections/add/">Add new colection</a><br />
         <a href="/comicteca/">Back to Index</a>
     </body>

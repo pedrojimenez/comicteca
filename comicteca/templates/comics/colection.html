@@ -7,19 +7,41 @@
     <body>
         {% if colection %}
         <h1>{{ colection_name }}</h1>
-	<ul>
-	  <li><u>Name:</u><strong>{{ colection.name }} </strong></li>
-	  {% if colection.subname  %}
-	      <li><u>Subname:</u><strong>{{ colection.subname }} </strong></li>
-	  {% endif  %}
-	  <li><u>Volume:</u><strong>{{ colection.volume }} </strong></li>
-	  <li><u>Max Numbers:</u><strong>{{ colection.max_numbers }} </strong></li>
-	  <li><u>Current Numbers:</u><strong>{{ colection.numbers }} </strong></li>
-	  <li><u>Pub Date:</u><strong>{{ colection.pub_date }} </strong></li>
-	  </br>
-	</ul>
+             <ul>
+	           <li><u>Name:</u><strong>{{ colection.name }} </strong></li>
+	           {% if colection.subname  %}
+	               <li><u>Subname:</u><strong>{{ colection.subname }} </strong></li>
+	           {% endif  %}
+	           <li><u>Volume:</u><strong>{{ colection.volume }} </strong></li>
+	           <li><u>Max Numbers:</u><strong>{{ colection.max_numbers }} </strong></li>
+	           <li><u>Current Numbers:</u><strong>{{ colection.numbers }} </strong></li>
+	           <li><u>Pub Date:</u><strong>{{ colection.pub_date }} </strong></li>
+	           </br>
+	        </ul>
+
+	    <h2>Distributor</h2>
+	        <ul>
+	            {% for distributor in distributor_list %}
+	  	            <li>Distributor: {{ distributor.name }}</li>
+                {% endfor %}
+	       </ul>
+	    <h2>Editors</h2>
+            <ul>
+	            {% for editor in editor_list %}
+	  	            <li>Editor: {{ editor.name }}</li>
+                {% endfor %}
+            </ul>
+
         {% else %}
-            The Colection {{ colection_name }} does not exist!
+            <h1>Colection Unknown</h1>
+            This colection does not exist!
         {% endif %}
+	    <hr>
+        {% if colection %}
+            <a href="/comicteca/colections/{{ colection.slug }}/edit/">Edit Colection</a><br/>
+            <a href="/comicteca/colections/{{ colection.slug }}/delete/">Delete Colection</a><br/>
+        {% endif %}
+	    <a href="/comicteca/colections/">Back to Colections</a><br/>
+	    <a href="/comicteca/">Back to Index</a><br/>
     </body>
 </html>

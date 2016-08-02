@@ -8,18 +8,28 @@
         {% if artist %}
         <h1>{{ artist_name }}</h1>
 	<ul>
-	  <li><u>Name:</u><strong>{{ artist.name }} </strong></li>
-	  <li><u>Nationality:</u><strong>{{ artist.nationality }} </strong></li>
-	  <li><u>Birthdate:</u><strong>{{ artist.birthdate }} </strong></li>
+	  <li><u>Name:</u> <strong>{{ artist.name }} </strong></li>
+	  <li><u>Nationality:</u> <strong>{{ artist.nationality }} </strong></li>
+      {% if artist.birthdate %}
+	       <li><u>Birthdate:</u> <strong>{{ artist.birthdate }} </strong></li>
+      {% endif %}
 	  {% if artist.deathdate %}
-	    <li><u>Deathdate:</u><strong>{{ artist.deathdate }} </strong></li>
+	       <li><u>Deathdate:</u> <strong>{{ artist.deathdate }} </strong></li>
 	  {% endif %}
 	  </br>
-	  <li><u>Bio</u><strong>{{ artist.biography }} </strong></li>
+	  <li><u>Bio</u> <strong>{{ artist.biography }} </strong></li>
 	</ul>
         {% else %}
-            The Artist {{ artist_name }} does not exist!
+            <h1>Artist Unknown</h1>
+            This artist does not exist!
         {% endif %}
-    <a href="/comicteca/artists/{{ artist.slug }}/edit/">Edit information about this Artist NEW+++</a><br />
+
+    <hr>
+    {% if artist %}
+        <a href="/comicteca/artists/{{ artist.slug }}/edit/">Edit Artist</a><br/>
+        <a href="/comicteca/artists/{{ artist.slug }}/delete/">Delete Artist</a><br/>
+    {% endif %}
+    <a href="/comicteca/artists/">Back to Artists</a><br/>
+    <a href="/comicteca/">Back to Index</a><br/>
     </body>
 </html>

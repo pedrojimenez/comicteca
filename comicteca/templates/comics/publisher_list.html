@@ -10,7 +10,9 @@
         {% if publisher_list %}
             <ul>
                 {% for publisher in publisher_list %}
-		<li><a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a></li>
+		            <li>
+                        <a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a>
+                    </li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -19,8 +21,8 @@
 
 
         <hr>
-        <br />
-        <a href="/comicteca/publishers/add/">Add new publisher</a><br />
+        <br/>
+        <a href="/comicteca/publishers/add/">Add new publisher</a><br/>
         <a href="/comicteca/">Back to Index</a>
     </body>
 </html>
