@@ -24,6 +24,7 @@ def index(request):
     # Render the response and send it back!
     return render(request, 'comics/index.html', context_dict)
 
+
 # ------------------------------------------------------------------ #
 #
 #                           Artist Views
@@ -86,7 +87,6 @@ class ArtistListView(ListView):
 
     def get_context_data(self, **kwargs):
         """Overwriting of method to pass additional info to the template."""
-
         # Call the base implementation first to get a context
         context = super(ArtistListView, self).get_context_data(**kwargs)
 
@@ -110,7 +110,7 @@ class ArtistUpdate(UpdateView):
     """."""
 
     model = Artist
-    template_name = "comics/artist_update_form.html"
+    template_name = "comics/update_artist_form.html"
     fields = ['name', 'nationality', 'birthdate', 'deathdate',
               'biography']
 
@@ -119,8 +119,10 @@ class ArtistDelete(DeleteView):
     """."""
 
     model = Artist
-    # success_url = reverse_lazy('artist-list')
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('artist_list')
+    template_name = "comics/delete_artist_confirm.html"
+    #success_url = reverse_lazy('index')
+
 
 # ------------------------------------------------------------------ #
 #
@@ -136,6 +138,24 @@ class ColectionCreate(CreateView):
     fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
               'pub_date', 'distributors', 'editors']
 
+
+class ColectionUpdate(UpdateView):
+    """."""
+
+    model = Colection
+    template_name = "comics/update_colection_form.html"
+    fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
+              'pub_date', 'distributors', 'editors']
+
+
+class ColectionDelete(DeleteView):
+    """."""
+
+    model = Colection
+    success_url = reverse_lazy('colection_list')
+    template_name = "comics/delete_colection_confirm.html"
+
+
 class ColectionListView(ListView):
     """Generic class view for all Colection models."""
 
@@ -144,7 +164,6 @@ class ColectionListView(ListView):
 
     def get_context_data(self, **kwargs):
         """Overwriting of method to pass additional info to the template."""
-
         # Call the base implementation first to get a context
         context = super(ColectionListView, self).get_context_data(**kwargs)
 
@@ -160,8 +179,15 @@ def colection(request, colection_name_slug):
     context_dict = {}
     try:
         colection = Colection.objects.get(slug=colection_name_slug)
+        colection_distributors = Publisher.objects.filter(
+            colection__name=colection.name)
+        colection_editors = Colection.objects.get(
+            slug=colection_name_slug).editors.all()
+        # filter(colection__editors__set)
         context_dict['colection_name'] = colection.name
         context_dict['colection'] = colection
+        context_dict['distributor_list'] = colection_distributors
+        context_dict['editor_list'] = colection_editors
     except Colection.DoesNotExist:
         # We get here if we didn't find the specified Colection
         # Don't do anything - the template displays the "no colection"
@@ -191,6 +217,7 @@ def add_colection(request):
         # If the request was not a POST, display the form to enter details.
         form = ColectionForm()
     return render(request, 'comics/add_colection.html', {'form': form})
+
 
 # ------------------------------------------------------------------ #
 #
@@ -243,7 +270,6 @@ class PublisherListView(ListView):
 
     def get_context_data(self, **kwargs):
         """Overwriting of method to pass additional info to the template."""
-
         # Call the base implementation first to get a context
         context = super(PublisherListView, self).get_context_data(**kwargs)
 
@@ -251,6 +277,7 @@ class PublisherListView(ListView):
         context['publisher_list'] = Publisher.objects.order_by('slug')
 
         return context
+
 
 class PublisherCreate(CreateView):
     """."""
@@ -266,6 +293,15 @@ class PublisherUpdate(UpdateView):
     model = Publisher
     template_name = "comics/update_publisher_form.html"
     fields = ['name', 'history', 'start_date', 'end_date']
+
+
+class PublisherDelete(DeleteView):
+    """."""
+
+    model = Publisher
+    success_url = reverse_lazy('publisher_list')
+    template_name = "comics/delete_publisher_confirm.html"
+
 
 # ------------------------------------------------------------------ #
 #
