@@ -3,6 +3,7 @@ from django.contrib import admin
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
+from comics.models import Comic
 # from comics.models import Distributor, Editor
 
 # Register your models here.
@@ -20,12 +21,17 @@ from comics.models import Publisher
 
 
 class ArtistAdmin(admin.ModelAdmin):
+    """."""
+
     prepopulated_fields = {'slug': ('name',)}
 
 
 class ColectionAdmin(admin.ModelAdmin):
+    """."""
+
     prepopulated_fields = {'slug': ('name',)}
-    list_display = ('name', 'subname', 'volume', 'colection_list', 'get_distributor')
+    list_display = ('name', 'subname', 'volume', 'colection_list',
+                    'get_distributor')
     search_fields = ['name', 'subname']
     list_filter = ['name']
     fieldsets = [
@@ -36,6 +42,7 @@ class ColectionAdmin(admin.ModelAdmin):
     # inlines = [EditorInline]
 
     def get_distributor(self, obj):
+        """."""
         return obj.distributors.name
 
     get_distributor.admin_order_field = 'distributors'
@@ -43,11 +50,39 @@ class ColectionAdmin(admin.ModelAdmin):
 
 
 class PublisherAdmin(admin.ModelAdmin):
+    """."""
+
     prepopulated_fields = {'slug': ('name',)}
     list_display = ('name', 'history', 'start_date', 'end_date')
     search_fields = ['name']
 
 
+class ComicAdmin(admin.ModelAdmin):
+    """."""
+
+    # prepopulated_fields = {'slug': ('name',)}
+    list_display = ('get_colection_name', 'get_colection_volume',
+                    'get_colection_distributors', 'number',
+                    'title', 'pages')
+    search_fields = ['slug', 'title']
+
+    def get_colection_name(self, obj):
+        """."""
+        return obj.colection.name
+
+    def get_colection_volume(self, obj):
+        """."""
+        return obj.colection.volume
+
+    def get_colection_distributors(self, obj):
+        """."""
+        return obj.colection.distributors
+
+    get_colection_name.short_description = 'Colection Name'
+    get_colection_volume.short_description = 'Volume'
+    get_colection_distributors.short_description = 'Distributor'
+
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Colection, ColectionAdmin)
 admin.site.register(Publisher, PublisherAdmin)
+admin.site.register(Comic, ComicAdmin)
