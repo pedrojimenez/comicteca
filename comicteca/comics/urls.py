@@ -14,7 +14,9 @@ from comics.views import PublisherListView
 urlpatterns = patterns(
     '',
     url(r'^$', views.index, name='index'),
+    # ---------- #
     # artists
+    # ---------- #
     url(r'artists/add/$', ArtistCreate.as_view(), name='artist_add'),
     url(r'^artists/(?P<artist_name_slug>[\w\-]+)/$', views.artist,
         name='artist_detail'),
@@ -28,7 +30,9 @@ urlpatterns = patterns(
     url(r'^add_artist/$', views.add_artist, name='add_artist'),
     url(r'artists/$', ArtistListView.as_view(), name='artist_list'),
 
+    # ---------- #
     # colections
+    # ---------- #
     url(r'colections/add/$', ColectionCreate.as_view(), name='colection_add'),
     url(r'^colections/(?P<colection_name_slug>[\w\-]+)/$', views.colection,
         name='colection_detail'),
@@ -42,10 +46,14 @@ urlpatterns = patterns(
     url(r'^add_colection/$', views.add_colection, name='add_colection'),
     url(r'colections/$', ColectionListView.as_view(), name='colection_list'),
 
+    # ---------- #
     # publishers
+    # ---------- #
     url(r'publishers/add/$', PublisherCreate.as_view(), name='publisher_add'),
+
     url(r'^publishers/(?P<publisher_name_slug>[\w\-]+)/$', views.publisher,
         name='publisher_detail'),
+
     url(r'^add_publisher/$', views.add_publisher, name='add_publisher'),
 
     url(r'^publishers/(?P<slug>[\w\-]+)/edit/$',
@@ -56,6 +64,8 @@ urlpatterns = patterns(
 
     url(r'publishers/$', PublisherListView.as_view(), name='publisher_list'),
 
+    # ---------- #
     # utils
+    # ---------- #
     url(r'^about/$', views.about, name='about'),
 )
