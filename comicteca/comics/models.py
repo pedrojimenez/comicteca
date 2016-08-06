@@ -40,7 +40,7 @@ class Artist(models.Model):
 class Publisher(models.Model):
     """Pubisher model."""
 
-    name = models.CharField(max_length=128, primary_key=True)
+    name = models.CharField(max_length=128)
     history = models.TextField(blank=True, default='')
     start_date = models.DateField('Comienzo de Editorial', blank=True,
                                   null=True)
