@@ -25,7 +25,7 @@ class Artist(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        """Overwriting of save method for Artist model."""
+        """Overriding of save method for Artist model."""
         self.slug = slugify(self.name)
         super(Artist, self).save(*args, **kwargs)
 
@@ -59,7 +59,7 @@ class Publisher(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        """Overwriting of save function in Publisher class."""
+        """Overriding of save function in Publisher class."""
         self.slug = slugify(self.name)
         super(Publisher, self).save(*args, **kwargs)
 
@@ -95,7 +95,7 @@ class Colection(models.Model):
         return str_temp
 
     def save(self, *args, **kwargs):
-        """Overwriting of save function in Colection class."""
+        """Overriding of save function in Colection class."""
         self.slug = slugify(self.name + ' v' + str(self.volume))
         # self.pub_list = Distributor.objects.filter(colection=self)
 
@@ -120,6 +120,33 @@ class Colection(models.Model):
         # db_table = 'colections'
         verbose_name_plural = "colections"
         unique_together = ("name", "volume")
+
+
+class Comic(models.Model):
+    """Comic model."""
+
+    title = models.CharField(max_length=128, blank=True, null=True)
+    number = models.IntegerField(default=1)
+    pages = models.IntegerField(default=24)
+    slug = models.SlugField()
+    colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
+    extrainfo = models.CharField(max_length=128, blank=True, null=True)
+
+    class Meta:
+        """Meta class for Comic model."""
+
+        # db_table = 'comics'
+        verbose_name_plural = "comics"
+
+    def __unicode__(self):
+        """str/unicode function of Comic class."""
+        return self.slug
+
+    def save(self, *args, **kwargs):
+        """Overriding of save function in Comics class."""
+        slugify(self.colection.slug) + '_n' + str(self.number)
+        self.slug = slugify(self.colection.slug) + '_n' + str(self.number)
+        super(Comic, self).save(*args, **kwargs)
 
 
 # class Distributor(models.Model):
