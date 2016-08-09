@@ -12,27 +12,25 @@
 		    <tr>
      		      <th>Name</th>
      		      <th>Volume</th>
-     		      <th>Language</th>
+                  <th>Distributor</th>
+                  <th>Language</th>
      		      <th>Pub Date</th>
      		      <th>Numbers</th>
 		    </tr>
                 {% for colection in colection_list %}
 		    <tr>
 	              <td><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a></td>
-	              <td>Volume {{ colection.volume }}</td>
-	              <td>{{ colection.language }}</td>
+	              <td>v{{ colection.volume }}</td>
+                  <td><a href="/comicteca/publishers/{{ colection.distributor.slug }}">{{ colection.distributor.name }}</a></td>
+                  <td>{{ colection.language }}</td>
+		          {% if colection.pub_date %}
+		              <td>{{ colection.pub_date }}</td>
+		          {% else %}
+		              <td>N/A</td>
+		          {% endif %}
 
-		      {% if colection.pub_date %}
-		        <td>{{ colection.pub_date }}</td>
-		      {% else %}
-		        <td>N/A</td>
-		      {% endif %}
+		          <td>{{ colection.colection_list }}</td>
 
-		      {% if colection.numbers == colection.max_numbers %}
-		        <td>Complete ({{ colection.max_numbers }})</td>
-		      {% else %}
-		        <td>{{ colection.numbers }} / {{colection.max_numbers}} </td>
-		      {% endif %}
 		    </tr>
                 {% endfor %}
             </table>

@@ -7,7 +7,7 @@
     <body>
         <h1>Comicteca says...hello world!</h1>
 
-	<h2><p>Autores:</p></h2>
+	<h2><p>Last Artists:</p></h2>
         {% if artists %}
             <ul>
                 {% for artist in artists %}
@@ -18,14 +18,14 @@
             <strong>There are no artists present yet.</strong>
         {% endif %}
 
-	<h2><p>Colecciones:</p></h2>
+	<h2><p>Last Colections:</p></h2>
         {% if colections %}
             <ul>
                 {% for colection in colections %}
                   <li><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a>
                   (v{{ colection.volume }})
-                  ({{ colection.distributors }})
-                  ({{ colection.numbers }})
+                  ({{ colection.distributor }})
+                  ({{ colection.colection_list }})
                   </li>
                 {% endfor %}
             </ul>
@@ -33,7 +33,7 @@
             <strong>There are no colections present yet.</strong>
         {% endif %}
 
-	<h2><p>Editoriales:</p></h2>
+	<h2><p>Last Publishers:</p></h2>
         {% if publishers %}
             <ul>
                 {% for publisher in publishers %}
@@ -48,6 +48,7 @@
         <a href="/comicteca/artists/">Artists</a><br />
         <a href="/comicteca/colections/">Colections</a><br />
         <a href="/comicteca/publishers/">Publishers</a><br />
+        <a href="/comicteca/comics/">Comics</a><br />
         <a href="/comicteca/about/">About</a><br />
     </body>
 </html>

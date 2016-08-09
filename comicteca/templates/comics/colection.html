@@ -6,29 +6,34 @@
 
     <body>
         {% if colection %}
-        <h1>{{ colection_name }}</h1>
+        <h1>{{ colection_name }} v{{ colection.volume }} ({{ colection.distributor }}) </h1>
              <ul>
 	           <li><u>Name:</u><strong>{{ colection.name }} </strong></li>
 	           {% if colection.subname  %}
 	               <li><u>Subname:</u><strong>{{ colection.subname }} </strong></li>
 	           {% endif  %}
 	           <li><u>Volume:</u><strong>{{ colection.volume }} </strong></li>
-	           <li><u>Max Numbers:</u><strong>{{ colection.max_numbers }} </strong></li>
-	           <li><u>Current Numbers:</u><strong>{{ colection.numbers }} </strong></li>
+	           <li><u>Status:</u><strong>{{ colection.colection_list }} </strong></li>
 	           <li><u>Pub Date:</u><strong>{{ colection.pub_date }} </strong></li>
 	           </br>
 	        </ul>
 
 	    <h2>Distributor</h2>
 	        <ul>
-	            {% for distributor in distributor_list %}
-	  	            <li>Distributor: {{ distributor.name }}</li>
-                {% endfor %}
+                <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</a></li>
 	       </ul>
+
 	    <h2>Editors</h2>
             <ul>
 	            {% for editor in editor_list %}
-	  	            <li>Editor: {{ editor.name }}</li>
+                    <li><a href="/comicteca/publishers/{{ editor.slug }}">{{ editor.name }}</a></li>
+                {% endfor %}
+            </ul>
+
+        <h2>Comics</h2> <a href="/comicteca/colections/{{ colection.slug }}/add-comic/">Add Comic</a><br/>
+            <ul>
+                {% for comic in comic_list %}
+                    <li><a href="/comicteca/comics/{{ comic.slug }}/">Number {{ comic.number }} ({{ comic.pages }})</a></li>
                 {% endfor %}
             </ul>
 
