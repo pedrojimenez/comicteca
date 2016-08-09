@@ -5,6 +5,11 @@ from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
 
 
+# ------------------------------------------------------------------ #
+#
+#                         Artist Model
+#
+# ------------------------------------------------------------------ #
 class Artist(models.Model):
     """Artists model."""
 
@@ -37,6 +42,11 @@ class Artist(models.Model):
         unique_together = ("name", "nationality", "birthdate")
 
 
+# ------------------------------------------------------------------ #
+#
+#                         Publisher Model
+#
+# ------------------------------------------------------------------ #
 class Publisher(models.Model):
     """Pubisher model."""
 
@@ -64,6 +74,11 @@ class Publisher(models.Model):
         super(Publisher, self).save(*args, **kwargs)
 
 
+# ------------------------------------------------------------------ #
+#
+#                         Colection Model
+#
+# ------------------------------------------------------------------ #
 class Colection(models.Model):
     """Colection model."""
 
@@ -77,8 +92,8 @@ class Colection(models.Model):
     slug = models.SlugField()
 
     # Relations
-    distributors = models.ForeignKey(Publisher, on_delete=models.CASCADE,
-                                     default='Marvel')
+    distributor = models.ForeignKey(Publisher, on_delete=models.CASCADE,
+                                    default='Marvel')
     # distributors = models.ManyToManyField('Publisher',
     #                                       related_name='Distributors',
     #                                       through='Distributor')
@@ -97,8 +112,7 @@ class Colection(models.Model):
     def save(self, *args, **kwargs):
         """Overriding of save function in Colection class."""
         self.slug = slugify(self.name + ' v' + str(self.volume))
-        # self.pub_list = Distributor.objects.filter(colection=self)
-
+        # self.__set_comics_number()
         super(Colection, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -107,12 +121,32 @@ class Colection(models.Model):
         return reverse('colection_detail',
                        kwargs={'colection_name_slug': self.slug})
 
+    def __set_comics_number(self):
+        """Count number of colection comics and set it."""
+        self.numbers = len(Comic.objects.filter(colection__name=self.name))
+        # print "setting {} to colection {}".format(self.numbers, self.name)
+
+    def update_comics_number(self):
+        """Count number of colection comics and return it."""
+        self.__set_comics_number()
+        # print "updating numbers ({}) from public method".format(self.numbers)
+
     def colection_list(self):
-        """Admin site method."""
+        """Count number of colection comics and return string."""
+        # self.numbers = len(Comic.objects.filter(colection__name=self.name))
+        self.__set_comics_number()
         if (self.max_numbers != 0) and (self.max_numbers == self.numbers):
             return "Complete"
         else:
             return str(self.numbers) + "/" + str(self.max_numbers)
+
+    def editor_list(self):
+        """Return the list of Editors as a string."""
+        editor_list_output = []
+        for editor in self.editors.all():
+            editor_list_output.append(editor.name)
+
+        return ', '.join(editor_list_output)
 
     class Meta:
         """Meta class for Colection model."""
@@ -122,15 +156,21 @@ class Colection(models.Model):
         unique_together = ("name", "volume")
 
 
+# ------------------------------------------------------------------ #
+#
+#                         Comic Model
+#
+# ------------------------------------------------------------------ #
 class Comic(models.Model):
     """Comic model."""
 
     title = models.CharField(max_length=128, blank=True, null=True)
-    number = models.IntegerField(default=1)
+    number = models.IntegerField(default=1, unique=True)
     pages = models.IntegerField(default=24)
     slug = models.SlugField()
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     extrainfo = models.CharField(max_length=128, blank=True, null=True)
+    # pub_date = models.DateField(blank=True, null=True)
 
     class Meta:
         """Meta class for Comic model."""
@@ -147,6 +187,8 @@ class Comic(models.Model):
         slugify(self.colection.slug) + '_n' + str(self.number)
         self.slug = slugify(self.colection.slug) + '_n' + str(self.number)
         super(Comic, self).save(*args, **kwargs)
+        # Update Colection "number of comics"
+        self.colection.update_comics_number()
 
 
 # class Distributor(models.Model):
