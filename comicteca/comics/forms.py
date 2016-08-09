@@ -45,8 +45,8 @@ class ColectionForm(forms.ModelForm):
         queryset=Publisher.objects.all(),  # empty_label="select publisher",
         help_text="Editors",
         label="Publishers responsible of the edition")
-    distributors = forms.ModelChoiceField(
-        queryset=Publisher.objects.all(), help_text="Distributors",
+    distributor = forms.ModelChoiceField(
+        queryset=Publisher.objects.all(), help_text="Distributor",
         label="Publishers responsible of the distribution", required=True)
     max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
                                      help_text='Total numbers')
@@ -62,7 +62,7 @@ class ColectionForm(forms.ModelForm):
 
         # Provide an association between the ModelForm and a model
         model = Colection
-        fields = ('name', 'subname', 'volume', 'editors', 'distributors',
+        fields = ('name', 'subname', 'volume', 'editors', 'distributor',
                   'max_numbers', 'language', 'pub_date')
 
 
