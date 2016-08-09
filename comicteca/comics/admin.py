@@ -36,16 +36,16 @@ class ColectionAdmin(admin.ModelAdmin):
     list_filter = ['name']
     fieldsets = [
         ('Nombre Coleccion', {'fields': ['name', 'volume', 'subname',
-         'max_numbers', 'pub_date', 'slug', 'distributors', 'editors']}),
+         'max_numbers', 'pub_date', 'slug', 'distributor', 'editors']}),
     ]
     # inlines = [DistributorInline, EditorInline]
     # inlines = [EditorInline]
 
     def get_distributor(self, obj):
         """."""
-        return obj.distributors.name
+        return obj.distributor.name
 
-    get_distributor.admin_order_field = 'distributors'
+    get_distributor.admin_order_field = 'distributor'
     get_distributor.short_description = 'Distributor Name'
 
 
@@ -62,7 +62,7 @@ class ComicAdmin(admin.ModelAdmin):
 
     # prepopulated_fields = {'slug': ('name',)}
     list_display = ('get_colection_name', 'get_colection_volume',
-                    'get_colection_distributors', 'number',
+                    'get_colection_distributor', 'number',
                     'title', 'pages')
     search_fields = ['slug', 'title']
 
@@ -74,13 +74,13 @@ class ComicAdmin(admin.ModelAdmin):
         """."""
         return obj.colection.volume
 
-    def get_colection_distributors(self, obj):
+    def get_colection_distributor(self, obj):
         """."""
-        return obj.colection.distributors
+        return obj.colection.distributor
 
     get_colection_name.short_description = 'Colection Name'
     get_colection_volume.short_description = 'Volume'
-    get_colection_distributors.short_description = 'Distributor'
+    get_colection_distributor.short_description = 'Distributor'
 
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Colection, ColectionAdmin)
