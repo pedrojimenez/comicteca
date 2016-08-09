@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Comicteca - Comic Detail</title>
+    </head>
+
+    <body>
+        {% if comic %}
+        <h1>{{ colection.name }} v{{ colection.volume }} - Number {{ comic.number }}</h1>
+             <ul>
+	           <li><u>Portada:</u><strong>{{ comic.slug }} </strong></li>
+
+	           {% if colection.subname  %}
+	               <li><u>Subname:</u><strong>{{ comic.subname }} </strong></li>
+	           {% endif  %}
+
+                <li><u>Pages:</u><strong>{{ comic.pages }}</strong></li>
+
+	           {% if colection.pub_date  %}
+	               <li><u>Pub Date:</u><strong>{{ comic.pub_date }} </strong></li>
+                {% else  %}
+                    <li><u>Pub Date:</u><strong>N/A</strong></li>
+                {% endif  %}
+
+                {% if colection.extrainfo  %}
+                    <li><u>Extra info:</u><strong>{{ colection.extrainfo }} </strong></li>
+                {% else  %}
+                    <li><u>Extra info:</u><strong>N/A</strong></li>
+                {% endif  %}
+
+
+	           </br>
+	        </ul>
+
+        {% else %}
+            <h1>Comic Unknown</h1>
+            This comic does not exist!
+        {% endif %}
+	    <hr>
+        {% if comic %}
+            <a href="/comicteca/comics/{{ comic.slug }}/edit/">Edit Comic</a><br/>
+            <a href="/comicteca/comics/{{ comic.slug }}/delete/">Delete Comic</a><br/>
+            <a href="/comicteca/colections/{{ colection.slug }}/">Back to {{ colection.name }} v{{ colection.volume }}</a><br/>
+        {% endif %}
+	    <a href="/comicteca/comics/">Back to Comics</a><br/>
+	    <a href="/comicteca/">Back to Index</a><br/>
+    </body>
+</html>
