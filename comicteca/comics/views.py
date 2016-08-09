@@ -2,12 +2,13 @@
 
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse_lazy
 
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
+from comics.models import Comic
 from comics.forms import ArtistForm
 from comics.forms import ColectionForm
 from comics.forms import PublisherForm
@@ -121,7 +122,6 @@ class ArtistDelete(DeleteView):
     model = Artist
     success_url = reverse_lazy('artist_list')
     template_name = "comics/delete_artist_confirm.html"
-    #success_url = reverse_lazy('index')
 
 
 # ------------------------------------------------------------------ #
@@ -130,13 +130,13 @@ class ArtistDelete(DeleteView):
 #
 # ------------------------------------------------------------------ #
 class ColectionCreate(CreateView):
-    """."""
+    """CBV for creating a new object Colection."""
 
     model = Colection
     template_name = "comics/add_colection.html"
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('colection_list')
     fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
-              'pub_date', 'distributors', 'editors']
+              'pub_date', 'distributor', 'editors']
 
 
 class ColectionUpdate(UpdateView):
@@ -145,7 +145,7 @@ class ColectionUpdate(UpdateView):
     model = Colection
     template_name = "comics/update_colection_form.html"
     fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
-              'pub_date', 'distributors', 'editors']
+              'pub_date', 'distributor', 'editors']
 
 
 class ColectionDelete(DeleteView):
@@ -179,15 +179,19 @@ def colection(request, colection_name_slug):
     context_dict = {}
     try:
         colection = Colection.objects.get(slug=colection_name_slug)
-        colection_distributors = Publisher.objects.filter(
-            colection__name=colection.name)
+        colection_distributor = Colection.objects.get(
+            slug=colection_name_slug).distributor
         colection_editors = Colection.objects.get(
             slug=colection_name_slug).editors.all()
+        colection_comics = Comic.objects.filter(
+            colection__name=colection.name)
+
         # filter(colection__editors__set)
         context_dict['colection_name'] = colection.name
         context_dict['colection'] = colection
-        context_dict['distributor_list'] = colection_distributors
+        context_dict['distributor'] = colection_distributor
         context_dict['editor_list'] = colection_editors
+        context_dict['comic_list'] = colection_comics
     except Colection.DoesNotExist:
         # We get here if we didn't find the specified Colection
         # Don't do anything - the template displays the "no colection"
@@ -284,6 +288,7 @@ class PublisherCreate(CreateView):
 
     model = Publisher
     template_name = "comics/add_publisher.html"
+    success_url = reverse_lazy('publisher_list')
     fields = ['name', 'history', 'start_date', 'end_date']
 
 
@@ -301,6 +306,93 @@ class PublisherDelete(DeleteView):
     model = Publisher
     success_url = reverse_lazy('publisher_list')
     template_name = "comics/delete_publisher_confirm.html"
+
+
+# ------------------------------------------------------------------ #
+#
+#                         Comic Views
+#
+# ------------------------------------------------------------------ #
+def comic(request, comic_name_slug):
+    """."""
+    context_dict = {}
+    try:
+        comic = Comic.objects.get(slug=comic_name_slug)
+
+        colection = Colection.objects.get(id=comic.colection.id)
+        context_dict['comic'] = comic
+        context_dict['colection'] = colection
+
+    except Comic.DoesNotExist:
+        # We get here if we didn't find the specified Comic
+        # Don't do anything - the template displays the "no comic"
+        # message for us.
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'comics/comic.html', context_dict)
+
+
+class ComicDetailView(DetailView):
+    """Generic class view for all Comics models of a Colection."""
+
+    model = Comic
+    template_name = "comics/comic_detail.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+        # Call the base implementation first to get a context
+        context = super(ComicDetailView, self).get_context_data(**kwargs)
+        print "entrando en Comic Detail View"
+        print self.kwargs
+        # Add in a QuerySet of all the Comics ordered by inserted date
+        # context['comic_list'] = Comic.objects.order_by('slug')
+        # cntext['colection'] = Colection.objects.get(slug=colection_name_slug)
+
+        return context
+
+
+class ComicListView(ListView):
+    """Generic class view for all Comics models of a Colection."""
+
+    model = Comic
+    template_name = "comics/comic_list.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+        # Call the base implementation first to get a context
+        context = super(ComicListView, self).get_context_data(**kwargs)
+
+        # Add in a QuerySet of all the Comics ordered by inserted date
+        # context['comic_list'] = Comic.objects.order_by('slug')
+        context['total_comics'] = len(Comic.objects.all())
+
+        return context
+
+
+class ComicCreate(CreateView):
+    """."""
+
+    model = Comic
+    template_name = "comics/add_comic.html"
+    fields = ['number', 'colection', 'pages', 'title', 'extrainfo']
+    success_url = reverse_lazy('comic_list')
+
+
+class ComicUpdate(UpdateView):
+    """."""
+
+    model = Comic
+    template_name = "comics/update_comic_form.html"
+    fields = ['title', 'number', 'pages', 'extrainfo']
+
+
+class ComicDelete(DeleteView):
+    """."""
+
+    model = Comic
+    success_url = reverse_lazy('comic_list')
+    template_name = "comics/delete_comic_confirm.html"
 
 
 # ------------------------------------------------------------------ #
