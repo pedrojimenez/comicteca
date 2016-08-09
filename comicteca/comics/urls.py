@@ -10,6 +10,8 @@ from comics.views import ColectionCreate, ColectionUpdate, ColectionDelete
 from comics.views import ColectionListView
 from comics.views import PublisherCreate, PublisherUpdate, PublisherDelete
 from comics.views import PublisherListView
+from comics.views import ComicListView
+from comics.views import ComicCreate
 
 urlpatterns = patterns(
     '',
@@ -18,6 +20,7 @@ urlpatterns = patterns(
     # artists
     # ---------- #
     url(r'artists/add/$', ArtistCreate.as_view(), name='artist_add'),
+
     url(r'^artists/(?P<artist_name_slug>[\w\-]+)/$', views.artist,
         name='artist_detail'),
 
@@ -28,22 +31,28 @@ urlpatterns = patterns(
         ArtistDelete.as_view(), name='artist_delete'),
 
     url(r'^add_artist/$', views.add_artist, name='add_artist'),
+
     url(r'artists/$', ArtistListView.as_view(), name='artist_list'),
 
     # ---------- #
     # colections
     # ---------- #
     url(r'colections/add/$', ColectionCreate.as_view(), name='colection_add'),
+
     url(r'^colections/(?P<colection_name_slug>[\w\-]+)/$', views.colection,
         name='colection_detail'),
 
     url(r'^colections/(?P<slug>[\w\-]+)/edit/$',
         ColectionUpdate.as_view(), name='colection_update'),
 
+    url(r'^colections/(?P<slug>[\w\-]+)/add-comic/$',
+        ComicCreate.as_view(), name='colection_comic_add'),
+
     url(r'^colections/(?P<slug>[\w\-]+)/delete/$',
         ColectionDelete.as_view(), name='colection_delete'),
 
     url(r'^add_colection/$', views.add_colection, name='add_colection'),
+
     url(r'colections/$', ColectionListView.as_view(), name='colection_list'),
 
     # ---------- #
@@ -63,6 +72,18 @@ urlpatterns = patterns(
         PublisherDelete.as_view(), name='publisher_delete'),
 
     url(r'publishers/$', PublisherListView.as_view(), name='publisher_list'),
+
+    # ---------- #
+    # comics
+    # ---------- #
+    url(r'comics/$', ComicListView.as_view(), name='comic_list'),
+
+    url(r'comics/add/$', ComicCreate.as_view(), name='comic_add'),
+
+    url(r'^comics/(?P<comic_name_slug>[\w\-]+)/$', views.comic,
+        name='comic_detail'),
+
+
 
     # ---------- #
     # utils
