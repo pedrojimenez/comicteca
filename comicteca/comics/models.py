@@ -61,6 +61,8 @@ class Publisher(models.Model):
                                   null=True)
     end_date = models.DateField('Fin de Publicaciones', blank=True,
                                 null=True)
+    inserted = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(default=timezone.now)
     slug = models.SlugField()
 
     def get_absolute_url(self):
@@ -76,6 +78,7 @@ class Publisher(models.Model):
     def save(self, *args, **kwargs):
         """Overriding of save function in Publisher class."""
         self.slug = slugify(self.name)
+        self.updated = timezone.now()
         super(Publisher, self).save(*args, **kwargs)
 
 
