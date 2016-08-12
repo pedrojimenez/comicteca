@@ -24,6 +24,7 @@ class ArtistAdmin(admin.ModelAdmin):
     """."""
 
     prepopulated_fields = {'slug': ('name',)}
+    list_display = ('name', 'nationality', 'inserted', 'updated')
 
 
 class ColectionAdmin(admin.ModelAdmin):
