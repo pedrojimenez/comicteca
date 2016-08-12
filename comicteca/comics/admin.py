@@ -54,7 +54,7 @@ class PublisherAdmin(admin.ModelAdmin):
     """."""
 
     prepopulated_fields = {'slug': ('name',)}
-    list_display = ('name', 'history', 'start_date', 'end_date')
+    list_display = ('name', 'history', 'inserted', 'updated')
     search_fields = ['name']
 
 
