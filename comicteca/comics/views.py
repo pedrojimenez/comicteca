@@ -16,9 +16,9 @@ from comics.forms import PublisherForm
 
 def index(request):
     """Index view."""
-    artists_list = Artist.objects.order_by('-name')[:5]
-    colection_list = Colection.objects.order_by('-name')[:5]
-    publisher_list = Publisher.objects.order_by('-name')[:5]
+    artists_list = Artist.objects.order_by('-inserted')[:5]
+    colection_list = Colection.objects.order_by('-inserted')[:5]
+    publisher_list = Publisher.objects.order_by('-inserted')[:5]
     context_dict = {'artists': artists_list, 'colections': colection_list,
                     'publishers': publisher_list}
 
