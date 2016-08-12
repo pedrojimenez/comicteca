@@ -165,7 +165,7 @@ class Comic(models.Model):
     """Comic model."""
 
     title = models.CharField(max_length=128, blank=True, null=True)
-    number = models.IntegerField(default=1, unique=True)
+    number = models.IntegerField(default=1)
     pages = models.IntegerField(default=24)
     slug = models.SlugField()
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
@@ -177,6 +177,7 @@ class Comic(models.Model):
 
         # db_table = 'comics'
         verbose_name_plural = "comics"
+        unique_together = ("colection", "number")
 
     def __unicode__(self):
         """str/unicode function of Comic class."""
