@@ -97,6 +97,8 @@ class Colection(models.Model):
     numbers = models.IntegerField(default=0)
     language = CountryField(blank_label='(select country)', default='ES')
     pub_date = models.DateField(blank=True, null=True)
+    inserted = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(default=timezone.now)
     slug = models.SlugField()
 
     # Relations
@@ -121,6 +123,7 @@ class Colection(models.Model):
         """Overriding of save function in Colection class."""
         self.slug = slugify(self.name + ' v' + str(self.volume))
         # self.__set_comics_number()
+        self.updated = timezone.now()
         super(Colection, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
