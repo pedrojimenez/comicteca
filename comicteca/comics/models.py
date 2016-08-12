@@ -1,5 +1,6 @@
 """Models for the comicteca project."""
 from django.db import models
+from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
@@ -18,6 +19,8 @@ class Artist(models.Model):
     birthdate = models.DateField(blank=True, null=True)
     deathdate = models.DateField(blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
+    inserted = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(default=timezone.now)
     slug = models.SlugField()
 
     def get_absolute_url(self):
@@ -32,12 +35,14 @@ class Artist(models.Model):
     def save(self, *args, **kwargs):
         """Overriding of save method for Artist model."""
         self.slug = slugify(self.name)
+        self.updated = timezone.now()
         super(Artist, self).save(*args, **kwargs)
 
     class Meta:
         """Meta class for Artist model."""
 
         # db_table = 'artists'
+        ordering = ('-inserted',)
         verbose_name_plural = "artists"
         unique_together = ("name", "nationality", "birthdate")
 
