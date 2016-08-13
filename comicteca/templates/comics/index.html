@@ -33,6 +33,22 @@
             <strong>There are no colections present yet.</strong>
         {% endif %}
 
+    <h2><p>Last Comics:</p></h2>
+        {% if comics %}
+            <ul>
+                {% for comic in comics %}
+                  <li><a href="/comicteca/comics/{{ comic.slug }}">{{ comic.colection.name }}
+                  (v{{ comic.colection.volume }})
+                  ({{ comic.colection.distributor }})
+                  n{{ comic.number }}
+                  </a>
+                  </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no comics present yet.</strong>
+        {% endif %}
+
 	<h2><p>Last Publishers:</p></h2>
         {% if publishers %}
             <ul>

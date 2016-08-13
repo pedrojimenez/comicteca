@@ -19,8 +19,9 @@ def index(request):
     artists_list = Artist.objects.order_by('-inserted')[:5]
     colection_list = Colection.objects.order_by('-inserted')[:5]
     publisher_list = Publisher.objects.order_by('-inserted')[:5]
+    comic_list = Comic.objects.order_by('-inserted')[:5]
     context_dict = {'artists': artists_list, 'colections': colection_list,
-                    'publishers': publisher_list}
+                    'publishers': publisher_list, 'comics': comic_list}
 
     # Render the response and send it back!
     return render(request, 'comics/index.html', context_dict)
