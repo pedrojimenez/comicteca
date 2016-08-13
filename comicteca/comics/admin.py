@@ -64,7 +64,7 @@ class ComicAdmin(admin.ModelAdmin):
     # prepopulated_fields = {'slug': ('name',)}
     list_display = ('get_colection_name', 'get_colection_volume',
                     'get_colection_distributor', 'number',
-                    'title', 'pages')
+                    'title', 'pages', 'inserted', 'updated')
     search_fields = ['slug', 'title']
 
     def get_colection_name(self, obj):
