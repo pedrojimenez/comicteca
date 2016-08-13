@@ -182,6 +182,8 @@ class Comic(models.Model):
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     extrainfo = models.CharField(max_length=128, blank=True, null=True)
     # pub_date = models.DateField(blank=True, null=True)
+    inserted = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(default=timezone.now)
 
     class Meta:
         """Meta class for Comic model."""
@@ -198,6 +200,7 @@ class Comic(models.Model):
         """Overriding of save function in Comics class."""
         slugify(self.colection.slug) + '_n' + str(self.number)
         self.slug = slugify(self.colection.slug) + '_n' + str(self.number)
+        self.updated = timezone.now()
         super(Comic, self).save(*args, **kwargs)
         # Update Colection "number of comics"
         self.colection.update_comics_number()
