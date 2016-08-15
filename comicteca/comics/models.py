@@ -90,10 +90,18 @@ class Publisher(models.Model):
 class Colection(models.Model):
     """Colection model."""
 
+    TYPE_OF_COLECTION = (
+        ('Regular', 'Serie Regular'),
+        ('Limited', 'Serie Limitada'),
+        ('Especial', 'Numero Especial'),
+    )
     name = models.CharField(max_length=50)
     subname = models.CharField(max_length=50, blank=True)
     volume = models.IntegerField(default=1)
     max_numbers = models.IntegerField(default=0)
+    colection_type = models.CharField('Type', max_length=15,
+                                      choices=TYPE_OF_COLECTION,
+                                      default='Regular')
     numbers = models.IntegerField(default=0)
     language = CountryField(blank_label='(select country)', default='ES')
     pub_date = models.DateField(blank=True, null=True)

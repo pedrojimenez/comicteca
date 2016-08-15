@@ -32,7 +32,7 @@ class ColectionAdmin(admin.ModelAdmin):
 
     prepopulated_fields = {'slug': ('name',)}
     list_display = ('name', 'subname', 'volume', 'colection_list',
-                    'get_distributor', 'inserted', 'updated')
+                    'get_distributor', 'colection_type', 'inserted', 'updated')
     search_fields = ['name', 'subname']
     list_filter = ['name']
     fieldsets = [
