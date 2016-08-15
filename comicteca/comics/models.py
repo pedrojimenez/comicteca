@@ -134,7 +134,8 @@ class Colection(models.Model):
 
     def __set_comics_number(self):
         """Count number of colection comics and set it."""
-        self.numbers = len(Comic.objects.filter(colection__name=self.name))
+        self.numbers = len(Comic.objects.filter(colection__name=self.name,
+                                                colection__volume=self.volume))
         # print "setting {} to colection {}".format(self.numbers, self.name)
 
     def update_comics_number(self):
@@ -144,7 +145,6 @@ class Colection(models.Model):
 
     def colection_list(self):
         """Count number of colection comics and return string."""
-        # self.numbers = len(Comic.objects.filter(colection__name=self.name))
         self.__set_comics_number()
         if (self.max_numbers != 0) and (self.max_numbers == self.numbers):
             return "Complete"
