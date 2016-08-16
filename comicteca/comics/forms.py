@@ -41,13 +41,16 @@ class ColectionForm(forms.ModelForm):
                               help_text="Please enter the Colection subname")
     volume = forms.IntegerField(label="Volume", min_value=1,
                                 help_text='Volume')
-    editors = forms.ModelMultipleChoiceField(
-        queryset=Publisher.objects.all(),  # empty_label="select publisher",
-        help_text="Editors",
-        label="Publishers responsible of the edition")
-    distributor = forms.ModelChoiceField(
-        queryset=Publisher.objects.all(), help_text="Distributor",
-        label="Publishers responsible of the distribution", required=True)
+    colection_type = forms.ChoiceField(label="Type", required="True",
+                                       choices=Colection.TYPE_OF_COLECTION)
+
+    editors = forms.ModelMultipleChoiceField(queryset=Publisher.objects.all(),
+                                             help_text="Editors",
+                                             label="Edition Publishers")
+    distributor = forms.ModelChoiceField(queryset=Publisher.objects.all(),
+                                         help_text="Distributor",
+                                         label="Distribution Publishers",
+                                         required=True)
     max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
                                      help_text='Total numbers')
     language = CountryField(blank_label='(select country)',
@@ -64,6 +67,24 @@ class ColectionForm(forms.ModelForm):
         model = Colection
         fields = ('name', 'subname', 'volume', 'editors', 'distributor',
                   'max_numbers', 'language', 'pub_date')
+
+    def save(self, commit=True):
+        """Overrride of save method in Colection Form."""
+        instance = super(ColectionForm, self).save(commit=False)
+
+        # do custom stuff
+        instance.colection_type = self.cleaned_data['colection_type']
+
+        if commit:
+            instance.save()
+            c = Colection.objects.get(
+                name=self.cleaned_data['name'],
+                volume=self.cleaned_data['volume'])
+            if c:
+                # custom actions once the Colection is saved
+                print "Colection saved <{} v{}>".format(c.name, c.volume)
+
+        return instance
 
 
 class PublisherForm(forms.ModelForm):
