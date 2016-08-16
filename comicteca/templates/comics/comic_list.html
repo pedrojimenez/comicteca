@@ -10,9 +10,7 @@
         {% if object_list %}
 	          <table>
 		        <tr>
-     		      <th>Colection</th>
-     		      <th>Volume</th>
-     		      <th>Number</th>
+              <th>Comic</th>
      		      <th>Distributor</th>
               <th>Editors</th>
      		      <th>Pages</th>
@@ -20,10 +18,10 @@
      		      <th>Pub Date</th>
 		        </tr>
             {% for comic in object_list %}
-		          <tr>
-	               <td><a href="/comicteca/colections/{{ comic.colection.slug }}/">{{ comic.colection.name }}</a></td>
-	              <td>v{{ comic.colection.volume }}</td>
-                <td><a href="/comicteca/comics/{{ comic.slug }}">n{{ comic.number }}</a></td>
+		    <tr>
+	            <td><a href="/comicteca/comics/{{ comic.slug }}/">{{ comic.colection.name }}
+	               (v{{ comic.colection.volume }}) n{{ comic.number }}</a>
+                </td>
                 <td>{{ comic.colection.distributor }}</td>
                 <td>{{ comic.colection.editor_list }}</td>
                 <td>{{ comic.pages }}</td>
