@@ -3,7 +3,7 @@
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 
 from comics.models import Artist
 from comics.models import Colection
@@ -134,10 +134,12 @@ class ColectionCreate(CreateView):
     """CBV for creating a new object Colection."""
 
     model = Colection
+    form_class = ColectionForm
     template_name = "comics/add_colection.html"
-    success_url = reverse_lazy('colection_list')
-    fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
-              'pub_date', 'distributor', 'editors']
+    # success_url = reverse_lazy('colection_list')
+    # If form_class is defined fields can not
+    # fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
+    #           'pub_date', 'distributor', 'editors']
 
 
 class ColectionUpdate(UpdateView):
@@ -146,7 +148,7 @@ class ColectionUpdate(UpdateView):
     model = Colection
     template_name = "comics/update_colection_form.html"
     fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
-              'pub_date', 'distributor', 'editors']
+              'pub_date', 'distributor', 'editors', 'colection_type']
 
 
 class ColectionDelete(DeleteView):
