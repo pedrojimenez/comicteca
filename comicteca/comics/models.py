@@ -91,9 +91,9 @@ class Colection(models.Model):
     """Colection model."""
 
     TYPE_OF_COLECTION = (
-        ('Regular', 'Serie Regular'),
-        ('Limited', 'Serie Limitada'),
-        ('Especial', 'Numero Especial'),
+        ('Regular', 'Regular Serie'),
+        ('Limited', 'Limited Serie'),
+        ('Special', 'Special Number'),
     )
     name = models.CharField(max_length=50)
     subname = models.CharField(max_length=50, blank=True)
@@ -130,8 +130,11 @@ class Colection(models.Model):
     def save(self, *args, **kwargs):
         """Overriding of save function in Colection class."""
         self.slug = slugify(self.name + ' v' + str(self.volume))
-        # self.__set_comics_number()
         self.updated = timezone.now()
+
+        self.numbers = len(Comic.objects.filter(
+            colection__name=self.name,
+            colection__volume=self.volume))
         super(Colection, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -140,20 +143,13 @@ class Colection(models.Model):
         return reverse('colection_detail',
                        kwargs={'colection_name_slug': self.slug})
 
-    def __set_comics_number(self):
-        """Count number of colection comics and set it."""
-        self.numbers = len(Comic.objects.filter(colection__name=self.name,
-                                                colection__volume=self.volume))
-        # print "setting {} to colection {}".format(self.numbers, self.name)
-
     def update_comics_number(self):
         """Count number of colection comics and return it."""
-        self.__set_comics_number()
-        # print "updating numbers ({}) from public method".format(self.numbers)
+        self.numbers = len(Comic.objects.filter(colection__name=self.name,
+                                                colection__volume=self.volume))
 
     def colection_list(self):
         """Count number of colection comics and return string."""
-        self.__set_comics_number()
         if (self.max_numbers != 0) and (self.max_numbers == self.numbers):
             return "Complete"
         else:
