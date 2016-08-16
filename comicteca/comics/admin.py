@@ -31,13 +31,13 @@ class ColectionAdmin(admin.ModelAdmin):
     """."""
 
     prepopulated_fields = {'slug': ('name',)}
-    list_display = ('name', 'subname', 'volume', 'colection_list',
+    list_display = ('name', 'subname', 'volume', 'get_colection_list',
                     'get_distributor', 'colection_type', 'inserted', 'updated')
     search_fields = ['name', 'subname']
     list_filter = ['name']
     fieldsets = [
         ('Nombre Coleccion', {'fields': ['name', 'volume', 'subname',
-         'max_numbers', 'pub_date', 'slug', 'distributor', 'editors']}),
+         'max_numbers', 'pub_date', 'slug', 'colection_type', 'distributor', 'editors']}),
     ]
     # inlines = [DistributorInline, EditorInline]
     # inlines = [EditorInline]
@@ -46,8 +46,13 @@ class ColectionAdmin(admin.ModelAdmin):
         """."""
         return obj.distributor.name
 
+    def get_colection_list(self, obj):
+        """."""
+        return obj.colection_list()
+
     get_distributor.admin_order_field = 'distributor'
     get_distributor.short_description = 'Distributor Name'
+    get_colection_list.short_description = 'Colection List'
 
 
 class PublisherAdmin(admin.ModelAdmin):
