@@ -189,6 +189,9 @@ class Comic(models.Model):
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
 
+    # Relations
+    colaborators = models.ManyToManyField(Artist, through='Colaborator')
+
     class Meta:
         """Meta class for Comic model."""
 
@@ -209,6 +212,42 @@ class Comic(models.Model):
         # Update Colection "number of comics"
         self.colection.update_comics_number()
 
+
+# ------------------------------------------------------------------ #
+#
+#                        Colaborator Model
+#
+# ------------------------------------------------------------------ #
+class Colaborator(models.Model):
+    """Colaborator model."""
+
+    ROLE_IN_COMIC = (
+        ('Guion', 'Guion'),
+        ('Dibujo', 'Dibujo'),
+        ('Tinta', 'Tinta'),
+        ('Color', 'Color'),
+        ('Color Ordenador', 'Color Ordenador'),
+        ('Dialogos', 'Dialogos'),
+        ('Portada', 'Portada'),
+        ('Argumento', 'Argumento'),
+        ('Adaptacion', 'Adaptacion'),
+    )
+    comic = models.ForeignKey(Comic)
+    artist = models.ForeignKey(Artist)
+    extrainfo = models.CharField(max_length=128, blank=True, null=True)
+    role = models.CharField(max_length=15, choices=ROLE_IN_COMIC,
+                            default='Guion')
+
+    class Meta:
+        """Meta class for Colaborator model."""
+
+        unique_together = ('comic', 'artist', 'role')
+
+    def __unicode__(self):
+        """str/unicode function of Comic class."""
+        return str(self.artist) + " - "\
+            + str(self.comic) + " - "\
+            + str(self.role)
 
 # class Distributor(models.Model):
 #     """Distributor intermediate model."""
