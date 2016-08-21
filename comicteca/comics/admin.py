@@ -4,6 +4,7 @@ from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
+from comics.models import Colaborator
 # from comics.models import Distributor, Editor
 
 # Register your models here.
@@ -18,6 +19,12 @@ from comics.models import Comic
 # class DistributorInline(admin.TabularInline):
 #     model = Distributor
 #     extra = 1
+
+class ColaboratorInline(admin.TabularInline):
+    """Inline for Colaborator model."""
+
+    model = Colaborator
+    extra = 1
 
 
 class ArtistAdmin(admin.ModelAdmin):
@@ -71,6 +78,7 @@ class ComicAdmin(admin.ModelAdmin):
                     'get_colection_distributor', 'number',
                     'title', 'pages', 'inserted', 'updated')
     search_fields = ['slug', 'title']
+    inlines = [ColaboratorInline]
 
     def get_colection_name(self, obj):
         """."""
@@ -92,3 +100,4 @@ admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Colection, ColectionAdmin)
 admin.site.register(Publisher, PublisherAdmin)
 admin.site.register(Comic, ComicAdmin)
+admin.site.register(Colaborator)
