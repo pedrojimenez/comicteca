@@ -7,19 +7,13 @@ from comics.models import Comic
 from comics.models import Colaborator
 # from comics.models import Distributor, Editor
 
+
 # Register your models here.
-
-
-# class EditorInline(admin.TabularInline):
-#     model = Editor
-#     extra = 1
-#     fields = ('id', 'colection', 'editorial','extrainfo')
-
-
-# class DistributorInline(admin.TabularInline):
-#     model = Distributor
-#     extra = 1
-
+# ------------------------------------------------------------------ #
+#
+#                         Inline Models
+#
+# ------------------------------------------------------------------ #
 class ColaboratorInline(admin.TabularInline):
     """Inline for Colaborator model."""
 
@@ -27,6 +21,20 @@ class ColaboratorInline(admin.TabularInline):
     extra = 1
 
 
+class ComicInline(admin.TabularInline):
+    """Inline for Comic model."""
+
+    model = Comic
+    exclude = ['title', 'slug', 'updated', 'inserted', 'extrainfo']
+    ordering = ('number',)
+    extra = 1
+
+
+# ------------------------------------------------------------------ #
+#
+#                         Main Admin Models
+#
+# ------------------------------------------------------------------ #
 class ArtistAdmin(admin.ModelAdmin):
     """."""
 
@@ -43,11 +51,14 @@ class ColectionAdmin(admin.ModelAdmin):
     search_fields = ['name', 'subname']
     list_filter = ['name']
     fieldsets = [
-        ('Nombre Coleccion', {'fields': ['name', 'volume', 'subname',
-         'max_numbers', 'pub_date', 'slug', 'colection_type', 'distributor', 'editors']}),
+        ('Nombre Coleccion', {'fields': ['name', 'subname', 'volume',
+                                         'colection_type',
+                                         'max_numbers', 'pub_date', 'slug'
+                                         ]}),
+        ('Editoriales', {'fields': ['distributor', 'editors']}),
     ]
-    # inlines = [DistributorInline, EditorInline]
-    # inlines = [EditorInline]
+
+    inlines = [ComicInline]
 
     def get_distributor(self, obj):
         """."""
