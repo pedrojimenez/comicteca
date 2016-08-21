@@ -87,7 +87,7 @@ class ComicAdmin(admin.ModelAdmin):
     # prepopulated_fields = {'slug': ('name',)}
     list_display = ('get_colection_name', 'get_colection_volume',
                     'get_colection_distributor', 'number',
-                    'title', 'pages', 'inserted', 'updated')
+                    'title', 'pages', 'pub_date', 'inserted', 'updated')
     search_fields = ['slug', 'title']
     inlines = [ColaboratorInline]
 
