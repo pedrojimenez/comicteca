@@ -185,7 +185,7 @@ class Comic(models.Model):
     slug = models.SlugField()
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     extrainfo = models.CharField(max_length=128, blank=True, null=True)
-    # pub_date = models.DateField(blank=True, null=True)
+    pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
 
