@@ -81,6 +81,13 @@ class PublisherAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 
+class ColaboratorAdmin(admin.ModelAdmin):
+    """."""
+
+    list_display = ('id', 'artist', 'role', 'comic', 'extrainfo')
+    search_fields = ['comic', 'artist', 'role']
+
+
 class ComicAdmin(admin.ModelAdmin):
     """."""
 
@@ -111,4 +118,4 @@ admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Colection, ColectionAdmin)
 admin.site.register(Publisher, PublisherAdmin)
 admin.site.register(Comic, ComicAdmin)
-admin.site.register(Colaborator)
+admin.site.register(Colaborator, ColaboratorAdmin)
