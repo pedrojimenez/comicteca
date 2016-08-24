@@ -1,11 +1,23 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        <h1>Comicteca about page</h1>
-	<a href="/comicteca/">Back to Index</a>
-    </body>
-</html>
+{% load staticfiles %}
+
+{% block title %}Comicteca About{% endblock %}
+
+{% block side_block %}
+Search About
+{% endblock %}
+
+{% block body_block %}
+
+<h1>Comicteca about page</h1>
+
+<p>
+  Special thanks to:
+  <ul>
+    <li>A3Sec Dev Team</li>
+    <li> Tango with Rango Team</li>
+    <li>Antonio Melé (Django By Example)</li>
+  </ul>
+</p>
+{% endblock %}
