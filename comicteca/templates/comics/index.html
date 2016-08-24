@@ -1,17 +1,19 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        <h1>Comicteca says...hello world!</h1>
+{% load staticfiles %}
 
+{% block title %}Comicteca Index{% endblock %}
+
+{% block side_block %}
+Search Index
+{% endblock %}
+
+{% block body_block %}
 	<h2><p>Last Artists:</p></h2>
         {% if artists %}
             <ul>
                 {% for artist in artists %}
-                  <li><a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a></li>
+                  <li><a href="{{ artist.get_absolute_url }}">{{ artist.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
@@ -22,7 +24,7 @@
         {% if colections %}
             <ul>
                 {% for colection in colections %}
-                  <li><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a>
+                  <li><a href="{{ colection.get_absolute_url }}">{{ colection.name }}</a>
                   (v{{ colection.volume }})
                   ({{ colection.distributor }})
                   ({{ colection.colection_list }})
@@ -38,7 +40,7 @@
         {% if comics %}
             <ul>
                 {% for comic in comics %}
-                  <li><a href="/comicteca/comics/{{ comic.slug }}">{{ comic.colection.name }}
+                  <li><a href="{{ comic.get_absolute_url }}">{{ comic.colection.name }}
                   (v{{ comic.colection.volume }})
                   ({{ comic.colection.distributor }})
                   n{{ comic.number }}
@@ -54,18 +56,11 @@
         {% if publishers %}
             <ul>
                 {% for publisher in publishers %}
-                  <li><a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a></li>
+                  <li><a href="{{ publisher.get_absolute_url }}">{{ publisher.name }}</a></li>
                 {% endfor %}
             </ul>
         {% else %}
             <strong>There are no publishers present yet.</strong>
         {% endif %}
+{% endblock %}
 
-	<hr>
-        <a href="/comicteca/artists/">Artists</a><br />
-        <a href="/comicteca/colections/">Colections</a><br />
-        <a href="/comicteca/publishers/">Publishers</a><br />
-        <a href="/comicteca/comics/">Comics</a><br />
-        <a href="/comicteca/about/">About</a><br />
-    </body>
-</html>
