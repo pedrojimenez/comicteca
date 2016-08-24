@@ -16,8 +16,21 @@
 	  {% if artist.deathdate %}
 	       <li><u>Deathdate:</u> <strong>{{ artist.deathdate }} </strong></li>
 	  {% endif %}
-	  </br>
-	  <li><u>Bio</u> <strong>{{ artist.biography }} </strong></li>
+
+      {% if artist.deathdate %}
+           <li><u>Bio</u> <strong>{{ artist.biography }} </strong></li>
+      {% endif %}
+
+      <li>
+          Colaborations:
+          <ul>
+            {% for comic,roles in artist.get_colaborations %}
+                <li><a href="{{ comic.get_absolute_url }}">{{ comic.colection.name }} ({{ comic.colection.distributor }} v{{ comic.colection.volume }}) number {{ comic.number }}</a>
+                ( {{ roles }} )
+                </li>
+            {% endfor %}
+          </ul>
+      </li>
 	</ul>
         {% else %}
             <h1>Artist Unknown</h1>

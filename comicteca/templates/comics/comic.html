@@ -28,6 +28,14 @@
                     <li><u>Extra info:</u><strong>N/A</strong></li>
                 {% endif  %}
 
+                Colaborators:
+                <ul>
+                    {% for artist,roles in comic.get_all_artists_roles %}
+                        <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
+                        ( {{ roles }} )
+                        </li>
+                    {% endfor %}
+                </ul>
 
 	           </br>
 	        </ul>
