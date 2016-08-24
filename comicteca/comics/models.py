@@ -38,6 +38,22 @@ class Artist(models.Model):
         self.updated = timezone.now()
         super(Artist, self).save(*args, **kwargs)
 
+    def get_colaborations(self):
+        """Get a list of tuples with comics/role of the Author.
+
+        ouput:  list[tuples(ComicObject, "Artist.Roles")]
+        output: [(<Comic: juez-dredd-v1_n1>, "Dibujo,Guion")]
+        """
+        comic_list_partial = Comic.objects.filter(
+            colaborators__id=self.id).distinct()
+        comic_tuple = ()
+        comic_list = []
+        for comic in comic_list_partial:
+            role_list = comic.get_artist_roles(self.id)
+            comic_tuple = (comic, role_list)
+            comic_list.append(comic_tuple)
+        return comic_list
+
     class Meta:
         """Meta class for Artist model."""
 
@@ -211,6 +227,43 @@ class Comic(models.Model):
         super(Comic, self).save(*args, **kwargs)
         # Update Colection "number of comics"
         self.colection.update_comics_number()
+
+    def get_absolute_url(self):
+        """."""
+        return reverse('comic_detail',
+                       kwargs={'comic_name_slug': self.slug})
+
+    def get_all_artists_roles(self):
+        """Get the full list of Artists and Roles for this comic."""
+        all_colaborators_list = Colaborator.objects.filter(
+            comic=self.id)
+        colaborator_list_partial = all_colaborators_list.values_list(
+            'artist', flat=True).distinct()
+        # Input: [<Colaborator: Jim Lee - juez-dredd-v1_n1 - Guion>,
+        #         <Colaborator: Jim Lee - juez-dredd-v1_n1 - Dibujo>,
+        #         <Colaborator: John Byrne - juez-dredd-v1_n1 - Tinta>]
+        # Output: [(6,), (7,)] (ids of Artists Jim Lee and John Byrne)
+        # Output: [6, 7] (with flat=true)
+        #
+        colaborator_tuple = ()
+        colaborator_list = []
+        for colaborator in colaborator_list_partial:
+            artist = Artist.objects.get(id=colaborator)
+            role_list = self.get_artist_roles(artist.id)
+            # role_list = self.get_artist_roles(colaborator.1)
+            colaborator_tuple = (artist, role_list)
+            colaborator_list.append(colaborator_tuple)
+        return colaborator_list
+
+    def get_artist_roles(self, author_id):
+        """Return the list of roles of a given Author."""
+        colaborations = Colaborator.objects.filter(
+            artist=author_id,
+            comic=self.id)
+        role_list = []
+        for role in colaborations.values('role'):
+            role_list.append(role['role'])
+        return ','.join(role_list)
 
 
 # ------------------------------------------------------------------ #
