@@ -1,28 +1,29 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
+{% load staticfiles %}
 
-        <h2><p>Listado de Editoriales:</p></h2>
-        {% if publisher_list %}
-            <ul>
-                {% for publisher in publisher_list %}
-		            <li>
-                        <a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no artists present yet.</strong>
-        {% endif %}
+{% block title %}Comicteca Comic List{% endblock %}
 
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
 
-        <hr>
-        <br/>
-        <a href="/comicteca/publishers/add/">Add new publisher</a><br/>
-        <a href="/comicteca/">Back to Index</a>
-    </body>
-</html>
+{% block body_block %}
+  <h2><u>Publishers List</u></h2>
+    {% if publisher_list %}
+      <ul>
+        {% for publisher in publisher_list %}
+		  <li>
+            <a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <strong>There are no artists present yet.</strong>
+    {% endif %}
+
+    <hr>
+    <a href="/comicteca/publishers/add/">Add new publisher</a><br/>
+    <a href="/comicteca/">Back to Index</a>
+
+{% endblock %}
