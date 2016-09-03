@@ -1,28 +1,33 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
+{% load staticfiles %}
 
-        <h2><p>Listado de Autores:</p></h2>
-        {% if artist_list %}
-            <ul>
-                {% for artist in artist_list %}
-		          <li>
-                        <a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a> ({{ artist.nationality }})
-                  </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <strong>There are no artists present yet.</strong>
-        {% endif %}
+{% block title %}Comicteca Comic List{% endblock %}
 
+{% block side_block %}
+  <p>Search Comic List</p>
+  {% if artist %}
+     <p><a href="/comicteca/artists/{{ artist.slug }}/edit/">Edit Artist</a></p>
+     <p><a href="/comicteca/artists/{{ artist.slug }}/delete/">Delete Artist</a></p>
+  {% endif %}
+{% endblock %}
 
-        <hr>
-        <br/>
-        <a href="/comicteca/artists/add/">Add new artist</a><br/>
-        <a href="/comicteca/">Back to Index</a>
-    </body>
-</html>
+{% block body_block %}
+<h2><u>Artists List</u></h2>
+  {% if artist_list %}
+    <ul>
+      {% for artist in artist_list %}
+        <li>
+          <a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a> ({{ artist.nationality }})
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <strong>There are no artists present yet.</strong>
+  {% endif %}
+
+  <hr>
+  <a href="/comicteca/artists/add/">Add new artist</a><br/>
+  <a href="/comicteca/">Back to Index</a>
+
+{% endblock %}

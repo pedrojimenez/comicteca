@@ -1,23 +1,32 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca - Artists</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        {% if artist %}
-        <h1>{{ artist_name }}</h1>
-	<ul>
-	  <li><u>Name:</u> <strong>{{ artist.name }} </strong></li>
-	  <li><u>Nationality:</u> <strong>{{ artist.nationality }} </strong></li>
+{% load staticfiles %}
+
+{% block title %}Comicteca Comic List{% endblock %}
+
+{% block side_block %}
+  <p>Search Comic List</p>
+  {% if artist %}
+     <p><a href="/comicteca/artists/{{ artist.slug }}/edit/">Edit Artist</a></p>
+     <p><a href="/comicteca/artists/{{ artist.slug }}/delete/">Delete Artist</a></p>
+  {% endif %}
+{% endblock %}
+
+{% block body_block %}
+  {% if artist %}
+  <h1>{{ artist_name }}</h1>
+	  <ul>
+	    <li><u>Name:</u> <strong>{{ artist.name }} </strong></li>
+	    <li><u>Nationality:</u> <strong>{{ artist.nationality }} </strong></li>
       {% if artist.birthdate %}
 	       <li><u>Birthdate:</u> <strong>{{ artist.birthdate }} </strong></li>
       {% endif %}
-	  {% if artist.deathdate %}
-	       <li><u>Deathdate:</u> <strong>{{ artist.deathdate }} </strong></li>
-	  {% endif %}
 
-      {% if artist.deathdate %}
+	    {% if artist.deathdate %}
+	       <li><u>Deathdate:</u> <strong>{{ artist.deathdate }} </strong></li>
+	    {% endif %}
+
+      {% if artist.biography %}
            <li><u>Bio</u> <strong>{{ artist.biography }} </strong></li>
       {% endif %}
 
@@ -44,5 +53,5 @@
     {% endif %}
     <a href="/comicteca/artists/">Back to Artists</a><br/>
     <a href="/comicteca/">Back to Index</a><br/>
-    </body>
-</html>
+
+{% endblock %}
