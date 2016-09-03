@@ -1,56 +1,57 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca - Comic Detail</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        {% if comic %}
-        <h1>{{ colection.name }} v{{ colection.volume }} - Number {{ comic.number }}</h1>
-             <ul>
-	           <li><u>Portada:</u><strong>{{ comic.slug }} </strong></li>
+{% load staticfiles %}
 
-	           {% if colection.subname  %}
-	               <li><u>Subname:</u><strong>{{ comic.subname }} </strong></li>
-	           {% endif  %}
+{% block title %}Comicteca Comic List{% endblock %}
 
-                <li><u>Pages:</u><strong>{{ comic.pages }}</strong></li>
+{% block side_block %}
+<p>Search Comic List</p>
+<a href="{{ colection.get_absolute_url }}">{{ colection.name }} v{{ colection.volume }}</a>
+{% endblock %}
 
-	           {% if colection.pub_date  %}
-	               <li><u>Pub Date:</u><strong>{{ comic.pub_date }} </strong></li>
-                {% else  %}
-                    <li><u>Pub Date:</u><strong>N/A</strong></li>
-                {% endif  %}
+{% block body_block %}
+{% if comic %}
+  <h1>{{ colection.name }} v{{ colection.volume }} - Number {{ comic.number }}</h1>
+  <ul>
+    <li><u>Portada:</u><strong>{{ comic.slug }} </strong></li>
 
-                {% if colection.extrainfo  %}
-                    <li><u>Extra info:</u><strong>{{ colection.extrainfo }} </strong></li>
-                {% else  %}
-                    <li><u>Extra info:</u><strong>N/A</strong></li>
-                {% endif  %}
+    {% if colection.subname  %}
+      <li><u>Subname:</u><strong>{{ comic.subname }} </strong></li>
+    {% endif  %}
 
-                Colaborators:
-                <ul>
-                    {% for artist,roles in comic.get_all_artists_roles %}
-                        <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
-                        ( {{ roles }} )
-                        </li>
-                    {% endfor %}
-                </ul>
+    <li><u>Pages:</u><strong>{{ comic.pages }}</strong></li>
 
-	           </br>
-	        </ul>
+    {% if colection.pub_date  %}
+      <li><u>Pub Date:</u><strong>{{ comic.pub_date }} </strong></li>
+    {% else  %}
+      <li><u>Pub Date:</u><strong>N/A</strong></li>
+    {% endif  %}
 
-        {% else %}
-            <h1>Comic Unknown</h1>
-            This comic does not exist!
-        {% endif %}
-	    <hr>
-        {% if comic %}
-            <a href="/comicteca/comics/{{ comic.slug }}/edit/">Edit Comic</a><br/>
-            <a href="/comicteca/comics/{{ comic.slug }}/delete/">Delete Comic</a><br/>
-            <a href="/comicteca/colections/{{ colection.slug }}/">Back to {{ colection.name }} v{{ colection.volume }}</a><br/>
-        {% endif %}
-	    <a href="/comicteca/comics/">Back to Comics</a><br/>
-	    <a href="/comicteca/">Back to Index</a><br/>
-    </body>
-</html>
+    {% if colection.extrainfo  %}
+      <li><u>Extra info:</u><strong>{{ colection.extrainfo }} </strong></li>
+    {% else  %}
+      <li><u>Extra info:</u><strong>N/A</strong></li>
+    {% endif  %}
+
+    Colaborators:
+    <ul>
+      {% for artist,roles in comic.get_all_artists_roles %}
+        <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
+            ( {{ roles }} )
+        </li>
+      {% endfor %}
+    </ul>
+
+  </ul>
+{% else %}
+  <h1>Comic Unknown</h1>
+  This comic does not exist!
+{% endif %}
+
+<hr>
+{% if comic %}
+  <a href="/comicteca/comics/{{ comic.slug }}/edit/">Edit Comic</a><br/>
+  <a href="/comicteca/comics/{{ comic.slug }}/delete/">Delete Comic</a><br/>
+{% endif %}
+
+{% endblock %}
