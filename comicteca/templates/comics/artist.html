@@ -35,6 +35,10 @@
            <li><u>Bio</u> <strong>{{ artist.biography }} </strong></li>
       {% endif %}
 
+      {% if artist.extrainfo %}
+           <li><u>Additional info:</u> <strong><a href="{{ artist.extrainfo }}"> link</a></strong></li>
+      {% endif %}
+
       <li>
           Colaborations:
           <ul>
