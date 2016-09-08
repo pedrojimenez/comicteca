@@ -1,34 +1,35 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        <h1>Add a new Artist updated</h1>
+{% load staticfiles %}
 
-        <form id="artist_form" method="post" action="/comicteca/add_artist/">
+{% block title %}Comicteca Comic List{% endblock %}
 
-            {% csrf_token %}
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
 
-            {% for field in form.visible_fields %}
-                {{ field.errors }}
+{% block body_block %}
+    <h1>Add a new Artist updated</h1>
+    <form role="form" id="artist_add_form" method="post" action=".">
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
 
-                {% if form.help_text %}
-                    {{ field.help_text }}
-                {% else %}
-                    {{ field.name }}
-                {% endif %}
+      {% for field in form.visible_fields %}
+        {{ field.errors }}
 
-                {{ field }}
+        {% if form.help_text %}
+          {{ field.help_text }}
+        {% else %}
+          {{ field.name }}
+        {% endif %}
+
+        {{ field }}
 		</br>
-            {% endfor %}
+      {% endfor %}
 
-            <input type="submit" name="submit" value="Add Artist" />
-        </form>
-    </body>
+      <input type="submit" name="submit" value="Add Artist"/>
+    </form>
 
-</html>
+{% endblock %}
