@@ -6,10 +6,17 @@ from django import forms
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
+
+# from urllib3 import request
+# from urllib.request import urlopen
+# import urllib.request
+import urllib
+from django.core.files.base import ContentFile
+from django.utils.text import slugify
 from django_countries.fields import CountryField
 
 
-class ArtistForm(forms.ModelForm):
+class ArtistCreateForm(forms.ModelForm):
     """Artist form."""
 
     name = forms.CharField(max_length=128, label="Name",
@@ -20,8 +27,13 @@ class ArtistForm(forms.ModelForm):
                                 help_text="Author birth date")
     deathdate = forms.DateField(label="Death Date", required=False,
                                 help_text="Author Death date")
-    biography = forms.CharField(max_length=128, label="Biography",
+    biography = forms.CharField(widget=forms.Textarea, max_length=128,
+                                label="Biography",
                                 required=False, help_text="Author Biography")
+    extrainfo = forms.URLField(label="Extra Info (URL)",
+                               required=False, help_text="Author Extra Info")
+    imageurl = forms.URLField(label="Artist Portrait URL",
+                              required=False, help_text="Artist Portrait URL")
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -30,6 +42,25 @@ class ArtistForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
         model = Artist
         fields = ('name', 'nationality', 'birthdate', 'deathdate', 'biography')
+
+    def save(self, force_insert=False, force_update=False, commit=True):
+        """."""
+        artist = super(ArtistCreateForm, self).save(commit=False)
+
+        image_url = self.cleaned_data['imageurl']
+        image_type = image_url.rsplit('.', 1)[1].lower()
+        image_name = slugify(artist.name) + '.' + image_type
+        # image_name = '{}.{}'.format(slugify(artist.name),
+        #                             image_url.rsplit('.', 1)[1].lower())
+        # download image from the given URL
+        if image_url:
+            # response = urllib.request.urlopen(image_url)
+            response = urllib.urlopen(image_url)
+            artist.image.save(image_name, ContentFile(response.read()),
+                              save=False)
+        if commit:
+            artist.save()
+        return artist
 
 
 class ColectionForm(forms.ModelForm):
