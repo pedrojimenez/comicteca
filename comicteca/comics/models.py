@@ -21,6 +21,8 @@ class Artist(models.Model):
     biography = models.TextField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
+    extrainfo = models.URLField(blank=True, null=True)
+    image = models.ImageField(upload_to='images/artists/', default='')
     slug = models.SlugField()
 
     def get_absolute_url(self):
@@ -34,6 +36,7 @@ class Artist(models.Model):
 
     def save(self, *args, **kwargs):
         """Overriding of save method for Artist model."""
+        self.name = str(self.name).title()
         self.slug = slugify(self.name)
         self.updated = timezone.now()
         super(Artist, self).save(*args, **kwargs)
