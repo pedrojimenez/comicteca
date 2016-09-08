@@ -9,6 +9,7 @@ from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
+# from comics.forms import ArtistCreateForm, ArtistUpdateForm
 from comics.forms import ArtistCreateForm
 from comics.forms import ColectionForm
 from comics.forms import PublisherForm
@@ -100,7 +101,7 @@ class ArtistListView(ListView):
 
 
 class ArtistCreate(CreateView):
-    """."""
+    """CBV for creating an Artist model."""
 
     model = Artist
     form_class = ArtistCreateForm
@@ -110,12 +111,13 @@ class ArtistCreate(CreateView):
 
 
 class ArtistUpdate(UpdateView):
-    """."""
+    """CBV for updating an Artist model."""
 
     model = Artist
+    form_class = ArtistCreateForm
     template_name = "comics/update_artist_form.html"
-    fields = ['name', 'nationality', 'birthdate', 'deathdate',
-              'biography']
+    # fields = ['name', 'nationality', 'birthdate', 'deathdate',
+    #           'biography', 'extrainfo', 'image_url']
 
 
 class ArtistDelete(DeleteView):
