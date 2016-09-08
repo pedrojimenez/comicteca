@@ -1,4 +1,17 @@
-<form action="" method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Update" />
-</form>
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Comic List{% endblock %}
+
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
+
+{% block body_block %}
+  <h1>Edit Artist</h1>
+  <form action="" method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Update" />
+  </form>
+{% endblock %}
