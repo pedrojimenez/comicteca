@@ -3,13 +3,13 @@
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
-from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.urlresolvers import reverse_lazy
 
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
-from comics.forms import ArtistForm
+from comics.forms import ArtistCreateForm
 from comics.forms import ColectionForm
 from comics.forms import PublisherForm
 
@@ -63,7 +63,7 @@ def artist(request, artist_name_slug):
 def add_artist(request):
     """."""
     if request.method == 'POST':
-        form = ArtistForm(request.POST)
+        form = ArtistCreateForm(request.POST)
         if form.is_valid():
             # Save the new category to the database.
             form.save(commit=True)
@@ -77,7 +77,7 @@ def add_artist(request):
 
     else:
         # If the request was not a POST, display the form to enter details.
-        form = ArtistForm()
+        form = ArtistCreateForm()
     return render(request, 'comics/add_artist.html', {'form': form})
 
 
@@ -103,9 +103,10 @@ class ArtistCreate(CreateView):
     """."""
 
     model = Artist
+    form_class = ArtistCreateForm
     template_name = "comics/add_artist.html"
-    fields = ['name', 'nationality', 'birthdate', 'deathdate',
-              'biography']
+    # fields = ['name', 'nationality', 'birthdate', 'deathdate',
+    #           'biography', 'extrainfo', 'image_url']
 
 
 class ArtistUpdate(UpdateView):
