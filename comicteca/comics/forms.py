@@ -41,21 +41,23 @@ class ArtistCreateForm(forms.ModelForm):
 
         # Provide an association between the ModelForm and a model
         model = Artist
-        fields = ('name', 'nationality', 'birthdate', 'deathdate', 'biography')
+        fields = ('name', 'nationality', 'birthdate', 'deathdate',
+                  'biography', 'extrainfo')
 
     def save(self, force_insert=False, force_update=False, commit=True):
         """."""
         artist = super(ArtistCreateForm, self).save(commit=False)
 
         image_url = self.cleaned_data['imageurl']
-        image_type = image_url.rsplit('.', 1)[1].lower()
-        image_name = slugify(artist.name) + '.' + image_type
-        # image_name = '{}.{}'.format(slugify(artist.name),
-        #                             image_url.rsplit('.', 1)[1].lower())
         # download image from the given URL
         if image_url:
             # response = urllib.request.urlopen(image_url)
+            # TODO try except ---> protect for a erroneous url
             response = urllib.urlopen(image_url)
+
+            image_type = image_url.rsplit('.', 1)[1].lower()
+            image_name = slugify(artist.name) + '.' + image_type
+
             artist.image.save(image_name, ContentFile(response.read()),
                               save=False)
         if commit:
