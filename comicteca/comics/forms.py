@@ -27,7 +27,7 @@ class ArtistCreateForm(forms.ModelForm):
                                 help_text="Author birth date")
     deathdate = forms.DateField(label="Death Date", required=False,
                                 help_text="Author Death date")
-    biography = forms.CharField(widget=forms.Textarea, max_length=128,
+    biography = forms.CharField(widget=forms.Textarea, max_length=3000,
                                 label="Biography",
                                 required=False, help_text="Author Biography")
     extrainfo = forms.URLField(label="Extra Info (URL)",
@@ -48,10 +48,11 @@ class ArtistCreateForm(forms.ModelForm):
         """Clean method for imageurl form field."""
         url = self.cleaned_data['imageurl']
         valid_extensions = ['jpg', 'jpeg', 'png']
-        extension = url.rsplit('.', 1)[1].lower()
-        if extension not in valid_extensions:
-            msg = 'The given URL does not match valid image extensions.'
-            raise forms.ValidationError(msg)
+        if url:
+            extension = url.rsplit('.', 1)[1].lower()
+            if extension not in valid_extensions:
+                msg = 'The given URL does not match valid image extensions.'
+                raise forms.ValidationError(msg)
         return url
 
     def save(self, force_insert=False, force_update=False, commit=True):
