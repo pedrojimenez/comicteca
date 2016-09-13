@@ -19,7 +19,7 @@ class Artist(models.Model):
     nationality = CountryField(blank_label='(select country)')
     birthdate = models.DateField(blank=True, null=True)
     deathdate = models.DateField(blank=True, null=True)
-    biography = models.TextField(blank=True, null=True)
+    biography = models.TextField(blank=True, null=True, max_length=3000)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     extrainfo = models.URLField(blank=True, null=True)
