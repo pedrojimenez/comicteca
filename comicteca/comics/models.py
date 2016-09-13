@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
+from comics.storage import OverwriteStorage
 
 
 # ------------------------------------------------------------------ #
@@ -22,7 +23,8 @@ class Artist(models.Model):
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     extrainfo = models.URLField(blank=True, null=True)
-    image = models.ImageField(upload_to='images/artists/', default='')
+    image = models.ImageField(default='', upload_to='images/artists/',
+                              storage=OverwriteStorage())
     slug = models.SlugField()
 
     def get_absolute_url(self):
