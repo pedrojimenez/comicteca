@@ -32,8 +32,8 @@ class ArtistCreateForm(forms.ModelForm):
                                 required=False, help_text="Author Biography")
     extrainfo = forms.URLField(label="Extra Info (URL)",
                                required=False, help_text="Author Extra Info")
-    imageurl = forms.URLField(label="Artist Portrait URL",
-                              required=False, help_text="Artist Portrait URL")
+    imageurl = forms.URLField(label="Artist Portrait URL", required=False,
+                              help_text="Formats: jpg/jpeg/png")
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -43,6 +43,16 @@ class ArtistCreateForm(forms.ModelForm):
         model = Artist
         fields = ('name', 'nationality', 'birthdate', 'deathdate',
                   'biography', 'extrainfo')
+
+    def clean_imageurl(self):
+        """Clean method for imageurl form field."""
+        url = self.cleaned_data['imageurl']
+        valid_extensions = ['jpg', 'jpeg', 'png']
+        extension = url.rsplit('.', 1)[1].lower()
+        if extension not in valid_extensions:
+            msg = 'The given URL does not match valid image extensions.'
+            raise forms.ValidationError(msg)
+        return url
 
     def save(self, force_insert=False, force_update=False, commit=True):
         """."""
