@@ -1,16 +1,21 @@
 {% extends 'comics/base.html' %}
 
 {% load staticfiles %}
+{% load comicteca_stats %}
 
 {% block title %}Comicteca Index{% endblock %}
 
 {% block side_block %}
-<p>Search Index</p>
-</br>
-<p><a href="{% url 'colection_add' %}">Add Colection</a></p>
-<p><a href="{% url 'comic_add' %}">Add Comic</a></p>
-<p><a href="{% url 'artist_add' %}">Add Artist</a></p>
-<p><a href="{% url 'publisher_add' %}">Add Publisher</a></p>
+  <p>Search Index</p>
+  </br>
+  <p><a href="{% url 'colection_add' %}">Add Colection</a></p>
+  <p><a href="{% url 'comic_add' %}">Add Comic</a></p>
+  <p><a href="{% url 'artist_add' %}">Add Artist</a></p>
+  <p><a href="{% url 'publisher_add' %}">Add Publisher</a></p>
+  <hr>
+  <p>Stats:</p>
+  <p><a href="{% url 'colection_list' %}">{% total_colections %} colections</a></p>
+
 {% endblock %}
 
 {% block body_block %}
