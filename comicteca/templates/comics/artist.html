@@ -1,6 +1,7 @@
 {% extends 'comics/base.html' %}
 
 {% load staticfiles %}
+{% load text_tags %}
 
 {% block title %}Comicteca Comic List{% endblock %}
 
@@ -32,7 +33,7 @@
 	    {% endif %}
 
       {% if artist.biography %}
-           <li><u>Bio</u> <strong>{{ artist.biography }} </strong></li>
+           <li><u>Bio</u>{{ artist.biography|markdown }}</li>
       {% endif %}
 
       {% if artist.extrainfo %}
