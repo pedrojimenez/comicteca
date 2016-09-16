@@ -2,3 +2,4 @@ django>=1.8,<1.9
 django-countries
 urllib3
 markdown
+sorl-thumbnail==12.3
