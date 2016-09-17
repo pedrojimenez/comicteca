@@ -15,13 +15,39 @@
 {% block body_block %}
 <h2><u>Artists List</u></h2>
   {% if artist_list %}
-    <ul>
+    <table class="table-bordered">
+      <tr>
+        <th><center>Picture</center></th>
+        <th><center>Name</center></th>
+        <th><center>Nationality</center></th>
+        <th><center>Colaborations</center></th>
+      </tr>
       {% for artist in artist_list %}
-        <li>
-          <a href="/comicteca/artists/{{ artist.slug }}">{{ artist.name }}</a> ({{ artist.nationality }})
-        </li>
+      <tr>
+        {% if artist.image %}
+
+          {% load thumbnail %}
+          {% thumbnail artist.image "70" as thumb_image %}
+          <td>
+            <center><a href="{{ artist.get_absolute_url }}" title="{{ artist.name  }}">
+              <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail">
+            </a></center>
+          </td>
+          {% endthumbnail %}
+
+        {% else %}
+          <td>No image</td>
+        {% endif %}
+
+        <td><center>{{ artist.name }}</center></td>
+
+        <td><center><img src="http://flagpedia.net/data/flags/mini/{{ artist.nationality|lower }}.png"></center></td>
+
+        <td><center>{{ artist.get_colaborations_count }}</center></td>
+      </tr>
       {% endfor %}
-    </ul>
+    </table>
+
   {% else %}
     <strong>There are no artists present yet.</strong>
   {% endif %}
