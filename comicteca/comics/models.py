@@ -16,7 +16,7 @@ class Artist(models.Model):
     """Artists model."""
 
     name = models.CharField(max_length=30)
-    nationality = CountryField(blank_label='(select country)')
+    nationality = CountryField(blank_label='(select country)', default='ES')
     birthdate = models.DateField(blank=True, null=True)
     deathdate = models.DateField(blank=True, null=True)
     biography = models.TextField(blank=True, null=True, max_length=3000)
@@ -83,6 +83,7 @@ class Publisher(models.Model):
     """Pubisher model."""
 
     name = models.CharField(max_length=128)
+    nationality = CountryField(blank_label='(select country)', default='ES')
     history = models.TextField(blank=True, default='')
     start_date = models.DateField('Comienzo de Editorial', blank=True,
                                   null=True)
