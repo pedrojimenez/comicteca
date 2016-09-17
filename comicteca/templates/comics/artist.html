@@ -15,15 +15,19 @@
 
 {% block body_block %}
   {% if artist %}
-  <h1>{{ artist_name }}</h1>
-
+  <!-- TODO: link with local URL media fot all flags -->
+  <h1>{{ artist_name }} <img src="http://flagpedia.net/data/flags/mini/{{ artist.nationality|lower }}.png"></h1>
     {% if artist.image %}
-      <img src="{{ MEDIA_URL }}{{ artist.image }}" class="img-rounded" alt="Picture of {{ artist.name }}">
+      <!-- img src="{{ MEDIA_URL }}{{ artist.image }}" class="img-rounded" alt="Picture of {{ artist.name  }}" -->
+      {% load thumbnail %}
+      {% thumbnail artist.image "200" as thumb_image %}
+        <a href="{{ MEDIA_URL }}{{ thumb_image }}">
+          <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail">
+        </a>
+      {% endthumbnail %}
     {% endif %}
 
 	  <ul>
-	    <li><u>Name:</u> <strong>{{ artist.name }} </strong></li>
-	    <li><u>Nationality:</u> <strong>{{ artist.nationality }} </strong></li>
       {% if artist.birthdate %}
 	       <li><u>Birthdate:</u> <strong>{{ artist.birthdate }} </strong></li>
       {% endif %}
