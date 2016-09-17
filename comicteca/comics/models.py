@@ -92,7 +92,7 @@ class Publisher(models.Model):
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     extrainfo = models.URLField(blank=True, null=True)
-    image = models.ImageField(default='', upload_to='images/artists/',
+    image = models.ImageField(default='', upload_to='images/publishers/',
                               storage=OverwriteStorage())
     slug = models.SlugField()
 
