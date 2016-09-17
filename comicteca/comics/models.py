@@ -43,6 +43,12 @@ class Artist(models.Model):
         self.updated = timezone.now()
         super(Artist, self).save(*args, **kwargs)
 
+    def get_colaborations_count(self):
+        """Get the count of colaborations in comics of the Author."""
+        comic_count = Comic.objects.filter(
+            colaborators__id=self.id).distinct().count()
+        return comic_count
+
     def get_colaborations(self):
         """Get a list of tuples with comics/role of the Author.
 
