@@ -293,17 +293,19 @@ class PublisherCreate(CreateView):
     """."""
 
     model = Publisher
+    form_class = PublisherForm
     template_name = "comics/add_publisher.html"
-    success_url = reverse_lazy('publisher_list')
-    fields = ['name', 'history', 'start_date', 'end_date']
+    # success_url = reverse_lazy('publisher_list')
+    # fields = ['name', 'history', 'start_date', 'end_date']
 
 
 class PublisherUpdate(UpdateView):
     """."""
 
     model = Publisher
+    form_class = PublisherForm
     template_name = "comics/update_publisher_form.html"
-    fields = ['name', 'history', 'start_date', 'end_date']
+    # fields = ['name', 'history', 'start_date', 'end_date']
 
 
 class PublisherDelete(DeleteView):
