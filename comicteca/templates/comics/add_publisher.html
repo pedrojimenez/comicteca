@@ -1,34 +1,34 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        <h1>Add a new Publisher</h1>
+{% load staticfiles %}
 
-        <form id="publisher_form" method="post" action="/comicteca/add_publisher/">
+{% block title %}Comicteca Comic List{% endblock %}
 
-            {% csrf_token %}
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
 
-            {% for field in form.visible_fields %}
-                {{ field.errors }}
+{% block body_block %}
+  <h1>Add a new Publisher</h1>
+    <form id="publisher_form" method="post" action="/comicteca/add_publisher/">
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+      {% endfor %}
 
-                {% if form.help_text %}
-                    {{ field.help_text }}
-                {% else %}
-                    {{ field.name }}
-                {% endif %}
+      {% for field in form.visible_fields %}
+        {{ field.errors }}
 
-                {{ field }}
-		</br>
-            {% endfor %}
+        {% if form.help_text %}
+          {{ field.help_text }}
+        {% else %}
+          {{ field.name }}
+        {% endif %}
 
-            <input type="submit" name="submit" value="Add Publisher" />
-        </form>
-    </body>
+        {{ field }} </br>
+      {% endfor %}
 
-</html>
+      <input type="submit" name="submit" value="Add Publisher" />
+    </form>
+
+{% endblock %}
