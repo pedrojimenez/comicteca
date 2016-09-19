@@ -11,15 +11,68 @@
 {% block body_block %}
   <h2><u>Publishers List</u></h2>
     {% if publisher_list %}
-      <ul>
-        {% for publisher in publisher_list %}
-		  <li>
-            <a href="/comicteca/publishers/{{ publisher.slug }}">{{ publisher.name }}</a>
-          </li>
-        {% endfor %}
-      </ul>
+
+      <table class="table-bordered">
+      <tr>
+        <th><center>Logo</center></th>
+        <th><center>Name</center></th>
+        <th><center>Nationality</center></th>
+        <th><center>Distributions</center></th>
+        <th><center>Editions</center></th>
+
+      </tr>
+      {% for publisher in publisher_list %}
+      <tr>
+        {% if publisher.image %}
+
+          {% load thumbnail %}
+          {% thumbnail publisher.image "70" as thumb_image %}
+          <td>
+            <center>
+              <a href="{{ publisher.get_absolute_url }}" title="{{ publisher.name  }}">
+              <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail"></a>
+            </center>
+          </td>
+          {% endthumbnail %}
+
+        {% else %}
+          {% load thumbnail %}
+          {% thumbnail "{{ MEDIA_URL }}images/noimage.gif" "70" as thumb_noimage %}
+          <td>
+            <center>
+            </center>
+          </td>
+          {% endthumbnail %}
+        {% endif %}
+
+
+        <td>
+          <center>
+            <a href="{{ publisher.get_absolute_url }}" title="{{ publisher.name }}">{{ publisher.name }}
+          </center>
+        </td>
+
+        <td><center><img src="http://flagpedia.net/data/flags/mini/{{ publisher.nationality|lower }}.png"></center></td>
+
+        <td>
+          <center>
+            {{ publisher.get_colections_distributions_count }} colections
+          </center>
+        </td>
+
+        <td>
+          <center>
+            {{ publisher.get_colections_editions_count }} colections
+          </center>
+        </td>
+
+      </tr>
+      {% endfor %}
+    </table>
+
     {% else %}
       <strong>There are no artists present yet.</strong>
+
     {% endif %}
 
     <hr>
