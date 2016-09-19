@@ -1,34 +1,58 @@
 {% extends 'comics/base.html' %}
 
 {% load staticfiles %}
+{% load text_tags %}
 
-{% block title %}Comicteca Comic List{% endblock %}
+
+{% block title %}Comicteca Publisher List{% endblock %}
 
 {% block side_block %}
   <p>Search Comic List</p>
+  {% if publisher %}
+     <p><a href="/comicteca/publishers/{{ publisher.slug }}/edit/">Edit Publisher</a></p>
+     <p><a href="/comicteca/publishers/{{ publisher.slug }}/delete/">Delete Publisher</a></p>
+  {% endif %}
 {% endblock %}
 
 {% block body_block %}
   {% if publisher %}
-    <h1>{{ publisher_name }}</h1>
-	<ul>
-	  <li><u>Name:</u> <strong>{{ publisher.name }} </strong></li>
-
-	  {% if publisher.start_date %}
-	  	<li><u>Start date:</u> <strong>{{ publisher.start_date }} </strong></li>
+    <h1>{{ publisher.name }} <img src="http://flagpedia.net/data/flags/mini/{{ publisher.nationality|lower }}.png"></h1>
+    {% if publisher.image %}
+      <!-- img src="{{ MEDIA_URL }}{{ artist.image }}" class="img-rounded" alt="Picture of {{ artist.name  }}" -->
+      {% load thumbnail %}
+      {% thumbnail publisher.image "200" as thumb_image %}
+        <a href="{{ MEDIA_URL }}{{ thumb_image }}">
+          <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;">
+        </a>
+      {% endthumbnail %}
+    {% endif %}
+	  <ul>
+	    {% if publisher.start_date %}
+        <li><u>Start date:</u> <strong>{{ publisher.start_date }} </strong></li>
       {% endif %}
 
-	  {% if publisher.end_date %}
-	  	<li><u>End date:</u> <strong>{{ publisher.end_date }} </strong></li>
-	  {% endif %}
+	    {% if publisher.end_date %}
+        <li><u>End date:</u> <strong>{{ publisher.end_date }} </strong></li>
+	    {% endif %}
 
-	  <li><u>Publisher History:</u> <strong>{{ publisher.history }} </strong></li>
-	</ul>
+	    <li><u>Publisher History:</u>{{ publisher.history|markdown }}</li>
+
+      <li><u>Colaborations:</u>
+          <ul>
+            {% for colection,roles in publisher.get_colaborations %}
+              <li>
+                <a href="{{ colection.get_absolute_url }}">{{ colection.name }}</a> ( {{ roles }} )
+              </li>
+            {% endfor %}
+          </ul>
+      </li>
+	  </ul>
+
   {% else %}
     <h1>Publisher Unknown</h1>
     The Publisher {{ publisher_name }} does not exist!
-  {% endif %}
 
+  {% endif %}
 
   <hr>
   {% if publisher %}
