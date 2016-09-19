@@ -39,7 +39,12 @@
           <td>No image</td>
         {% endif %}
 
-        <td><center>{{ artist.name }}</center></td>
+        <td>
+          <center>
+            <a href="{{ artist.get_absolute_url }}" title="{{ artist.name }}">{{ artist.name }}
+          </center>
+        </td>
+        <a href="{{ publisher.get_absolute_url }}" title="{{ publisher.name }}">{{ publisher.name }}
 
         <td><center><img src="http://flagpedia.net/data/flags/mini/{{ artist.nationality|lower }}.png"></center></td>
 
