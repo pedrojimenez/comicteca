@@ -136,14 +136,25 @@ class PublisherForm(forms.ModelForm):
 
     name = forms.CharField(max_length=128, label="Name",
                            help_text="Please enter the Publisher name")
-    history = forms.CharField(max_length=128, label="Publisher history",
-                              required=False, help_text="Author Biography")
+
+    history = forms.CharField(widget=forms.Textarea, max_length=3000,
+                              label="History",
+                              required=False, help_text="Publisher History")
+
+    nationality = CountryField(blank_label='(select country)',
+                               help_text="Nationality")
+
     start_date = forms.DateField(label="Beginning of Publication Date",
                                  required=False,
                                  help_text="Beginning of publications date")
     end_date = forms.DateField(label="End of publications date",
                                required=False,
                                help_text="end of publications date")
+    extrainfo = forms.URLField(label="Extra Info (URL)",
+                               required=False,
+                               help_text="Publisher Extra Info")
+    imageurl = forms.URLField(label="Publisher logo (URL)", required=False,
+                              help_text="Formats: jpg/jpeg/png")
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -151,4 +162,36 @@ class PublisherForm(forms.ModelForm):
 
         # Provide an association between the ModelForm and a model
         model = Publisher
-        fields = ('name', 'history', 'start_date', 'end_date')
+        fields = ('name', 'history', 'nationality', 'start_date', 'end_date',
+                  'extrainfo')
+
+    def clean_imageurl(self):
+        """Clean method for imageurl form field."""
+        url = self.cleaned_data['imageurl']
+        valid_extensions = ['jpg', 'jpeg', 'png']
+        if url:
+            extension = url.rsplit('.', 1)[1].lower()
+            if extension not in valid_extensions:
+                msg = 'The given URL does not match valid image extensions.'
+                raise forms.ValidationError(msg)
+        return url
+
+    def save(self, force_insert=False, force_update=False, commit=True):
+        """."""
+        publisher = super(PublisherForm, self).save(commit=False)
+
+        image_url = self.cleaned_data['imageurl']
+        # download image from the given URL
+        if image_url:
+            # response = urllib.request.urlopen(image_url)
+            # TODO try except ---> protect for a erroneous url
+            response = urllib.urlopen(image_url)
+
+            image_type = image_url.rsplit('.', 1)[1].lower()
+            image_name = slugify(publisher.name) + '.' + image_type
+
+            publisher.image.save(image_name, ContentFile(response.read()),
+                                 save=False)
+        if commit:
+            publisher.save()
+        return publisher
