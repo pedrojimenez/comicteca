@@ -102,6 +102,45 @@ class Publisher(models.Model):
         return reverse('publisher_detail',
                        kwargs={'publisher_name_slug': self.slug})
 
+    def get_colections_distributions_count(self):
+        """Get the count of colaborations in colections of the Publisher."""
+        colection_count = Colection.objects.filter(
+            distributor__id=self.id).distinct().count()
+        return colection_count
+
+    def get_colections_editions_count(self):
+        """Get the count of colaborations in colections of the Publisher."""
+        colection_count = Colection.objects.filter(
+            editors__id=self.id).distinct().count()
+        return colection_count
+
+    def get_colaborations(self):
+        """Get a list of tuples with colections/relation of the Publisher.
+
+        ouput:  list[tuples(ColectionObject, "Publisher.Roles")]
+        output: [(<Colection: Vengadores - Vol 1>, "editor")]
+        output: [(<Colection: Naruto - Vol 3>, "editor,distributor")]
+        """
+        print "xxxxxx get colaborations of Publisher: {}".format(self.name)
+        distributor_list_partial = Colection.objects.filter(
+            distributor__id=self.id).distinct()
+
+        editor_list_partial = Colection.objects.filter(
+            editors__id=self.id).distinct()
+
+        # Join both querysets and get a single copy of each
+        colection_list_partial = distributor_list_partial | editor_list_partial
+        colection_list_partial = colection_list_partial.distinct()
+
+        colection_tuple = ()
+        colection_list = []
+        for colection in colection_list_partial:
+            role_list = colection.get_publisher_roles(self.id)
+            colection_tuple = (colection, role_list)
+            colection_list.append(colection_tuple)
+
+        return colection_list
+
     def __unicode__(self):
         """str/unicode function of Publisher class."""
         return self.name
@@ -193,6 +232,17 @@ class Colection(models.Model):
             editor_list_output.append(editor.name)
 
         return ', '.join(editor_list_output)
+
+    def get_publisher_roles(self, publisher_id):
+        """Return the list of roles/relation of a given Publisher."""
+        role_list = []
+        if self.distributor.id == publisher_id:
+            role_list.append('distributor')
+
+        for editor in self.editors.all():
+            if publisher_id == editor.id:
+                role_list.append('editor')
+        return ','.join(role_list)
 
     class Meta:
         """Meta class for Colection model."""
