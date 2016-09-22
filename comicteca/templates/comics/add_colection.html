@@ -1,29 +1,29 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Comicteca</title>
-    </head>
+{% extends 'comics/base.html' %}
 
-    <body>
-        <h1>Add a new Colection</h1>
+{% load staticfiles %}
 
-        <form id="colection_form" method="post" action="/comicteca/add_colection/">
+{% block title %}Comicteca Comic List{% endblock %}
 
-            {% csrf_token %}
-            {% for hidden in form.hidden_fields %}
-                {{ hidden }}
-            {% endfor %}
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
 
-            {% for field in form.visible_fields %}
-                {{ field.errors }}
+{% block body_block %}
 
-                {% if form.help_text %}
-                    {{ field.help_text }}
-                {% else %}
-                    {{ field.name }}
-                {% endif %}
-
-                {{ field }}
+<h1>Add a new Colection</h1>
+  <form id="colection_form" method="post" action="/comicteca/add_colection/">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+        {{ field.errors }}
+        {% if form.help_text %}
+            {{ field.help_text }}
+        {% else %}
+            {{ field.name }}
+        {% endif %}
+        {{ field }}
 		</br>
             {% endfor %}
 
@@ -42,6 +42,6 @@
                 <p></p>
             {% endfor %}
         {% endif %}
-    </body>
 
-</html>
+{% endblock %}
+
