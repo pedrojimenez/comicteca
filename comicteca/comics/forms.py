@@ -102,6 +102,11 @@ class ColectionForm(forms.ModelForm):
     pub_date = forms.DateField(label="Publication Date",
                                help_text="Colection publication date",
                                required=False)
+    full_colection = forms.BooleanField(
+        label="Add comics",
+        help_text="Fill the colection with all comics",
+        required=False)
+
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -121,12 +126,14 @@ class ColectionForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            c = Colection.objects.get(
+            col = Colection.objects.get(
                 name=self.cleaned_data['name'],
                 volume=self.cleaned_data['volume'])
-            if c:
+            if col:
                 # custom actions once the Colection is saved
-                print "Colection saved <{} v{}>".format(c.name, c.volume)
+                # 1.) if full_colection ==> Adding all related comics
+                if self.cleaned_data['full_colection']:
+                    col.complete_colection()
 
         return instance
 
