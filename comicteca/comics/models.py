@@ -217,6 +217,7 @@ class Colection(models.Model):
         """Count number of colection comics and return it."""
         self.numbers = len(Comic.objects.filter(colection__name=self.name,
                                                 colection__volume=self.volume))
+        self.save()
 
     def colection_list(self):
         """Count number of colection comics and return string."""
@@ -243,6 +244,26 @@ class Colection(models.Model):
             if publisher_id == editor.id:
                 role_list.append('editor')
         return ','.join(role_list)
+
+    def complete_colection(self, pages=24):
+        """Complete all missing comics for the colection."""
+        for n in range(1, self.max_numbers + 1):
+            print "Filling comic n{} in colection {}".format(n, self.name)
+
+            try:
+                checkcomic = Comic.objects.get(colection=self, number=n)
+            except Comic.DoesNotExist:
+                checkcomic = None
+
+            if not checkcomic:
+                comic = Comic()
+                comic.number = n
+                comic.pages = pages
+                comic.colection = self
+                comic.save()
+            else:
+                print "Comic already exists, omitting . . ."
+        self.update_comics_number()
 
     class Meta:
         """Meta class for Colection model."""
