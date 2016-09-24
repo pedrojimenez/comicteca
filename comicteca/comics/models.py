@@ -27,6 +27,19 @@ class Artist(models.Model):
                               storage=OverwriteStorage())
     slug = models.SlugField()
 
+    def __init__(self, name, nationality, biography=None, extrainfo=None,
+                 image=None):
+        """Constructor method for Artist model."""
+        self.name = name
+        self.nationality = nationality
+        if biography:
+            self.biography = biography
+        if extrainfo:
+            self.extrainfo = extrainfo
+        if image:
+            # Download the image and get the local url
+            self.image = image
+
     def get_absolute_url(self):
         """."""
         # return reverse('artist-detail', kwargs={'pk': self.pk})
@@ -95,6 +108,19 @@ class Publisher(models.Model):
     image = models.ImageField(default='', upload_to='images/publishers/',
                               storage=OverwriteStorage())
     slug = models.SlugField()
+
+    def __init__(self, name, nationality, history=None, extrainfo=None,
+                 image=None):
+        """Constructor method for Artist model."""
+        self.name = name
+        self.nationality = nationality
+        if history:
+            self.history = history
+        if extrainfo:
+            self.extrainfo = extrainfo
+        if image:
+            # Download the image and get the local url
+            self.image = image
 
     def get_absolute_url(self):
         """."""
@@ -168,26 +194,48 @@ class Colection(models.Model):
     name = models.CharField(max_length=50)
     subname = models.CharField(max_length=50, blank=True)
     volume = models.IntegerField(default=1)
+    language = CountryField(blank_label='(select country)', default='ES')
     max_numbers = models.IntegerField(default=0)
     colection_type = models.CharField('Type', max_length=15,
                                       choices=TYPE_OF_COLECTION,
                                       default='Regular')
     numbers = models.IntegerField(default=0)
-    language = CountryField(blank_label='(select country)', default='ES')
+
     pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
+    image = models.ImageField(default='', upload_to='images/artists/',
+                              storage=OverwriteStorage())
     slug = models.SlugField()
 
     # Relations
     distributor = models.ForeignKey(Publisher, on_delete=models.CASCADE,
                                     default='Marvel')
-    # distributors = models.ManyToManyField('Publisher',
-    #                                       related_name='Distributors',
-    #                                       through='Distributor')
     editors = models.ManyToManyField(Publisher,
                                      related_name='Publishers')
-    #                                through='Editor')
+
+    def __init__(self, name, subname, volume, language, max_numbers,
+                 colection_type, distributor, image=None):
+        """Constructor method for Colection model."""
+        self.name = name
+        self.subname = subname
+        self.volume = volume
+        self.language = language
+        self.max_numbers = max_numbers
+        if colection_type in self.TYPE_OF_COLECTION:
+            self.colection_type = colection_type
+        else:
+            raise ValueError('Wrong type. Must be [Regular/Limited/Special]')
+
+        d = Publisher.objects.get(name=distributor)
+        if d:
+            self.distributor = d
+        else:
+            raise ValueError('Distributor does not exist')
+
+        if image:
+            # Download the image and get the local url
+            self.image = image
 
     def __unicode__(self):
         """str/unicode function of Colection class."""
