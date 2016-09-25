@@ -4,6 +4,7 @@ from django.test import TestCase
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
+from comics.models import Comic
 
 
 # ------------------------------------------------------------------ #
@@ -39,6 +40,16 @@ def create_colection(name='Test Colection', subname='extra subname',
                                         colection_type=colection_type,
                                         distributor=distributor_id,
                                         )
+
+
+def create_comic(title='Test Comic Title', number=1, pages=24,
+                 colection_id='1'):
+        """Create a Comic external function."""
+        return Comic.objects.create(title=title,
+                                    number=number,
+                                    pages=pages,
+                                    colection=colection_id,
+                                    )
 
 
 # ------------------------------------------------------------------ #
@@ -102,3 +113,29 @@ class PublisherTest(TestCase):
         self.assertTrue(isinstance(p2, Publisher))
         self.assertEqual(p1.nationality.name, 'United States of America')
         self.assertEqual(p2.nationality.name, 'Spain')
+
+
+# ------------------------------------------------------------------ #
+#
+#                            Comic Tests
+#
+# ------------------------------------------------------------------ #
+class ComicTest(TestCase):
+    """Comic class tests."""
+
+    def test_comic_creation(self):
+        """Test for creating an object from model Comic."""
+        p1 = create_publisher(name='TestPublisher002', nationality='US')
+        c1 = create_colection(
+            name='Xmen2', subname='children of the atom', vol=2,
+            language='ES', distributor_id=p1, colection_type='Regular',
+            max_numbers=50)
+        comic = create_comic(title='Return of Colossus', number=10, pages=64,
+                             colection_id=c1)
+
+        self.assertTrue(isinstance(p1, Publisher))
+        self.assertTrue(isinstance(c1, Colection))
+        self.assertTrue(isinstance(comic, Comic))
+        self.assertEqual(p1.nationality.name, 'United States of America')
+        self.assertEqual(c1.language.name, 'Spain')
+        self.assertEqual(c1.numbers, 1)
