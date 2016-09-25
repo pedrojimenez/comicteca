@@ -27,19 +27,6 @@ class Artist(models.Model):
                               storage=OverwriteStorage())
     slug = models.SlugField()
 
-    def __init__(self, name, nationality, biography=None, extrainfo=None,
-                 image=None):
-        """Constructor method for Artist model."""
-        self.name = name
-        self.nationality = nationality
-        if biography:
-            self.biography = biography
-        if extrainfo:
-            self.extrainfo = extrainfo
-        if image:
-            # Download the image and get the local url
-            self.image = image
-
     def get_absolute_url(self):
         """."""
         # return reverse('artist-detail', kwargs={'pk': self.pk})
@@ -108,19 +95,6 @@ class Publisher(models.Model):
     image = models.ImageField(default='', upload_to='images/publishers/',
                               storage=OverwriteStorage())
     slug = models.SlugField()
-
-    def __init__(self, name, nationality, history=None, extrainfo=None,
-                 image=None):
-        """Constructor method for Artist model."""
-        self.name = name
-        self.nationality = nationality
-        if history:
-            self.history = history
-        if extrainfo:
-            self.extrainfo = extrainfo
-        if image:
-            # Download the image and get the local url
-            self.image = image
 
     def get_absolute_url(self):
         """."""
@@ -213,29 +187,6 @@ class Colection(models.Model):
                                     default='Marvel')
     editors = models.ManyToManyField(Publisher,
                                      related_name='Publishers')
-
-    def __init__(self, name, subname, volume, language, max_numbers,
-                 colection_type, distributor, image=None):
-        """Constructor method for Colection model."""
-        self.name = name
-        self.subname = subname
-        self.volume = volume
-        self.language = language
-        self.max_numbers = max_numbers
-        if colection_type in self.TYPE_OF_COLECTION:
-            self.colection_type = colection_type
-        else:
-            raise ValueError('Wrong type. Must be [Regular/Limited/Special]')
-
-        d = Publisher.objects.get(name=distributor)
-        if d:
-            self.distributor = d
-        else:
-            raise ValueError('Distributor does not exist')
-
-        if image:
-            # Download the image and get the local url
-            self.image = image
 
     def __unicode__(self):
         """str/unicode function of Colection class."""
