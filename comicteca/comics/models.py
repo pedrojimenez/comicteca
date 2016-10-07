@@ -121,7 +121,7 @@ class Publisher(models.Model):
         output: [(<Colection: Vengadores - Vol 1>, "editor")]
         output: [(<Colection: Naruto - Vol 3>, "editor,distributor")]
         """
-        print "xxxxxx get colaborations of Publisher: {}".format(self.name)
+        # print "xxxxxx get colaborations of Publisher: {}".format(self.name)
         distributor_list_partial = Colection.objects.filter(
             distributor__id=self.id).distinct()
 
