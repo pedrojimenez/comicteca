@@ -3,3 +3,4 @@ django-countries
 urllib3
 markdown
 sorl-thumbnail==12.3
+Pillow==3.4.1
