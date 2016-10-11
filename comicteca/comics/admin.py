@@ -5,6 +5,8 @@ from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
 from comics.models import Colaborator
+from comics.actions import duplicate_colection
+
 # from comics.models import Distributor, Editor
 
 
@@ -50,6 +52,7 @@ class ColectionAdmin(admin.ModelAdmin):
                     'get_distributor', 'colection_type', 'inserted', 'updated')
     search_fields = ['name', 'subname']
     list_filter = ['name']
+    actions = [duplicate_colection]
     fieldsets = [
         ('Nombre Coleccion', {'fields': ['name', 'subname', 'volume',
                                          'colection_type',
