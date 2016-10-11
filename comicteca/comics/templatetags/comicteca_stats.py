@@ -6,19 +6,19 @@ register = template.Library()
 
 @register.simple_tag
 def total_colections():
-    return Colection.objects.all().count()
+    return Colection.objects.count()
 
 
 @register.simple_tag
 def total_comics():
-    return Comic.objects.all().count()
+    return Comic.objects.count()
 
 
 @register.simple_tag
 def total_publishers():
-    return Publisher.objects.all().count()
+    return Publisher.objects.count()
 
 
 @register.simple_tag
 def total_artists():
-    return Artist.objects.all().count()
+    return Artist.objects.count()
