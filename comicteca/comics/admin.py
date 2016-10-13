@@ -6,6 +6,9 @@ from comics.models import Publisher
 from comics.models import Comic
 from comics.models import Colaborator
 from comics.actions import duplicate_colection
+from comics.actions import duplicate_publisher
+from comics.actions import duplicate_artist
+
 
 # from comics.models import Distributor, Editor
 
@@ -42,6 +45,7 @@ class ArtistAdmin(admin.ModelAdmin):
 
     prepopulated_fields = {'slug': ('name',)}
     list_display = ('name', 'nationality', 'inserted', 'updated')
+    actions = [duplicate_artist]
 
 
 class ColectionAdmin(admin.ModelAdmin):
@@ -82,6 +86,7 @@ class PublisherAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_display = ('name', 'history', 'inserted', 'updated')
     search_fields = ['name']
+    actions = [duplicate_publisher]
 
 
 class ColaboratorAdmin(admin.ModelAdmin):
