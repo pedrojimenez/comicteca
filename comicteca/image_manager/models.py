@@ -11,15 +11,17 @@ class ImageManager(models.Model):
         """Check if input url is a valid image."""
         if not url:
             msg = 'The given URL is empty'
+            # TODO: logger.error(msg)
             print msg
-            return 1
+            return 0
 
         # Get the last part of the url and check against
         extension = url.rsplit('.', 1)[1].lower()
 
         if extension not in self.__valid_extensions:
             msg = 'The given URL does not match valid image extensions.'
+            # TODO: logger.error(msg)
             print msg
-            return 1
+            return 0
 
-        return 0
+        return 1
