@@ -24,7 +24,8 @@ class Artist(models.Model):
     updated = models.DateTimeField(default=timezone.now)
     extrainfo = models.URLField(blank=True, null=True)
     image = models.ImageField(default='', upload_to='images/artists/',
-                              storage=OverwriteStorage(), null=True)
+                              storage=OverwriteStorage(),
+                              blank=True, null=True)
     slug = models.SlugField()
 
     def get_absolute_url(self):
@@ -93,7 +94,8 @@ class Publisher(models.Model):
     updated = models.DateTimeField(default=timezone.now)
     extrainfo = models.URLField(blank=True, null=True)
     image = models.ImageField(default='', upload_to='images/publishers/',
-                              storage=OverwriteStorage(), null=True)
+                              storage=OverwriteStorage(),
+                              blank=True, null=True)
     slug = models.SlugField()
 
     def get_absolute_url(self):
@@ -179,7 +181,8 @@ class Colection(models.Model):
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     image = models.ImageField(default='', upload_to='images/artists/',
-                              storage=OverwriteStorage(), null=True)
+                              storage=OverwriteStorage(),
+                              blank=True, null=True)
     slug = models.SlugField()
 
     # Relations
