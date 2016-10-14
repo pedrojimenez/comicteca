@@ -13,6 +13,7 @@ from comics.models import Comic
 from comics.forms import ArtistCreateForm
 from comics.forms import ColectionForm
 from comics.forms import PublisherForm
+from comics.forms import ComicForm
 
 
 def index(request):
@@ -393,7 +394,8 @@ class ComicUpdate(UpdateView):
 
     model = Comic
     template_name = "comics/update_comic_form.html"
-    fields = ['title', 'number', 'pages', 'extrainfo']
+    form_class = ComicForm
+    # fields = ['title', 'number', 'pages', 'extrainfo']
 
 
 class ComicDelete(DeleteView):
