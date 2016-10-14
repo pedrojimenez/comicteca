@@ -1,0 +1,17 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca edit Comic{% endblock %}
+
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
+
+{% block body_block %}
+  <h1>Edit Comic</h1>
+  <form action="" method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Update" />
+  </form>
+{% endblock %}
