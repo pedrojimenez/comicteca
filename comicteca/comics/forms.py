@@ -5,6 +5,7 @@ from django import forms
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
+from comics.models import Comic
 from image_manager.models import ImageManager
 
 from django.core.files.base import ContentFile
@@ -224,4 +225,78 @@ class PublisherForm(forms.ModelForm):
 
 class ComicForm(forms.ModelForm):
     """Comic form."""
-    pass
+
+    image_manager = ImageManager()
+    title = forms.CharField(max_length=128, label="Name", required=False,
+                            help_text="Comic title")
+
+    number = forms.IntegerField(label="Volume", min_value=1,
+                                help_text='Volume')
+
+    pages = forms.IntegerField(label="Volume", min_value=1,
+                               help_text='Volume')
+
+    extrainfo = forms.URLField(label="External Info (URL)",
+                               required=False,
+                               help_text="Comic External Info")
+
+    comments = forms.CharField(widget=forms.Textarea, max_length=3000,
+                               label="Comments",
+                               required=False,
+                               help_text="Comic comments")
+
+    pub_date = forms.DateField(label="Publication Date",
+                               help_text="Colection publication date",
+                               required=False)
+    imageurl = forms.URLField(label="Comic Image URL", required=False,
+                              help_text="Formats: {}".format(
+                                  image_manager.valid_extensions))
+
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        """Meta class for Comic Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Comic
+        fields = ('title', 'number', 'pages', 'extrainfo', 'comments',
+                  'pub_date')
+
+    def clean_imageurl(self):
+        """Clean method for imageurl form field."""
+        url = self.cleaned_data['imageurl']
+        if url:
+            if not self.image_manager.is_valid_image_extension(url):
+                msg = 'The given URL does not match valid image extensions.'
+                raise forms.ValidationError(msg)
+        return url
+
+    def clean_extrainfo(self):
+        """Clean method for extrainfo form field."""
+        url = self.cleaned_data['extrainfo']
+        if url:
+            response = self.image_manager.check_http_url(url)
+            if not response:
+                msg = 'The given URL does not match a valid link.'
+                raise forms.ValidationError(msg)
+        return url
+
+    def save(self, force_insert=False, force_update=False, commit=True):
+        """Overrride of save method in Publisher Form."""
+        comic = super(ComicForm, self).save(commit=False)
+
+        image_url = self.cleaned_data['imageurl']
+        # download image from the given URL
+        if image_url:
+            response = self.image_manager.check_http_url(image_url)
+            if response:
+                image_type = image_url.rsplit('.', 1)[1].lower()
+                image_name = slugify(comic.colection) + \
+                    '_n' + str(comic.number) + \
+                    '.' + image_type
+
+                comic.cover.save(image_name, ContentFile(response.read()),
+                                 save=False)
+        if commit:
+            comic.save()
+        return comic
