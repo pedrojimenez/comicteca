@@ -13,7 +13,7 @@
     <h1>{{ colection_name }} v{{ colection.volume }} ({{ colection.distributor }}) </h1>
         <ul>
 	        <li><u>Name:</u><strong>{{ colection.name }} </strong></li>
-	        {% if colection.subname  %}
+	        {% if colection.subname %}
 	            <li><u>Subname:</u><strong>{{ colection.subname }} </strong></li>
 	        {% endif  %}
 	        <li><u>Volume:</u><strong>{{ colection.volume }} </strong></li>
@@ -21,6 +21,14 @@
             <li><u>Type:</u><strong>{{ colection.colection_type }} </strong></li>
 	        <li><u>Pub Date:</u><strong>{{ colection.pub_date }} </strong></li>
 	        </br>
+          {% if colection.image %}
+            {% load thumbnail %}
+            {% thumbnail colection.image "200" as thumb_image %}
+            <a href="{{ MEDIA_URL }}{{ thumb_image }}">
+              <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;">
+            </a>
+            {% endthumbnail %}
+          {% endif %}
 	    </ul>
 
     <h2>Distributor</h2>
