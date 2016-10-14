@@ -287,16 +287,22 @@ class Comic(models.Model):
     number = models.IntegerField(default=1)
     pages = models.IntegerField(default=24)
     slug = models.SlugField()
-    colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
-    extrainfo = models.CharField(max_length=128, blank=True, null=True)
+
+    # texts
+    comments = models.TextField(blank=True, null=True, default='')
+    extrainfo = models.URLField(blank=True, null=True)
+
+    # dates
     pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(default='', upload_to='images/comics/',
+
+    # cover (image)
+    cover = models.ImageField(default='', upload_to='images/comics/',
                               storage=OverwriteStorage(),
                               blank=True, null=True)
-
     # Relations
+    colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     colaborators = models.ManyToManyField(Artist, through='Colaborator')
 
     class Meta:
