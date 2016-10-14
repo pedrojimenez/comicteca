@@ -1,16 +1,12 @@
 """Forms for Comic app."""
 from django import forms
 # from django.contrib.auth.models import User
-# from rango.models import Page, Category, UserProfile
 
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
+from image_manager.models import ImageManager
 
-# from urllib3 import request
-# from urllib.request import urlopen
-# import urllib.request
-import urllib
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
 from django_countries.fields import CountryField
@@ -19,6 +15,7 @@ from django_countries.fields import CountryField
 class ArtistCreateForm(forms.ModelForm):
     """Artist form."""
 
+    image_manager = ImageManager()
     name = forms.CharField(max_length=128, label="Name",
                            help_text="Please enter the Artist name.")
     nationality = CountryField(blank_label='(select country)',
@@ -33,7 +30,8 @@ class ArtistCreateForm(forms.ModelForm):
     extrainfo = forms.URLField(label="Extra Info (URL)",
                                required=False, help_text="Author Extra Info")
     imageurl = forms.URLField(label="Artist Portrait URL", required=False,
-                              help_text="Formats: jpg/jpeg/png")
+                              help_text="Formats: {}".format(
+                                  image_manager.valid_extensions))
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -47,10 +45,8 @@ class ArtistCreateForm(forms.ModelForm):
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
         url = self.cleaned_data['imageurl']
-        valid_extensions = ['jpg', 'jpeg', 'png']
         if url:
-            extension = url.rsplit('.', 1)[1].lower()
-            if extension not in valid_extensions:
+            if not self.image_manager.is_valid_image_extension(url):
                 msg = 'The given URL does not match valid image extensions.'
                 raise forms.ValidationError(msg)
         return url
@@ -62,15 +58,12 @@ class ArtistCreateForm(forms.ModelForm):
         image_url = self.cleaned_data['imageurl']
         # download image from the given URL
         if image_url:
-            # response = urllib.request.urlopen(image_url)
-            # TODO try except ---> protect for a erroneous url
-            response = urllib.urlopen(image_url)
-
-            image_type = image_url.rsplit('.', 1)[1].lower()
-            image_name = slugify(artist.name) + '.' + image_type
-
-            artist.image.save(image_name, ContentFile(response.read()),
-                              save=False)
+            response = self.image_manager.check_http_url(image_url)
+            if response:
+                image_type = image_url.rsplit('.', 1)[1].lower()
+                image_name = slugify(artist.name) + '.' + image_type
+                artist.image.save(image_name, ContentFile(response.read()),
+                                  save=False)
         if commit:
             artist.save()
         return artist
@@ -79,6 +72,7 @@ class ArtistCreateForm(forms.ModelForm):
 class ColectionForm(forms.ModelForm):
     """Colection form."""
 
+    image_manager = ImageManager()
     name = forms.CharField(max_length=128, label="Name",
                            help_text="Please enter the Colection name")
     subname = forms.CharField(max_length=128, label="Name", required=False,
@@ -102,6 +96,10 @@ class ColectionForm(forms.ModelForm):
     pub_date = forms.DateField(label="Publication Date",
                                help_text="Colection publication date",
                                required=False)
+    imageurl = forms.URLField(label="Colection Image URL", required=False,
+                              help_text="Formats: {}".format(
+                                  image_manager.valid_extensions))
+
     full_colection = forms.BooleanField(
         label="Add comics",
         help_text="Fill the colection with all comics",
@@ -117,15 +115,34 @@ class ColectionForm(forms.ModelForm):
         fields = ('name', 'subname', 'volume', 'editors', 'distributor',
                   'max_numbers', 'language', 'pub_date')
 
+    def clean_imageurl(self):
+        """Clean method for imageurl form field."""
+        url = self.cleaned_data['imageurl']
+        if url:
+            if not self.image_manager.is_valid_image_extension(url):
+                msg = 'The given URL does not match valid image extensions.'
+                raise forms.ValidationError(msg)
+        return url
+
     def save(self, commit=True):
         """Overrride of save method in Colection Form."""
-        instance = super(ColectionForm, self).save(commit=False)
+        collection = super(ColectionForm, self).save(commit=False)
 
         # do custom stuff
-        instance.colection_type = self.cleaned_data['colection_type']
+        collection.colection_type = self.cleaned_data['colection_type']
+        image_url = self.cleaned_data['imageurl']
+
+        # download image from the given URL
+        if image_url:
+            response = self.image_manager.check_http_url(image_url)
+            if response:
+                image_type = image_url.rsplit('.', 1)[1].lower()
+                image_name = slugify(collection.name) + '.' + image_type
+                collection.image.save(image_name, ContentFile(response.read()),
+                                      save=False)
 
         if commit:
-            instance.save()
+            collection.save()
             col = Colection.objects.get(
                 name=self.cleaned_data['name'],
                 volume=self.cleaned_data['volume'])
@@ -135,12 +152,13 @@ class ColectionForm(forms.ModelForm):
                 if self.cleaned_data['full_colection']:
                     col.complete_colection()
 
-        return instance
+        return collection
 
 
 class PublisherForm(forms.ModelForm):
     """Publisher form."""
 
+    image_manager = ImageManager()
     name = forms.CharField(max_length=128, label="Name",
                            help_text="Please enter the Publisher name")
 
@@ -161,7 +179,8 @@ class PublisherForm(forms.ModelForm):
                                required=False,
                                help_text="Publisher Extra Info")
     imageurl = forms.URLField(label="Publisher logo (URL)", required=False,
-                              help_text="Formats: jpg/jpeg/png")
+                              help_text="Formats: {}".format(
+                                  image_manager.valid_extensions))
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -175,30 +194,25 @@ class PublisherForm(forms.ModelForm):
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
         url = self.cleaned_data['imageurl']
-        valid_extensions = ['jpg', 'jpeg', 'png']
         if url:
-            extension = url.rsplit('.', 1)[1].lower()
-            if extension not in valid_extensions:
+            if not self.image_manager.is_valid_image_extension(url):
                 msg = 'The given URL does not match valid image extensions.'
                 raise forms.ValidationError(msg)
         return url
 
     def save(self, force_insert=False, force_update=False, commit=True):
-        """."""
+        """Overrride of save method in Publisher Form."""
         publisher = super(PublisherForm, self).save(commit=False)
 
         image_url = self.cleaned_data['imageurl']
         # download image from the given URL
         if image_url:
-            # response = urllib.request.urlopen(image_url)
-            # TODO try except ---> protect for a erroneous url
-            response = urllib.urlopen(image_url)
-
-            image_type = image_url.rsplit('.', 1)[1].lower()
-            image_name = slugify(publisher.name) + '.' + image_type
-
-            publisher.image.save(image_name, ContentFile(response.read()),
-                                 save=False)
+            response = self.image_manager.check_http_url(image_url)
+            if response:
+                image_type = image_url.rsplit('.', 1)[1].lower()
+                image_name = slugify(publisher.name) + '.' + image_type
+                publisher.image.save(image_name, ContentFile(response.read()),
+                                     save=False)
         if commit:
             publisher.save()
         return publisher
