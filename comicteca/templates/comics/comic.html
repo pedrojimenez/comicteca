@@ -1,38 +1,53 @@
 {% extends 'comics/base.html' %}
 
 {% load staticfiles %}
+{% load text_tags %}
 
 {% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-<p>Search Comic List</p>
-<a href="{{ colection.get_absolute_url }}">{{ colection.name }} v{{ colection.volume }}</a>
+<p><center>Search Comic List</center></p>
+<p>
+  <center>
+    <a href="{{ colection.get_absolute_url }}">{{ colection.name }} v{{ colection.volume }}</a>
+  </center>
+</p>
+
+{% if comic.cover %}
+  {% load thumbnail %}
+    {% thumbnail comic.cover "180" as thumb_image %}
+    <a href="{{ MEDIA_URL }}{{ comic.cover }}">
+    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+  {% endthumbnail %}
+{% endif %}
 {% endblock %}
 
 {% block body_block %}
 {% if comic %}
   <h1>{{ colection.name }} v{{ colection.volume }} - Number {{ comic.number }}</h1>
   <ul>
-    <li><u>Portada:</u><strong>{{ comic.slug }} </strong></li>
-
-    {% if colection.subname  %}
-      <li><u>Subname:</u><strong>{{ comic.subname }} </strong></li>
-    {% endif  %}
+    {% if comic.title %}
+      <li><u>Title:</u><strong>{{ comic.title }} </strong></li>
+    {% endif %}
 
     <li><u>Pages:</u><strong>{{ comic.pages }}</strong></li>
 
-    {% if colection.pub_date  %}
+    {% if comic.pub_date  %}
       <li><u>Pub Date:</u><strong>{{ comic.pub_date }} </strong></li>
-    {% else  %}
+    {% else %}
       <li><u>Pub Date:</u><strong>N/A</strong></li>
-    {% endif  %}
+    {% endif %}
 
-    {% if colection.extrainfo  %}
-      <li><u>Extra info:</u><strong>{{ colection.extrainfo }} </strong></li>
+    {% if comic.extrainfo %}
+      <li><u>Additional info:</u> <strong><a href="{{ comic.extrainfo }}"> link</a></strong></li>
+    {% endif %}
+
+    {% if comic.comments  %}
+      <li><u>Comments:</u><strong>{{ comic.comments|markdown }} </strong></li>
     {% else  %}
-      <li><u>Extra info:</u><strong>N/A</strong></li>
-    {% endif  %}
-
+      <li><u>Comments:</u><strong>N/A</strong></li>
+    {% endif %}
+    <br/>
     Colaborators:
     <ul>
       {% for artist,roles in comic.get_all_artists_roles %}
