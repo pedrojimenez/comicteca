@@ -149,9 +149,10 @@ class ColectionUpdate(UpdateView):
     """."""
 
     model = Colection
+    form_class = ColectionForm
     template_name = "comics/update_colection_form.html"
-    fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
-              'pub_date', 'distributor', 'editors', 'colection_type']
+    # fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
+    #          'pub_date', 'distributor', 'editors', 'colection_type']
 
 
 class ColectionDelete(DeleteView):
