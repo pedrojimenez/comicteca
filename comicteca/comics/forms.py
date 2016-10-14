@@ -220,3 +220,8 @@ class PublisherForm(forms.ModelForm):
         if commit:
             publisher.save()
         return publisher
+
+
+class ComicForm(forms.ModelForm):
+    """Comic form."""
+    pass
