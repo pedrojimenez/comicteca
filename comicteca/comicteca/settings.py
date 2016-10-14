@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_countries',
     'comics',
+    'image_manager',
     'sorl.thumbnail',
 )
 
