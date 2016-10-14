@@ -7,6 +7,11 @@ class ImageManager(models.Model):
 
     __valid_extensions = ['jpg', 'jpeg', 'png']
 
+    @property
+    def valid_extensions(self):
+        """Return the list of supported/valid image extensions."""
+        return self.__valid_extensions
+
     def is_valid_image_extension(self, url):
         """Check if input url is a valid image."""
         if not url:
