@@ -180,7 +180,7 @@ class Colection(models.Model):
     pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(default='', upload_to='images/artists/',
+    image = models.ImageField(default='', upload_to='images/colections/',
                               storage=OverwriteStorage(),
                               blank=True, null=True)
     slug = models.SlugField()
