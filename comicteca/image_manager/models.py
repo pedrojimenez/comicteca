@@ -25,3 +25,21 @@ class ImageManager(models.Model):
             return 0
 
         return 1
+
+    def check_http_url(self, url):
+        """Check if current url is accesible and return the http response."""
+        import urllib2
+        request = urllib2.Request(url)
+        try:
+            response = urllib2.urlopen(request)
+            msg = "({}) image url is correct: {}".format(
+                response.getcode(), url)
+            # TODO: logger.info(msg)
+            print msg
+            return response
+        except urllib2.HTTPError as e:  # 404, 500, etc..
+            msg = "ERROR ({}) getting the image from the url: {}".format(
+                e, url)
+            # TODO: logger.error(msg)
+            print msg
+            return None
