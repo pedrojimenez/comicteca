@@ -11,7 +11,7 @@ from comics.views import ColectionListView
 from comics.views import PublisherCreate, PublisherUpdate, PublisherDelete
 from comics.views import PublisherListView
 from comics.views import ComicListView
-from comics.views import ComicCreate
+from comics.views import ComicCreate, ComicUpdate, ComicDelete
 
 urlpatterns = patterns(
     '',
@@ -83,7 +83,11 @@ urlpatterns = patterns(
     url(r'^comics/(?P<comic_name_slug>[\w\-]+)/$', views.comic,
         name='comic_detail'),
 
+    url(r'^comics/(?P<slug>[\w\-]+)/edit/$',
+        ComicUpdate.as_view(), name='comic_update'),
 
+    url(r'^comics/(?P<slug>[\w\-]+)/delete/$',
+        ComicDelete.as_view(), name='comic_delete'),
 
     # ---------- #
     # utils
