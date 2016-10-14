@@ -201,7 +201,8 @@ class Colection(models.Model):
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Colection class."""
-        self.slug = slugify(self.name + ' v' + str(self.volume))
+        self.slug = slugify(self.name + '-' + str(self.distributor) +
+                            '-v' + str(self.volume))
         self.updated = timezone.now()
 
         self.numbers = len(Comic.objects.filter(
@@ -318,8 +319,7 @@ class Comic(models.Model):
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Comics class."""
-        slugify(self.colection.slug) + '_n' + str(self.number)
-        self.slug = slugify(self.colection.slug) + '_n' + str(self.number)
+        self.slug = slugify(self.colection.slug) + '-n' + str(self.number)
         self.updated = timezone.now()
         super(Comic, self).save(*args, **kwargs)
         # Update Colection "number of comics"
