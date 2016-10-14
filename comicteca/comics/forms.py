@@ -137,7 +137,11 @@ class ColectionForm(forms.ModelForm):
             response = self.image_manager.check_http_url(image_url)
             if response:
                 image_type = image_url.rsplit('.', 1)[1].lower()
-                image_name = slugify(collection.name) + '.' + image_type
+                image_name = slugify(collection.name) + '_' + \
+                    slugify(collection.subname) + '_v' + \
+                    str(collection.volume) + '_' + \
+                    slugify(collection.distributor) + '.' + image_type
+                # Example: daredevil_fall-from-paradise_v1_forum.jpg
                 collection.image.save(image_name, ContentFile(response.read()),
                                       save=False)
 
