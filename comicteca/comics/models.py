@@ -191,6 +191,27 @@ class Colection(models.Model):
     editors = models.ManyToManyField(Publisher,
                                      related_name='Publishers')
 
+    @property
+    def my_url(self):
+        """Return the absolute url as model property."""
+        return self.get_absolute_url()
+
+    @property
+    def my_image(self):
+        """Return the absolute url of colection image as property.
+
+        If the colection has no image it will search in all the comics
+        but if no image is found, it will return the empty image url
+        """
+        if self.image:
+            return self.image
+        comics_set = Comic.objects.filter(colection__id=self.id)
+        for comic in comics_set:
+            print "scanning comic: ", comic
+            if comic.cover:
+                print "found cover in comic: ", comic
+        return "images/noimage.png"
+
     def __unicode__(self):
         """str/unicode function of Colection class."""
         str_temp = self.name
@@ -201,8 +222,11 @@ class Colection(models.Model):
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Colection class."""
-        self.slug = slugify(self.name + '-' + str(self.distributor) +
-                            '-v' + str(self.volume))
+        self.slug = slugify(self.name) + '-' + \
+            slugify(self.subname) + '-' + \
+            slugify(self.distributor) + \
+            '-v' + str(self.volume)
+
         self.updated = timezone.now()
 
         self.numbers = len(Comic.objects.filter(
@@ -312,6 +336,11 @@ class Comic(models.Model):
         # db_table = 'comics'
         verbose_name_plural = "comics"
         unique_together = ("colection", "number")
+
+    @property
+    def my_url(self):
+        """Return the absolute url as model property."""
+        return self.get_absolute_url()
 
     def __unicode__(self):
         """str/unicode function of Comic class."""
