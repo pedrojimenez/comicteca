@@ -187,17 +187,14 @@ def colection(request, colection_name_slug):
     context_dict = {}
     try:
         colection = Colection.objects.get(slug=colection_name_slug)
-        colection_distributor = Colection.objects.get(
-            slug=colection_name_slug).distributor
         colection_editors = Colection.objects.get(
-            slug=colection_name_slug).editors.all()
+            slug=colection_name_slug).editors.all().order_by('slug')
         colection_comics = Comic.objects.filter(
-            colection__name=colection.name)
+            colection__id=colection.id).order_by('slug')
 
         # filter(colection__editors__set)
         context_dict['colection_name'] = colection.name
         context_dict['colection'] = colection
-        context_dict['distributor'] = colection_distributor
         context_dict['editor_list'] = colection_editors
         context_dict['comic_list'] = colection_comics
     except Colection.DoesNotExist:
