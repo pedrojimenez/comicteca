@@ -62,6 +62,7 @@ class ColectionAdmin(admin.ModelAdmin):
                                          'colection_type',
                                          'max_numbers', 'pub_date', 'slug'
                                          ]}),
+        ('Image', {'fields': ['image']}),
         ('Editoriales', {'fields': ['distributor', 'editors']}),
     ]
 
