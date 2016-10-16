@@ -5,49 +5,116 @@
 {% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-  <p>Search Comic List</p>
+  {% if colection %}
+    <!-- Name -->
+    <h2><center>{{ colection_name }}</center></h2>
+    {% if colection.subname %}
+      <p><center>{{ colection.subname }}</center></p>
+    {% endif %}
+    <br/>
+    <!-- Buttons -->
+    <p><center>
+      <a href="/comicteca/colections/{{ colection.slug }}/edit/" class="btn btn-info" role="button">Edit</a>
+      <a href="/comicteca/colections/{{ colection.slug }}/delete/" class="btn btn-info" role="button">Delete</a>
+    </center></p>
+    <p><center>
+      <a href="/comicteca/colections/{{ colection.slug }}/add-comic/" class="btn btn-info" role="button">Add Comic</a>
+    </center></p>
+
+    <hr style="height:5px">
+    <!-- Info -->
+    <h2><center>Info</center></h2>
+    <p><center><u>Status:</u> <strong>{{ colection.colection_list }}</strong></center></p>
+    <p><center><u>Type:</u> <strong>{{ colection.colection_type }}</strong></center></p>
+
+    <!-- TODO: Create a colection.get_pubdate for checking if defined of number 1-->
+    {% if comic.pub_date  %}
+      <p><center><u>Pub Date:</u> <strong>{{ colection.pub_date }} </strong></center></p>
+    {% else %}
+      <p><center><u>Pub Date:</u> <strong>N/A</strong></center></p>
+    {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block body_block %}
   {% if colection %}
-    <h1>{{ colection_name }} v{{ colection.volume }} ({{ colection.distributor }}) </h1>
-        <ul>
-	        <li><u>Name:</u><strong>{{ colection.name }} </strong></li>
-	        {% if colection.subname %}
-	            <li><u>Subname:</u><strong>{{ colection.subname }} </strong></li>
-	        {% endif  %}
-	        <li><u>Volume:</u><strong>{{ colection.volume }} </strong></li>
-	        <li><u>Status:</u><strong>{{ colection.colection_list }} </strong></li>
-            <li><u>Type:</u><strong>{{ colection.colection_type }} </strong></li>
-	        <li><u>Pub Date:</u><strong>{{ colection.pub_date }} </strong></li>
-	        </br>
-          {% if colection.image %}
-            {% load thumbnail %}
-            {% thumbnail colection.image "200" as thumb_image %}
-            <a href="{{ MEDIA_URL }}{{ thumb_image }}">
-              <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;">
-            </a>
-            {% endthumbnail %}
-          {% endif %}
-	    </ul>
+    <h1>{{ colection_name }}
+      {% if colection.subname %} - {{ colection.subname }} {% endif %} - volume {{ colection.volume }}
+    </h1>
+        <!-- Cover and Info -->
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Colection Image -->
+              {% load thumbnail %}
+              {% thumbnail colection.my_image "400" as thumb_image %}
+                <a href="{{ MEDIA_URL }}{{ colection.image }}">
+                <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border: thin solid black;">
+                </a>
+              {% endthumbnail %}
+            </div>
+            <!-- Distributor / Editor -->
+            <div class="col-md-6">
+              <div class="row">
+                <!-- Distributor -->
+                <h2>Distributor</h2>
+                {% if colection.distributor.image %}
+                  {% load thumbnail %}
+                    {% thumbnail colection.distributor.image "200" as thumb_image %}
+                    <!-- a href="{{ MEDIA_URL }}{{ colection.distributor.image }}" -->
+                    <a href="{{ colection.distributor.my_url }}">
+                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+                  {% endthumbnail %}
+                {% else %}
+                  <ul>
+                    <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</a></li>
+                  </ul>
+                {% endif %}
+              </div> <!-- Distributor row -->
+              <div class="row">
+                <!-- Editors -->
+                  <h2>Editors</h2>
+                    {% for editor in editor_list %}
+                  {% if editor.image %}
+                    {% thumbnail editor.image "200" as thumb_image %}
+                      <a href="{{ editor.my_url }}">
+                      <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+                    {% endthumbnail %}
+                  {% else %}
+                    <li><a href="/comicteca/publishers/{{ editor.slug }}">{{ editor.name }} (NO)</a></li>
+                  {% endif %}
+                  {% endfor %}
+              </div> <!-- Editors row -->
+            </div> <!-- Distributor / Editor col md 6-->
+          </div> <!-- ROW del container -->
+        </div> <!-- container -->
 
-    <h2>Distributor</h2>
-	    <ul>
-            <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</a></li>
-	    </ul>
 
-	<h2>Editors</h2>
+    <!-- Collection Comics -->
+    <h2>Comics</h2>
       <ul>
-	    {% for editor in editor_list %}
-          <li><a href="/comicteca/publishers/{{ editor.slug }}">{{ editor.name }}</a></li>
-        {% endfor %}
-      </ul>
-
-    <h2>Comics</h2> <a href="/comicteca/colections/{{ colection.slug }}/add-comic/">Add Comic</a><br/>
-      <ul>
-        {% for comic in comic_list %}
-          <li><a href="/comicteca/comics/{{ comic.slug }}/">Number {{ comic.number }} ({{ comic.pages }})</a></li>
-        {% endfor %}
+        <div class="container-fluid">
+          <div class="row">
+            <!-- comic_list from context data -->
+            {% for comic in comic_list %}
+              <div class="col-xs-12 col-md-4 col-lg-3 col-xl-2" style="height: 350px;">
+                {% if comic.cover %}
+                  {% thumbnail comic.cover "200x280" as thumb_image %}
+                    <a href="{{ comic.my_url }}">
+                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+                    <br/>
+                    <a href="/comicteca/comics/{{ comic.slug }}/"><strong>Number {{ comic.number }}</strong> ({{ comic.pages }} pags)</a>
+                  {% endthumbnail %}
+                {% else %}
+                  <a href="{{ comic.my_url }}">
+                  <img src="/media/images/noimage.png" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+                  <a href="/comicteca/comics/{{ comic.slug }}/"><strong>Number {{ comic.number }}</strong> ({{ comic.pages }} pags)</a>
+                {% endif %}
+                <div class="clearfix visible-sm-block visible-lg-block"></div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
       </ul>
 
   {% else %}
@@ -57,6 +124,7 @@
 
   <hr>
   {% if colection %}
+    <a href="/comicteca/colections/{{ colection.slug }}/add-comic/">Add Comic</a><br/>
     <a href="/comicteca/colections/{{ colection.slug }}/edit/">Edit Colection</a><br/>
     <a href="/comicteca/colections/{{ colection.slug }}/delete/">Delete Colection</a><br/>
   {% endif %}
