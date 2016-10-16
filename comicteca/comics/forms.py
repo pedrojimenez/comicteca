@@ -233,8 +233,8 @@ class ComicForm(forms.ModelForm):
     number = forms.IntegerField(label="Volume", min_value=1,
                                 help_text='Volume')
 
-    pages = forms.IntegerField(label="Volume", min_value=1,
-                               help_text='Volume')
+    pages = forms.IntegerField(label="Pages", min_value=1,
+                               help_text='Number of pages')
 
     extrainfo = forms.URLField(label="External Info (URL)",
                                required=False,
