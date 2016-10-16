@@ -382,7 +382,8 @@ class ComicCreate(CreateView):
 
     model = Comic
     template_name = "comics/add_comic.html"
-    fields = ['number', 'colection', 'pages', 'title', 'extrainfo']
+    form_class = ComicForm
+    # fields = ['number', 'colection', 'pages', 'title', 'extrainfo']
     success_url = reverse_lazy('comic_list')
 
 
