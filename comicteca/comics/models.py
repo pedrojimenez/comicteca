@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
 from comics.storage import OverwriteStorage
+from comics.utils import parse_int_set
 
 
 # ------------------------------------------------------------------ #
@@ -272,19 +273,30 @@ class Colection(models.Model):
                 role_list.append('editor')
         return ','.join(role_list)
 
-    def complete_colection(self, pages=24):
+    def complete_colection(self, pages=24, rangeset=None):
         """Complete all missing comics for the colection."""
-        for n in range(1, self.max_numbers + 1):
-            print "Filling comic n{} in colection {}".format(n, self.name)
+        localrange = set()
+        invalidrange = set()
+        if not rangeset:
+            for i in range(1, self.max_numbers + 1):
+                localrange.add(int(i))
+        else:
+            localrange, invalidrange = parse_int_set(rangeset,
+                                                     self.max_numbers)
+
+        # for n in range(1, self.max_numbers + 1):
+        for n in range(0, len(localrange)):
+            number = localrange.pop()
+            print "Filling comic n{} in colection {}".format(number, self.name)
 
             try:
-                checkcomic = Comic.objects.get(colection=self, number=n)
+                checkcomic = Comic.objects.get(colection=self, number=number)
             except Comic.DoesNotExist:
                 checkcomic = None
 
             if not checkcomic:
                 comic = Comic()
-                comic.number = n
+                comic.number = number
                 comic.pages = pages
                 comic.colection = self
                 comic.save()
