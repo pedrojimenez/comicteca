@@ -6,67 +6,123 @@
 {% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-<p><center>Search Comic List</center></p>
-<p>
-  <center>
-    <a href="{{ colection.get_absolute_url }}">{{ colection.name }} v{{ colection.volume }}</a>
-  </center>
-</p>
-
-{% if comic.cover %}
-  {% load thumbnail %}
-    {% thumbnail comic.cover "180" as thumb_image %}
-    <a href="{{ MEDIA_URL }}{{ comic.cover }}">
-    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
-  {% endthumbnail %}
+{% if comic %}
+<p><center>
+  <a href="{% url 'comic_update' comic.slug %}" class="btn btn-warning" role="button">Edit</a>
+  <a href="{% url 'comic_delete' comic.slug %}" class="btn btn-danger" role="button">Delete</a>
+</center></p>
 {% endif %}
+<p><center>
+  <a href="{{ colection.get_absolute_url }}" class="btn btn-info" role="button">Return to<br>{{ colection.name }}</a>
+</center></p>
 {% endblock %}
 
 {% block body_block %}
 {% if comic %}
-  <h1>{{ colection.name }} v{{ colection.volume }} - Number {{ comic.number }}</h1>
-  <ul>
-    {% if comic.title %}
-      <li><u>Title:</u><strong>{{ comic.title }} </strong></li>
-    {% endif %}
+  <h1>{{ colection.name }}
+  {% if colection.subname %} - {{ colection.subname }} {% endif %} #{{ comic.number }}
+  </h1>
+  {% if comic.title %}<h2>{{ comic.title }}</h2>{% endif %}
 
-    <li><u>Pages:</u><strong>{{ comic.pages }}</strong></li>
+   <!-- Cover and Info -->
+   <div class="container-fluid">
+     <div class="row">
+       <div class="col-md-6">
+         <!-- Colection Image -->
+         {% load thumbnail %}
+         {% thumbnail comic.my_cover "400" as thumb_image %}
+           <a href="{{ MEDIA_URL }}{{ colection.image }}">
+                <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail"
+                style="padding:1px;border: thin solid black;">
+           </a>
+         {% endthumbnail %}
+       </div>
+       <!-- Distributor / Info -->
+       <div class="col-md-6">
+         <!-- Distributor -->
+         <div class="row">
+           <!-- Distributor -->
+           <h2>Distributor</h2>
+           {% if colection.distributor.image %}
+             {% load thumbnail %}
+               {% thumbnail colection.distributor.image "200" as thumb_image %}
+               <!-- a href="{{ MEDIA_URL }}{{ colection.distributor.image }}" -->
+               <a href="{{ colection.distributor.my_url }}">
+                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail"
+                    style="padding:1px;border:thin solid black;"></a>
+             {% endthumbnail %}
+           {% else %}
+             <ul>
+               <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }</li>
+             </ul>
+           {% endif %}
+         </div> <!-- Distributor row -->
+         <!-- Info -->
+         <div class="row">
+           <h2>Info</h2>
+           <p><u>Volume</u>: <strong>{{ colection.volume }}</strong></p>
+           <p><u>Pages</u>: <strong>{{ comic.pages }}</strong></p>
+           <p><u>Format</u>: <strong>{{ comic.format }}</strong></p>
+           <p><u>Price</u>: <strong>{{ comic.price }}</strong></p>
 
-    {% if comic.pub_date  %}
-      <li><u>Pub Date:</u><strong>{{ comic.pub_date }} </strong></li>
-    {% else %}
-      <li><u>Pub Date:</u><strong>N/A</strong></li>
-    {% endif %}
+           <p>
+             {% if comic.pub_date  %}
+               <u>Pub Date</u>: <strong>{{ comic.pub_date }} </strong>
+             {% else %}
+               <u>Published</u>: <strong>N/A</strong>
+             {% endif %}
+           </p>
+           <p>
+             {% if comic.extrainfo %}
+               <strong><a href="{{ comic.extrainfo }}"> Additional info</a></strong>
+             {% endif %}
+           </p>
+         </div> <!-- Info row -->
 
-    {% if comic.extrainfo %}
-      <li><u>Additional info:</u> <strong><a href="{{ comic.extrainfo }}"> link</a></strong></li>
-    {% endif %}
+       </div> <!-- Distributor / Editor col md 6-->
+     </div> <!-- ROW del container -->
+   </div> <!-- container -->
+   <hr/>
 
-    {% if comic.comments  %}
-      <li><u>Comments:</u>{{ comic.comments|markdown }}</li>
-    {% else  %}
-      <li><u>Comments:</u><strong>N/A</strong></li>
-    {% endif %}
-    <br/>
-    <li><u>Colaborators:</u></li>
-    <ul>
-      {% for artist,roles in comic.get_all_artists_roles %}
-        <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
-            ( {{ roles }} )
-        </li>
-      {% endfor %}
-    </ul>
+   <!-- Comments -->
+   <div class="container-fluid">
+     <div class="row">
+       <div class="col-md-12">
+         {% if comic.comments  %}
+           <p><u>Comments</u>:</p>
+           {{ comic.comments|markdown }}</li>
+         {% else  %}
+           <u>Comments</u>: <strong>N/A</strong></li>
+         {% endif %}
+       </div> <!-- Comments 12-->
+     </div> <!-- ROW del container -->
+   </div> <!-- container -->
+   <hr/>
 
-  </ul>
+   <!-- Colaborators -->
+   <div class="container-fluid">
+     <div class="row">
+       <div class="col-md-12">
+         <p><u>Colaborators</u>:</p>
+         <ul>
+         {% for artist,roles in comic.get_all_artists_roles %}
+           <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
+            ( {{ roles }} )</li>
+         {% endfor %}
+         </ul>
+       </div> <!-- Colaborators 12-->
+     </div> <!-- ROW del container -->
+   </div> <!-- container -->
+
 {% else %}
   <h1>Comic Unknown</h1>
   This comic does not exist!
 {% endif %}
 
-<hr>
+<hr/>
 {% if comic %}
-  <a href="/comicteca/comics/{{ comic.slug }}/edit/">Edit Comic</a><br/>
-  <a href="/comicteca/comics/{{ comic.slug }}/delete/">Delete Comic</a><br/>
+  <p><a href="/comicteca/comics/{{ comic.slug }}/edit/">Edit Comic</a></p>
+  <p><a href="/comicteca/comics/{{ comic.slug }}/delete/">Delete Comic</a></p>
 {% endif %}
 
 {% endblock %}
