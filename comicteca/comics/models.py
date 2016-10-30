@@ -207,9 +207,8 @@ class Colection(models.Model):
             return self.image
         comics_set = Comic.objects.filter(colection__id=self.id)
         for comic in comics_set:
-            print "scanning comic: ", comic
             if comic.cover:
-                print "found cover in comic: ", comic
+                return comic.cover
         return "images/noimage.png"
 
     def __unicode__(self):
