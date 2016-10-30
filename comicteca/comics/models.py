@@ -342,6 +342,15 @@ class Comic(models.Model):
         """Return the absolute url as model property."""
         return self.get_absolute_url()
 
+    def my_cover(self):
+        """Return the absolute url of comic cover as property.
+
+        If the comic has no cover  it will return the empty image url
+        """
+        if self.cover:
+            return self.cover
+        return "images/noimage.png"
+
     def __unicode__(self):
         """str/unicode function of Comic class."""
         return self.slug
