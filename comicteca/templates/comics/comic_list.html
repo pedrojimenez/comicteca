@@ -24,7 +24,7 @@
       <th>Language</th>
      	<th>Pub Date</th>
 		</tr>
-    {% for comic in object_list %}
+    {% for comic in object_list|dictsortreversed:"updated" %}
     <tr>
 	    <td><a href="{{ comic.get_absolute_url }}">{{ comic.colection.name }}
 	               (v{{ comic.colection.volume }}) n{{ comic.number }}</a></td>
