@@ -7,6 +7,7 @@ from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
 from image_manager.models import ImageManager
+from comics.utils import parse_int_set
 
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
@@ -106,6 +107,10 @@ class ColectionForm(forms.ModelForm):
         help_text="Fill the colection with all comics",
         required=False)
 
+    input_range = forms.CharField(max_length=128, label="Range",
+                                  help_text="Please enter a valid range",
+                                  required=False)
+
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -124,6 +129,20 @@ class ColectionForm(forms.ModelForm):
                 msg = 'The given URL does not match valid image extensions.'
                 raise forms.ValidationError(msg)
         return url
+
+    def clean_input_range(self):
+        """Clean method for input_range form field."""
+        my_range = self.cleaned_data['input_range']
+        max_numbers = self.cleaned_data['max_numbers']
+        if my_range:
+            selection, invalid = parse_int_set(inputstr=my_range,
+                                               max=max_numbers)
+            if invalid:
+                # msg = 'Invalid input values: {}'.format(str(invalid))
+                msg = 'Invalid input values: {}'.format(
+                    ", ".join(str(item) for item in invalid))
+                raise forms.ValidationError(msg)
+        return my_range
 
     def save(self, commit=True):
         """Overrride of save method in Colection Form."""
@@ -156,6 +175,9 @@ class ColectionForm(forms.ModelForm):
                 # 1.) if full_colection ==> Adding all related comics
                 if self.cleaned_data['full_colection']:
                     col.complete_colection()
+                elif self.cleaned_data['input_range']:
+                    col.complete_colection(
+                        rangeset=self.cleaned_data['input_range'])
 
         return collection
 
