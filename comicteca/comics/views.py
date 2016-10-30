@@ -190,7 +190,7 @@ def colection(request, colection_name_slug):
         colection_editors = Colection.objects.get(
             slug=colection_name_slug).editors.all().order_by('slug')
         colection_comics = Comic.objects.filter(
-            colection__id=colection.id).order_by('slug')
+            colection__id=colection.id).order_by('number')
 
         # filter(colection__editors__set)
         context_dict['colection_name'] = colection.name
