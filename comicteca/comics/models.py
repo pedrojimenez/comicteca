@@ -221,11 +221,12 @@ class Colection(models.Model):
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Colection class."""
-        self.slug = slugify(self.name) + '-' + \
-            slugify(self.subname) + '-' + \
-            slugify(self.distributor) + \
-            '-v' + str(self.volume)
-
+        tmp_slug = slugify(self.name)
+        if self.subname:
+            tmp_slug += '-' + slugify(self.subname)
+        tmp_slug += '-' + slugify(self.distributor)
+        tmp_slug += '-v' + slugify(self.volume)
+        self.slug = tmp_slug
         self.updated = timezone.now()
 
         self.numbers = len(Comic.objects.filter(
