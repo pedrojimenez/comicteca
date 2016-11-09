@@ -63,7 +63,11 @@
            <p><u>Volume</u>: <strong>{{ colection.volume }}</strong></p>
            <p><u>Pages</u>: <strong>{{ comic.pages }}</strong></p>
            <p><u>Format</u>: <strong>{{ comic.format }}</strong></p>
-           <p><u>Price</u>: <strong>{{ comic.price }}</strong></p>
+           <p><u>Price</u>: <strong>{{ comic.retail_price }} {{ comic.retail_unit }}</strong>
+           {% if comic.purchase_price > 0 %}
+           (paid {{ comic.purchase_price}} {{ comic.purchase_unit}})
+           {% endif %}
+           </p>
 
            <p>
              {% if comic.pub_date  %}
