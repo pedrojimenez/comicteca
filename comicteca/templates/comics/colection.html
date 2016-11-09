@@ -33,6 +33,11 @@
     {% else %}
       <p><center><u>Pub Date:</u> <strong>N/A</strong></center></p>
     {% endif %}
+
+    <p><center><u>Total Pages:</u> <strong>{{ colection.get_pages }}</strong></center></p>
+    <p><center><u>Real Price:</u> <strong>{{ colection.get_currency }}</strong></center></p>
+    <p><center><u>Price Paid:</u> <strong>{{ colection.get_paid }}</strong></center></p>
+
   {% endif %}
 {% endblock %}
 
