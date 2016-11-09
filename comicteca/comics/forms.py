@@ -111,6 +111,24 @@ class ColectionForm(forms.ModelForm):
                                   help_text="Please enter a valid range",
                                   required=False)
 
+    pages = forms.IntegerField(label="Pages", min_value=1, required=False,
+                               help_text='Number of pages of each comic')
+
+    purchase_price = forms.FloatField(label="Purchase Price",
+                                      required=False,
+                                      help_text='Money paid for these comics')
+
+    purchase_unit = forms.ChoiceField(label="currency",
+                                      choices=Comic.CURRENCY_TYPES)
+
+    retail_price = forms.FloatField(label="Retail Price",
+                                    required=False,
+                                    help_text='Real price of each comic')
+
+    retail_unit = forms.ChoiceField(label="currency",
+                                    required=True,
+                                    choices=Comic.CURRENCY_TYPES)
+
     slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
@@ -177,7 +195,12 @@ class ColectionForm(forms.ModelForm):
                     col.complete_colection()
                 elif self.cleaned_data['input_range']:
                     col.complete_colection(
-                        rangeset=self.cleaned_data['input_range'])
+                        rangeset=self.cleaned_data['input_range'],
+                        pages=self.cleaned_data['pages'],
+                        retail_price=self.cleaned_data['retail_price'],
+                        retail_unit=self.cleaned_data['retail_unit'],
+                        purchase_price=self.cleaned_data['purchase_price'],
+                        purchase_unit=self.cleaned_data['purchase_unit'])
 
         return collection
 
@@ -258,6 +281,21 @@ class ComicForm(forms.ModelForm):
     pages = forms.IntegerField(label="Pages", min_value=1,
                                help_text='Number of pages')
 
+    purchase_price = forms.FloatField(label="Purchase Price",
+                                      required=False,
+                                      help_text='Money paid for this comic')
+
+    purchase_unit = forms.ChoiceField(label="currency",
+                                      choices=Comic.CURRENCY_TYPES)
+
+    retail_price = forms.FloatField(label="Retail Price",
+                                    required=False,
+                                    help_text='Real price of comic (cover)')
+
+    retail_unit = forms.ChoiceField(label="currency",
+                                    required=True,
+                                    choices=Comic.CURRENCY_TYPES)
+
     extrainfo = forms.URLField(label="External Info (URL)",
                                required=False,
                                help_text="Comic External Info")
@@ -282,7 +320,8 @@ class ComicForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
         model = Comic
         fields = ('title', 'number', 'pages', 'extrainfo', 'comments',
-                  'pub_date')
+                  'pub_date', 'colection', 'purchase_price', 'purchase_unit',
+                  'retail_price', 'retail_unit')
 
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
@@ -307,6 +346,7 @@ class ComicForm(forms.ModelForm):
         """Overrride of save method in Publisher Form."""
         comic = super(ComicForm, self).save(commit=False)
 
+        # Image section
         image_url = self.cleaned_data['imageurl']
         # download image from the given URL
         if image_url:
