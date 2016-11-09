@@ -6,7 +6,7 @@ from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
 from comics.storage import OverwriteStorage
 from comics.utils import parse_int_set
-from price_manager.models import PriceField
+# from price_manager.models import PriceField
 
 
 # ------------------------------------------------------------------ #
@@ -274,7 +274,33 @@ class Colection(models.Model):
                 role_list.append('editor')
         return ','.join(role_list)
 
-    def complete_colection(self, pages=24, rangeset=None):
+    def get_currency(self, unit='euros'):
+        """Return the total of associated comics prices."""
+        col_comics = Comic.objects.filter(colection__id=self.id)
+        total_currency = 0
+        for comic in col_comics:
+            total_currency += comic.price_retail(unit)
+        return str(total_currency) + ' ' + str(unit)
+
+    def get_paid(self, unit='euros'):
+        """Return the total of associated comics prices."""
+        col_comics = Comic.objects.filter(colection__id=self.id)
+        total_currency = 0
+        for comic in col_comics:
+            total_currency += comic.price_purchase(unit)
+        return str(total_currency) + ' ' + str(unit)
+
+    def get_pages(self, unit='euros'):
+        """Return the total of associated comics prices."""
+        col_comics = Comic.objects.filter(colection__id=self.id)
+        total_pages = 0
+        for comic in col_comics:
+            total_pages += comic.pages
+        return total_pages
+
+    def complete_colection(self, pages=24, rangeset=None,
+                           retail_price=0, retail_unit='euros',
+                           purchase_price='0', purchase_unit='euros'):
         """Complete all missing comics for the colection."""
         localrange = set()
         invalidrange = set()
@@ -300,6 +326,10 @@ class Colection(models.Model):
                 comic.number = number
                 comic.pages = pages
                 comic.colection = self
+                comic.retail_price = retail_price
+                comic.retail_unit = retail_unit
+                comic.purchase_price = purchase_price
+                comic.purchase_unit = purchase_unit
                 comic.save()
             else:
                 print "Comic already exists, omitting . . ."
@@ -321,6 +351,18 @@ class Colection(models.Model):
 class Comic(models.Model):
     """Comic model."""
 
+    # TODO: extract it to settings
+    CURRENCY_TYPES = (
+        ('euros', 'euros'),
+        ('pesetas', 'pesetas'),
+        ('dollars', 'dollars'),
+        ('pounds', 'pounds'),
+    )
+    # TODO: extract it to settings
+    EURO_PTAS_EXCHANGE_RATE = 166.386
+    EURO_DOLLARS_EXCHANGE_RATE = 1
+    EURO_POUNDS_EXCHANGE_RATE = 1
+
     title = models.CharField(max_length=128, blank=True, null=True)
     number = models.IntegerField(default=1)
     pages = models.IntegerField(default=24)
@@ -336,8 +378,16 @@ class Comic(models.Model):
     updated = models.DateTimeField(default=timezone.now)
 
     # prices
-    purchase_price = PriceField(amount=0, unit='EURO')
-    retail_price = PriceField(amount=0, unit='EURO')
+    # purchase_price = PriceField(amount=0, unit='EURO')
+    # retail_price = PriceField(amount=0, unit='EURO')
+    purchase_price = models.FloatField(default=0)
+    purchase_unit = models.CharField('Type', max_length=15,
+                                     choices=CURRENCY_TYPES,
+                                     default='euros')
+    retail_price = models.FloatField(default=0)
+    retail_unit = models.CharField('Type', max_length=15,
+                                   choices=CURRENCY_TYPES,
+                                   default='euros')
 
     # cover (image)
     cover = models.ImageField(default='', upload_to='images/comics/',
@@ -376,7 +426,19 @@ class Comic(models.Model):
         """Overriding of save function in Comics class."""
         self.slug = slugify(self.colection.slug) + '-n' + str(self.number)
         self.updated = timezone.now()
+
+        print "saving prices . . ."
+        print "retail: <{}>".format(self.retail_price)
+        print "purchase: <{}>".format(self.purchase_price)
+        # Update prices
+        if self.retail_price == 0.0 and self.purchase_price > 0:
+            print "   ... entering ..."
+            self.retail_price = self.purchase_price
+            self.retail_unit = self.purchase_unit
+        print "   ... exiting ..."
+
         super(Comic, self).save(*args, **kwargs)
+
         # Update Colection "number of comics"
         self.colection.update_comics_number()
 
@@ -416,6 +478,54 @@ class Comic(models.Model):
         for role in colaborations.values('role'):
             role_list.append(role['role'])
         return ','.join(role_list)
+
+    def price_retail(self, unit='euros'):
+        """Return the comic real price in the desired unit."""
+        if self.retail_price == 0.0:
+            return 0.0
+
+        if unit == self.retail_unit:
+            return self.retail_price
+
+        return self.__convert_to(unit=unit, price='retail')
+
+    def price_purchase(self, unit='euros'):
+        """Return the comic purchase price in the desired unit."""
+        if self.purchase_price == 0.0:
+            return 0.0
+
+        if unit == self.purchase_unit:
+            return self.purchase_price
+
+        return self.__convert_to(unit=unit, price='purchase')
+
+    def __convert_to(self, price='retail', unit='euros'):
+        """Convert the amount(self) into selected unit."""
+        # TODO: convert to all possible units by downloading the EX_rates
+        if price == 'retail':
+            my_price = self.retail_price
+            my_unit = self.retail_unit
+        else:
+            my_price = self.purchase_price
+            my_unit = self.purchase_unit
+
+        print "Converting <{} {}> to {}".format(my_price, my_unit, unit)
+        if unit == 'euros':
+            if my_unit == 'pesetas':
+                return round(my_price / self.EURO_PTAS_EXCHANGE_RATE, 2)
+
+            elif my_unit == 'dollars':
+                return round(my_price / self.EURO_DOLLARS_EXCHANGE_RATE, 2)
+
+            elif my_unit == 'pounds':
+                return round(my_price / self.EURO_POUNDS_EXCHANGE_RATE, 2)
+
+        elif unit == 'pesetas':
+            if my_unit == 'euros':
+                return round(my_price * self.EURO_PTAS_EXCHANGE_RATE, 2)
+
+        else:
+            return round(float(my_price), 2)
 
 
 # ------------------------------------------------------------------ #
