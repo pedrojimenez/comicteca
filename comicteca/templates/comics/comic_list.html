@@ -22,6 +22,8 @@
       <th>Editors</th>
      	<th>Pages</th>
       <th>Language</th>
+      <th>RetailPrice</th>
+      <th>PurchasePrice</th>
      	<th>Pub Date</th>
 		</tr>
     {% for comic in object_list|dictsortreversed:"updated" %}
@@ -32,6 +34,9 @@
       <td>{{ comic.colection.editor_list }}</td>
       <td>{{ comic.pages }}</td>
 	    <td>{{ comic.colection.language }}</td>
+
+      <td>{{ comic.retail_price }} {{ comic.retail_unit }}</td>
+      <td>{{ comic.purchase_price }} {{ comic.purchase_unit }}</td>
 
 		  {% if comic.colection.pub_date %}
 		    <td>{{ comic.colection.pub_date }}</td>
