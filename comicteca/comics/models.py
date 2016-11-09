@@ -6,6 +6,7 @@ from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
 from comics.storage import OverwriteStorage
 from comics.utils import parse_int_set
+from price_manager.models import PriceField
 
 
 # ------------------------------------------------------------------ #
@@ -333,6 +334,10 @@ class Comic(models.Model):
     pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
+
+    # prices
+    purchase_price = PriceField(amount=0, unit='EURO')
+    retail_price = PriceField(amount=0, unit='EURO')
 
     # cover (image)
     cover = models.ImageField(default='', upload_to='images/comics/',
