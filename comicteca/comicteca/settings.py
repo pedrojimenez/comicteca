@@ -43,7 +43,6 @@ INSTALLED_APPS = (
     'django_countries',
     'comics',
     'image_manager',
-    'price_manager',
     'sorl.thumbnail',
 )
 
