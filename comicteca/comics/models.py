@@ -274,21 +274,27 @@ class Colection(models.Model):
                 role_list.append('editor')
         return ','.join(role_list)
 
-    def get_currency(self, unit='euros'):
+    def get_currency(self, unit='euros', output_format='string'):
         """Return the total of associated comics prices."""
         col_comics = Comic.objects.filter(colection__id=self.id)
         total_currency = 0
         for comic in col_comics:
             total_currency += comic.price_retail(unit)
-        return str(total_currency) + ' ' + str(unit)
+        if output_format == 'string':
+            return str(total_currency) + ' ' + str(unit)
+        return total_currency
 
-    def get_paid(self, unit='euros'):
+    def get_paid(self, unit='euros', output_format='string'):
         """Return the total of associated comics prices."""
         col_comics = Comic.objects.filter(colection__id=self.id)
         total_currency = 0
         for comic in col_comics:
             total_currency += comic.price_purchase(unit)
-        return str(total_currency) + ' ' + str(unit)
+        if output_format == 'string':
+            return str(total_currency) + ' ' + str(unit)
+        return total_currency
+    # TODO: merge the two above functions into a single one.
+    #       Also it must accept a parameter for accepting "pesetas"
 
     def get_pages(self, unit='euros'):
         """Return the total of associated comics prices."""
