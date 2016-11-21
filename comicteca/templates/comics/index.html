@@ -6,18 +6,29 @@
 {% block title %}Comicteca Index{% endblock %}
 
 {% block side_block %}
+  <!-- Search form -->
   <p>Search Index</p>
-  </br>
+  <hr>
+  <!-- Items -->
+  <p>Items:</p>
   <p><a href="{% url 'colection_add' %}">Add Colection</a></p>
   <p><a href="{% url 'comic_add' %}">Add Comic</a></p>
   <p><a href="{% url 'artist_add' %}">Add Artist</a></p>
   <p><a href="{% url 'publisher_add' %}">Add Publisher</a></p>
   <hr>
+  <!-- Stats -->
   <p>Stats:</p>
   <p><a href="{% url 'colection_list' %}">{% total_colections %} colections</a></p>
   <p><a href="{% url 'comic_list' %}">{% total_comics %} comics</a></p>
   <p><a href="{% url 'publisher_list' %}">{% total_publishers %} publishers</a></p>
   <p><a href="{% url 'artist_list' %}">{% total_artists %} artists</a></p>
+  <hr>
+  <!-- Prices -->
+  <p>Total Prices:</p>
+  <p><u>Retail</u>: <a href="{% url 'colection_list' %}">{% total_retail_currency %} euros</a></p>
+  <p><u>Paid</u>: <a href="{% url 'colection_list' %}">{% total_paid_currency %} euros</a></p>
+  <hr>
+
 
 {% endblock %}
 
