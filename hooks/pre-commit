@@ -1,0 +1,8 @@
+#!/bin/bash
+
+version=$(git describe --tags --long)
+version_file="comicteca/comicteca/__init__.py"
+sed -i "s/__version__ =.*/__version__ = '`echo $version`'/g" $version_file
+git add $version_file
+echo "Updated version to $version"
+exit 0
