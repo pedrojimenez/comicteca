@@ -30,7 +30,8 @@ def total_retail_currency():
     total_cash = 0
     for collection in collection_list:
         total_cash += collection.get_currency(unit='euros',
-                                              output_format='integer')
+                                              output_format='integer',
+                                              currency_type='retail')
     return total_cash
 
 
@@ -39,6 +40,7 @@ def total_paid_currency():
     collection_list = Colection.objects.all()
     total_cash = 0
     for collection in collection_list:
-        total_cash += collection.get_paid(unit='euros',
-                                          output_format='integer')
+        total_cash += collection.get_currency(unit='euros',
+                                              output_format='integer',
+                                              currency_type='paid')
     return total_cash
