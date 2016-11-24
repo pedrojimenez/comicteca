@@ -274,27 +274,20 @@ class Colection(models.Model):
                 role_list.append('editor')
         return ','.join(role_list)
 
-    def get_currency(self, unit='euros', output_format='string'):
-        """Return the total of associated comics prices."""
+    def get_currency(self, unit='euros', output_format='string',
+                     currency_type='retail'):
+        """Return the total price of Colection (retail or paid)."""
         col_comics = Comic.objects.filter(colection__id=self.id)
         total_currency = 0
         for comic in col_comics:
-            total_currency += comic.price_retail(unit)
+            total_currency += comic.get_price(unit, currency_type)
         if output_format == 'string':
             return str(total_currency) + ' ' + str(unit)
         return total_currency
 
-    def get_paid(self, unit='euros', output_format='string'):
-        """Return the total of associated comics prices."""
-        col_comics = Comic.objects.filter(colection__id=self.id)
-        total_currency = 0
-        for comic in col_comics:
-            total_currency += comic.price_purchase(unit)
-        if output_format == 'string':
-            return str(total_currency) + ' ' + str(unit)
-        return total_currency
-    # TODO: merge the two above functions into a single one.
-    #       Also it must accept a parameter for accepting "pesetas"
+    def get_paid(self):
+        """Return the total amount of money paid for all collection comics."""
+        return self.get_currency(unit='euros', currency_type='purchase')
 
     def get_pages(self, unit='euros'):
         """Return the total of associated comics prices."""
@@ -422,6 +415,7 @@ class Comic(models.Model):
         """
         if self.cover:
             return self.cover
+        # TODO: create an empty image with font-awesome icons
         return "images/noimage.png"
 
     def __unicode__(self):
@@ -433,15 +427,11 @@ class Comic(models.Model):
         self.slug = slugify(self.colection.slug) + '-n' + str(self.number)
         self.updated = timezone.now()
 
-        print "saving prices . . ."
-        print "retail: <{}>".format(self.retail_price)
-        print "purchase: <{}>".format(self.purchase_price)
-        # Update prices
+        # Update prices (check if comic has purchase price but not retail)
+        #               ( ==> force retail = purchase )
         if self.retail_price == 0.0 and self.purchase_price > 0:
-            print "   ... entering ..."
             self.retail_price = self.purchase_price
             self.retail_unit = self.purchase_unit
-        print "   ... exiting ..."
 
         super(Comic, self).save(*args, **kwargs)
 
@@ -485,6 +475,13 @@ class Comic(models.Model):
             role_list.append(role['role'])
         return ','.join(role_list)
 
+    def get_price(self, unit='euros', currency_type='retail'):
+        """Return the selected Comic price (retail or paid)."""
+        if currency_type == 'retail':
+            return self.price_retail(unit=unit)
+        return self.price_purchase(unit=unit)
+
+    # Next 2 functions are used in templates and "get_price" method
     def price_retail(self, unit='euros'):
         """Return the comic real price in the desired unit."""
         if self.retail_price == 0.0:
@@ -494,11 +491,12 @@ class Comic(models.Model):
             return self.retail_price
 
         return self.__convert_to(unit=unit, price='retail')
+        # return self.__convert_to(unit=unit, price=self.retail_price)
 
     def price_purchase(self, unit='euros'):
         """Return the comic purchase price in the desired unit."""
         if self.purchase_price == 0.0:
-            return 0.0
+                return 0.0
 
         if unit == self.purchase_unit:
             return self.purchase_price
