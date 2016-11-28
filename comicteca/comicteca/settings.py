@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+# Needed for login/logout reverse urls
+from django.core.urlresolvers import reverse_lazy
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Site name:
@@ -125,3 +128,8 @@ MEDIA_URL = '/media/'
 
 # Absolute path to the media directory
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Login / Logout configuration
+LOGIN_REDIRECT_URL = reverse_lazy('index')
+LOGIN_URL = reverse_lazy('login')
+LOGOUT_URL = reverse_lazy('logout')
