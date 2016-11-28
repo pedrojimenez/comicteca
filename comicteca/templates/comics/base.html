@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="http://getbootstrap.com/favicon.ico">
 
-    <title>Lordpiotr's - {% block title %}Comicteca{% endblock %}</title>
+    <title>{% block title %}Comicteca{% endblock %}</title>
 
     <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
@@ -25,31 +25,31 @@
 
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container-fluid">
+        <!-- header of navbar -->
         <div class="navbar-header">
           <a class="navbar-brand" href="{% url 'index' %}">Comicteca</a>
         </div>
         <div class="navbar-collapse collapse">
-		      <ul class="nav navbar-nav navbar-left">
+          <!-- left side of navbar -->
+          <ul class="nav navbar-nav navbar-left">
             <p class="navbar-text">
-              {% if user.is_authenticated %}
+              {% if request.user.is_authenticated %}
+                <li><a href="{% url 'index' %}">Home</a></li>
                 <li><a href="{% url 'colection_list' %}">Colections</a></li>
                 <li><a href="{% url 'comic_list' %}">Comics</a></li>
                 <li><a href="{% url 'artist_list' %}">Authors</a></li>
                 <li><a href="{% url 'publisher_list' %}">Publishers</a></li>
+                <li><a href="{% url 'about' %}">About</a></li>
               {% endif %}
-              <li><a href="{% url 'about' %}">About</a></li>
-		        </p>
+            </p>
           </ul>
-		      <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
+          <!-- right side of navbar -->
+          <ul class="nav navbar-nav navbar-right">
+            {% if request.user.is_authenticated %}
               <p class="navbar-text">
-			          <font color="White">Welcome {{ user }}</font> |
-			          logout
-			        </p>
-            {% else %}
-		          <p class="navbar-text">
-			          Login
-			        </p>
+                <font color="White">Welcome {{ request.user }}</font> |
+                <a href="{% url 'logout' %}">logout</a>
+              </p>
             {% endif %}
           </ul>
         </div>
@@ -58,15 +58,16 @@
 
     <div class="container-fluid">
       <div class="row">
+	<!-- left sidebar block -->
         <div class="col-sm-3 col-md-2 sidebar">
           {% block side_block %}
-	        <!--  get_category_list category  -->
-          Search Global
           {% endblock %}
         </div>
+	<!-- body block -->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <div>
-            {% block body_block %}{% endblock %}
+            {% block body_block %}
+            {% endblock %}
           </div>
         </div>
       </div>
