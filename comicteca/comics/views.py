@@ -74,6 +74,7 @@ def artist(request, artist_name_slug):
     return render(request, 'comics/artist.html', context_dict)
 
 
+@login_required
 def add_artist(request):
     """."""
     if request.method == 'POST':
@@ -95,7 +96,6 @@ def add_artist(request):
     return render(request, 'comics/add_artist.html', {'form': form})
 
 
-@login_required
 class ArtistListView(ListView):
     """Generic class view for all Artists models."""
 
@@ -114,7 +114,6 @@ class ArtistListView(ListView):
         return context
 
 
-@login_required
 class ArtistCreate(CreateView):
     """CBV for creating an Artist model."""
 
@@ -125,7 +124,6 @@ class ArtistCreate(CreateView):
     #           'biography', 'extrainfo', 'image_url']
 
 
-@login_required
 class ArtistUpdate(UpdateView):
     """CBV for updating an Artist model."""
 
@@ -136,9 +134,8 @@ class ArtistUpdate(UpdateView):
     #           'biography', 'extrainfo', 'image_url']
 
 
-@login_required
 class ArtistDelete(DeleteView):
-    """."""
+    """CBV for deleting an Artist model."""
 
     model = Artist
     success_url = reverse_lazy('artist_list')
@@ -150,9 +147,8 @@ class ArtistDelete(DeleteView):
 #                         Colection Views
 #
 # ------------------------------------------------------------------ #
-@login_required
 class ColectionCreate(CreateView):
-    """CBV for creating a new object Colection."""
+    """CBV for creating a new Collection."""
 
     model = Colection
     form_class = ColectionForm
@@ -163,9 +159,8 @@ class ColectionCreate(CreateView):
     #           'pub_date', 'distributor', 'editors']
 
 
-@login_required
 class ColectionUpdate(UpdateView):
-    """."""
+    """CBV for updating a Collection."""
 
     model = Colection
     form_class = ColectionForm
@@ -174,18 +169,16 @@ class ColectionUpdate(UpdateView):
     #          'pub_date', 'distributor', 'editors', 'colection_type']
 
 
-@login_required
 class ColectionDelete(DeleteView):
-    """."""
+    """CBV for deleting a Collection."""
 
     model = Colection
     success_url = reverse_lazy('colection_list')
     template_name = "comics/delete_colection_confirm.html"
 
 
-@login_required
 class ColectionListView(ListView):
-    """Generic class view for all Colection models."""
+    """CBV for listing all Colection objects."""
 
     model = Colection
     template_name = "comics/colection_list.html"
@@ -295,9 +288,8 @@ def add_publisher(request):
     return render(request, 'comics/add_publisher.html', {'form': form})
 
 
-@login_required
 class PublisherListView(ListView):
-    """Generic class view for all Publisher models."""
+    """CBV for listing all Publisher objects."""
 
     model = Publisher
     template_name = "comics/publisher_list.html"
@@ -313,9 +305,8 @@ class PublisherListView(ListView):
         return context
 
 
-@login_required
 class PublisherCreate(CreateView):
-    """."""
+    """CBV for creating an Artist object."""
 
     model = Publisher
     form_class = PublisherForm
@@ -324,9 +315,8 @@ class PublisherCreate(CreateView):
     # fields = ['name', 'history', 'start_date', 'end_date']
 
 
-@login_required
 class PublisherUpdate(UpdateView):
-    """."""
+    """CBV for updating an Artist object."""
 
     model = Publisher
     form_class = PublisherForm
@@ -334,9 +324,8 @@ class PublisherUpdate(UpdateView):
     # fields = ['name', 'history', 'start_date', 'end_date']
 
 
-@login_required
 class PublisherDelete(DeleteView):
-    """."""
+    """CBV for deleting an Artist model."""
 
     model = Publisher
     success_url = reverse_lazy('publisher_list')
@@ -369,7 +358,6 @@ def comic(request, comic_name_slug):
     return render(request, 'comics/comic.html', context_dict)
 
 
-@login_required
 class ComicDetailView(DetailView):
     """Generic class view for all Comics models of a Colection."""
 
@@ -389,7 +377,6 @@ class ComicDetailView(DetailView):
         return context
 
 
-@login_required
 class ComicListView(ListView):
     """Generic class view for all Comics models of a Colection."""
 
@@ -408,9 +395,8 @@ class ComicListView(ListView):
         return context
 
 
-@login_required
 class ComicCreate(CreateView):
-    """."""
+    """CBV for creating a Comic object."""
 
     model = Comic
     template_name = "comics/add_comic.html"
@@ -419,9 +405,8 @@ class ComicCreate(CreateView):
     success_url = reverse_lazy('comic_list')
 
 
-@login_required
 class ComicUpdate(UpdateView):
-    """."""
+    """CBV for updating a Comic object."""
 
     model = Comic
     template_name = "comics/update_comic_form.html"
@@ -429,9 +414,8 @@ class ComicUpdate(UpdateView):
     # fields = ['title', 'number', 'pages', 'extrainfo']
 
 
-@login_required
 class ComicDelete(DeleteView):
-    """."""
+    """CBV for deleting a Artist object."""
 
     model = Comic
     success_url = reverse_lazy('comic_list')
@@ -445,7 +429,7 @@ class ComicDelete(DeleteView):
 # ------------------------------------------------------------------ #
 @login_required
 def about(request):
-    """."""
+    """About page."""
     return render(request, 'comics/about.html')
 
 
@@ -455,10 +439,8 @@ def about(request):
 #
 # ------------------------------------------------------------------ #
 def user_login(request):
-    """Login view."""
-    print "entering user login . . ."
+    """Default login view."""
     if request.method == 'POST':
-        print "entering POST"
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
@@ -473,7 +455,7 @@ def user_login(request):
             else:
                 return HttpResponse('Invalid login')
     else:
-        print "entering GET"
         form = LoginForm()
+
     # return render(request, 'registration/login.html', {'form': form})
     return render(request, 'comics/login.html', {'form': form})
