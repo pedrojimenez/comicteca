@@ -5,6 +5,10 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse_lazy
 
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
@@ -14,8 +18,15 @@ from comics.forms import ArtistCreateForm
 from comics.forms import ColectionForm
 from comics.forms import PublisherForm
 from comics.forms import ComicForm
+from comics.forms import LoginForm
 
 
+# ------------------------------------------------------------------ #
+#
+#                        Main view --> index
+#
+# ------------------------------------------------------------------ #
+@login_required
 def index(request):
     """Index view."""
     artists_list = Artist.objects.order_by('-inserted')[:5]
@@ -34,6 +45,7 @@ def index(request):
 #                           Artist Views
 #
 # ------------------------------------------------------------------ #
+@login_required
 def artist(request, artist_name_slug):
     """."""
     context_dict = {}
@@ -83,6 +95,7 @@ def add_artist(request):
     return render(request, 'comics/add_artist.html', {'form': form})
 
 
+@login_required
 class ArtistListView(ListView):
     """Generic class view for all Artists models."""
 
@@ -101,6 +114,7 @@ class ArtistListView(ListView):
         return context
 
 
+@login_required
 class ArtistCreate(CreateView):
     """CBV for creating an Artist model."""
 
@@ -111,6 +125,7 @@ class ArtistCreate(CreateView):
     #           'biography', 'extrainfo', 'image_url']
 
 
+@login_required
 class ArtistUpdate(UpdateView):
     """CBV for updating an Artist model."""
 
@@ -121,6 +136,7 @@ class ArtistUpdate(UpdateView):
     #           'biography', 'extrainfo', 'image_url']
 
 
+@login_required
 class ArtistDelete(DeleteView):
     """."""
 
@@ -134,6 +150,7 @@ class ArtistDelete(DeleteView):
 #                         Colection Views
 #
 # ------------------------------------------------------------------ #
+@login_required
 class ColectionCreate(CreateView):
     """CBV for creating a new object Colection."""
 
@@ -146,6 +163,7 @@ class ColectionCreate(CreateView):
     #           'pub_date', 'distributor', 'editors']
 
 
+@login_required
 class ColectionUpdate(UpdateView):
     """."""
 
@@ -156,6 +174,7 @@ class ColectionUpdate(UpdateView):
     #          'pub_date', 'distributor', 'editors', 'colection_type']
 
 
+@login_required
 class ColectionDelete(DeleteView):
     """."""
 
@@ -164,6 +183,7 @@ class ColectionDelete(DeleteView):
     template_name = "comics/delete_colection_confirm.html"
 
 
+@login_required
 class ColectionListView(ListView):
     """Generic class view for all Colection models."""
 
@@ -182,6 +202,7 @@ class ColectionListView(ListView):
         return context
 
 
+@login_required
 def colection(request, colection_name_slug):
     """."""
     context_dict = {}
@@ -207,6 +228,7 @@ def colection(request, colection_name_slug):
     return render(request, 'comics/colection.html', context_dict)
 
 
+@login_required
 def add_colection(request):
     """."""
     if request.method == 'POST':
@@ -233,6 +255,7 @@ def add_colection(request):
 #                         Publisher Views
 #
 # ------------------------------------------------------------------ #
+@login_required
 def publisher(request, publisher_name_slug):
     """."""
     context_dict = {}
@@ -250,6 +273,7 @@ def publisher(request, publisher_name_slug):
     return render(request, 'comics/publisher.html', context_dict)
 
 
+@login_required
 def add_publisher(request):
     """."""
     if request.method == 'POST':
@@ -271,6 +295,7 @@ def add_publisher(request):
     return render(request, 'comics/add_publisher.html', {'form': form})
 
 
+@login_required
 class PublisherListView(ListView):
     """Generic class view for all Publisher models."""
 
@@ -288,6 +313,7 @@ class PublisherListView(ListView):
         return context
 
 
+@login_required
 class PublisherCreate(CreateView):
     """."""
 
@@ -298,6 +324,7 @@ class PublisherCreate(CreateView):
     # fields = ['name', 'history', 'start_date', 'end_date']
 
 
+@login_required
 class PublisherUpdate(UpdateView):
     """."""
 
@@ -307,6 +334,7 @@ class PublisherUpdate(UpdateView):
     # fields = ['name', 'history', 'start_date', 'end_date']
 
 
+@login_required
 class PublisherDelete(DeleteView):
     """."""
 
@@ -320,6 +348,7 @@ class PublisherDelete(DeleteView):
 #                         Comic Views
 #
 # ------------------------------------------------------------------ #
+@login_required
 def comic(request, comic_name_slug):
     """."""
     context_dict = {}
@@ -340,6 +369,7 @@ def comic(request, comic_name_slug):
     return render(request, 'comics/comic.html', context_dict)
 
 
+@login_required
 class ComicDetailView(DetailView):
     """Generic class view for all Comics models of a Colection."""
 
@@ -359,6 +389,7 @@ class ComicDetailView(DetailView):
         return context
 
 
+@login_required
 class ComicListView(ListView):
     """Generic class view for all Comics models of a Colection."""
 
@@ -377,6 +408,7 @@ class ComicListView(ListView):
         return context
 
 
+@login_required
 class ComicCreate(CreateView):
     """."""
 
@@ -387,6 +419,7 @@ class ComicCreate(CreateView):
     success_url = reverse_lazy('comic_list')
 
 
+@login_required
 class ComicUpdate(UpdateView):
     """."""
 
@@ -396,6 +429,7 @@ class ComicUpdate(UpdateView):
     # fields = ['title', 'number', 'pages', 'extrainfo']
 
 
+@login_required
 class ComicDelete(DeleteView):
     """."""
 
@@ -409,6 +443,37 @@ class ComicDelete(DeleteView):
 #                           Util Views
 #
 # ------------------------------------------------------------------ #
+@login_required
 def about(request):
     """."""
     return render(request, 'comics/about.html')
+
+
+# ------------------------------------------------------------------ #
+#
+#                          Login / Logout
+#
+# ------------------------------------------------------------------ #
+def user_login(request):
+    """Login view."""
+    print "entering user login . . ."
+    if request.method == 'POST':
+        print "entering POST"
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            user = authenticate(username=cd['username'],
+                                password=cd['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    return HttpResponse('Authenticated successfully')
+                else:
+                    return HttpResponse('Disabled account')
+            else:
+                return HttpResponse('Invalid login')
+    else:
+        print "entering GET"
+        form = LoginForm()
+    # return render(request, 'registration/login.html', {'form': form})
+    return render(request, 'comics/login.html', {'form': form})
