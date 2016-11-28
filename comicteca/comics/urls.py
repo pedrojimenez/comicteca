@@ -93,4 +93,20 @@ urlpatterns = patterns(
     # utils
     # ---------- #
     url(r'^about/$', views.about, name='about'),
+
+    # ---------- #
+    # utils
+    # ---------- #
+    url(r'^about/$', views.about, name='about'),
+
+    url(r'^login/$',
+        'django.contrib.auth.views.login',
+        name='login'),
+
+    # url(r'^logout-then-login/$',
+    url(r'^logout/$',
+        'django.contrib.auth.views.logout_then_login',
+        name='logout'),
+
+
 )
