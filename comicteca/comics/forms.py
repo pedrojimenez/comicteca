@@ -14,6 +14,11 @@ from django.utils.text import slugify
 from django_countries.fields import CountryField
 
 
+# ------------------------------------------------------------------ #
+#
+#                           Artist Forms
+#
+# ------------------------------------------------------------------ #
 class ArtistCreateForm(forms.ModelForm):
     """Artist form."""
 
@@ -71,6 +76,11 @@ class ArtistCreateForm(forms.ModelForm):
         return artist
 
 
+# ------------------------------------------------------------------ #
+#
+#                        Collection Forms
+#
+# ------------------------------------------------------------------ #
 class ColectionForm(forms.ModelForm):
     """Colection form."""
 
@@ -205,6 +215,11 @@ class ColectionForm(forms.ModelForm):
         return collection
 
 
+# ------------------------------------------------------------------ #
+#
+#                        Publisher Forms
+#
+# ------------------------------------------------------------------ #
 class PublisherForm(forms.ModelForm):
     """Publisher form."""
 
@@ -268,6 +283,11 @@ class PublisherForm(forms.ModelForm):
         return publisher
 
 
+# ------------------------------------------------------------------ #
+#
+#                        Comic Forms
+#
+# ------------------------------------------------------------------ #
 class ComicForm(forms.ModelForm):
     """Comic form."""
 
@@ -362,3 +382,15 @@ class ComicForm(forms.ModelForm):
         if commit:
             comic.save()
         return comic
+
+
+# ------------------------------------------------------------------ #
+#
+#                        Login / Logout Forms
+#
+# ------------------------------------------------------------------ #
+class LoginForm(forms.Form):
+    """Login Form."""
+
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
