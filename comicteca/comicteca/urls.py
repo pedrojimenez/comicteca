@@ -19,6 +19,7 @@ from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    # url(r'^', include('comics.urls')),
     url(r'^comicteca/', include('comics.urls')),
 ]
 

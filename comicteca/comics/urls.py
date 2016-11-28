@@ -1,7 +1,7 @@
 """Urls for Comics app."""
 
 from django.conf.urls import patterns, url
-# from django.conf.urls import include
+from django.contrib.auth.decorators import login_required
 
 from comics import views
 from comics.views import ArtistCreate, ArtistUpdate, ArtistDelete
@@ -19,20 +19,31 @@ urlpatterns = patterns(
     # ---------- #
     # artists
     # ---------- #
-    url(r'artists/add/$', ArtistCreate.as_view(), name='artist_add'),
-
     url(r'^artists/(?P<artist_name_slug>[\w\-]+)/$', views.artist,
         name='artist_detail'),
 
+    url(r'artists/add/$',
+        login_required(ArtistCreate.as_view(
+            template_name="comics/add_artist.html")),
+        name='artist_add'),
+
     url(r'^artists/(?P<slug>[\w\-]+)/edit/$',
-        ArtistUpdate.as_view(), name='artist_update'),
+        login_required(ArtistUpdate.as_view(
+            template_name="comics/update_artist_form.html")),
+        name='artist_update'),
 
     url(r'^artists/(?P<slug>[\w\-]+)/delete/$',
-        ArtistDelete.as_view(), name='artist_delete'),
+        login_required(ArtistDelete.as_view(
+            template_name="comics/delete_artist_confirm.html")),
+        name='artist_delete'),
 
-    url(r'^add_artist/$', views.add_artist, name='add_artist'),
+    url(r'artists/$',
+        login_required(ArtistListView.as_view(
+            template_name="comics/artist_list.html")),
+        name='artist_list'),
 
-    url(r'artists/$', ArtistListView.as_view(), name='artist_list'),
+    # Deprecated:
+    # url(r'^add_artist/$', views.add_artist, name='add_artist'),
 
     # ---------- #
     # colections
@@ -99,14 +110,17 @@ urlpatterns = patterns(
     # ---------- #
     url(r'^about/$', views.about, name='about'),
 
+    url(r'^iilogin/$', views.user_login, name='iilogin'),
+
     url(r'^login/$',
         'django.contrib.auth.views.login',
         name='login'),
 
-    # url(r'^logout-then-login/$',
+    url(r'^logout_simple/$',
+        'django.contrib.auth.views.logout',
+        name='logout_simple'),
+
     url(r'^logout/$',
         'django.contrib.auth.views.logout_then_login',
         name='logout'),
-
-
 )
