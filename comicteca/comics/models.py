@@ -1,12 +1,14 @@
 """Models for the comicteca project."""
 from django.db import models
+from django.conf import settings
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django_countries.fields import CountryField
 from django.template.defaultfilters import slugify
+
+from django_countries.fields import CountryField
+
 from comics.storage import OverwriteStorage
 from comics.utils import parse_int_set
-# from price_manager.models import PriceField
 
 
 # ------------------------------------------------------------------ #
@@ -121,7 +123,7 @@ class Publisher(models.Model):
     def get_colaborations(self):
         """Get a list of tuples with colections/relation of the Publisher.
 
-        ouput:  list[tuples(ColectionObject, "Publisher.Roles")]
+        output: list[tuples(ColectionObject, "Publisher.Roles")]
         output: [(<Colection: Vengadores - Vol 1>, "editor")]
         output: [(<Colection: Naruto - Vol 3>, "editor,distributor")]
         """
@@ -567,6 +569,25 @@ class Colaborator(models.Model):
         return str(self.artist) + " - "\
             + str(self.comic) + " - "\
             + str(self.role)
+
+
+# ------------------------------------------------------------------ #
+#
+#                        Profile Model
+#
+# ------------------------------------------------------------------ #
+class Profile(models.Model):
+    """Colaborator model."""
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    date_of_birth = models.DateField(blank=True, null=True)
+    photo = models.ImageField(default='', upload_to='images/users/',
+                              storage=OverwriteStorage(),
+                              blank=True, null=True)
+
+    def __unicode__(self):
+        """str/unicode function of Profile class."""
+        return 'Profile for user {}'.format(self.user.username)
 
 # class Distributor(models.Model):
 #     """Distributor intermediate model."""
