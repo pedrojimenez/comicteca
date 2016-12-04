@@ -1,5 +1,7 @@
 """Models for the comicteca project."""
 from django.db import models
+from django.contrib.auth.models import User
+
 from django.conf import settings
 from django.utils import timezone
 from django.core.urlresolvers import reverse
@@ -397,6 +399,8 @@ class Comic(models.Model):
     # Relations
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     colaborators = models.ManyToManyField(Artist, through='Colaborator')
+
+    users = models.ManyToManyField(User, related_name='Users')
 
     class Meta:
         """Meta class for Comic model."""
