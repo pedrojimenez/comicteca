@@ -127,6 +127,9 @@ urlpatterns = patterns(
     # ---------- #
     url(r'^about/$', views.about, name='about'),
 
+    # ----------------- #
+    # login/logout urls
+    # ----------------- #
     url(r'^login/$',
         'django.contrib.auth.views.login',
         name='login'),
@@ -138,4 +141,21 @@ urlpatterns = patterns(
     url(r'^logout/$',
         'django.contrib.auth.views.logout_then_login',
         name='logout'),
+
+    # ------------ #
+    # profile urls
+    # ------------ #
+    url(r'^profiles/edit/$', views.profile_edit, name='profile_edit'),
+
+    # -------------------- #
+    # change password urls
+    # -------------------- #
+    url(r'^profiles/password-change/$',
+        'django.contrib.auth.views.password_change',
+        name='password_change'),
+
+    url(r'^profiles/password-change/done/$',
+        'django.contrib.auth.views.password_change_done',
+        name='password_change_done'),
+
 )
