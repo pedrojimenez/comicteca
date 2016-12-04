@@ -5,20 +5,25 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse_lazy
 
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import HttpResponse
 
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
+from comics.models import Profile
 # from comics.forms import ArtistCreateForm, ArtistUpdateForm
 from comics.forms import ArtistCreateForm
 from comics.forms import ColectionForm
 from comics.forms import PublisherForm
 from comics.forms import ComicForm
 from comics.forms import LoginForm
+from comics.forms import UserEditForm
+from comics.forms import ProfileEditForm
 
 
 # ------------------------------------------------------------------ #
@@ -449,6 +454,9 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
+                    real_user = User.objects.get(username=user)
+                    if not real_user.profile:
+                        Profile.objects.create(user=real_user)
                     return HttpResponse('Authenticated successfully')
                 else:
                     return HttpResponse('Disabled account')
@@ -459,3 +467,36 @@ def user_login(request):
 
     # return render(request, 'registration/login.html', {'form': form})
     return render(request, 'comics/login.html', {'form': form})
+
+
+# ------------------------------------------------------------------ #
+#
+#                              Profile
+#
+# ------------------------------------------------------------------ #
+@login_required
+def profile_edit(request):
+    """Profile edit view."""
+    if request.method == 'POST':
+        user_form = UserEditForm(
+            instance=request.user,
+            data=request.POST)
+
+        profile_form = ProfileEditForm(
+            instance=request.user.profile,
+            data=request.POST,
+            files=request.FILES)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request,
+                             'Profile updated successfully')
+        else:
+            messages.error(request, 'Error updating your profile')
+
+    else:
+        user_form = UserEditForm(instance=request.user)
+        profile_form = ProfileEditForm(instance=request.user.profile)
+    return render(
+        request, 'profiles/edit.html',
+        {'user_form': user_form, 'profile_form': profile_form})
