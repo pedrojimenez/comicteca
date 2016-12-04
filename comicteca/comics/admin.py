@@ -5,6 +5,8 @@ from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
 from comics.models import Colaborator
+from comics.models import Profile
+
 from comics.actions import duplicate_colection
 from comics.actions import duplicate_publisher
 from comics.actions import duplicate_artist
@@ -124,8 +126,12 @@ class ComicAdmin(admin.ModelAdmin):
     get_colection_volume.short_description = 'Volume'
     get_colection_distributor.short_description = 'Distributor'
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'date_of_birth', 'photo']
+
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Colection, ColectionAdmin)
 admin.site.register(Publisher, PublisherAdmin)
 admin.site.register(Comic, ComicAdmin)
 admin.site.register(Colaborator, ColaboratorAdmin)
+admin.site.register(Profile, ProfileAdmin)
