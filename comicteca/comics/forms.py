@@ -1,11 +1,12 @@
 """Forms for Comic app."""
 from django import forms
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
+from comics.models import Profile
 from image_manager.models import ImageManager
 from comics.utils import parse_int_set
 
@@ -394,3 +395,28 @@ class LoginForm(forms.Form):
 
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+
+
+# ------------------------------------------------------------------ #
+#
+#                        Profile Forms
+#
+# ------------------------------------------------------------------ #
+class UserEditForm(forms.ModelForm):
+    """."""
+
+    class Meta:
+        """."""
+
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+
+class ProfileEditForm(forms.ModelForm):
+    """."""
+
+    class Meta:
+        """."""
+
+        model = Profile
+        fields = ('date_of_birth', 'photo')
