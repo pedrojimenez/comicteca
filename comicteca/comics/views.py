@@ -394,9 +394,28 @@ class ComicListView(ListView):
         context = super(ComicListView, self).get_context_data(**kwargs)
 
         # Add in a QuerySet of all the Comics ordered by inserted date
-        # context['comic_list'] = Comic.objects.order_by('slug')
-        context['total_comics'] = len(Comic.objects.all())
+        # context['object_list'] = Comic.objects.order_by('slug')
+        context['total_comics'] = Comic.objects.count()
 
+        return context
+
+
+class ComicListByUserView(ListView):
+    """Generic class view for all Comics from a given User ."""
+
+    model = Comic
+    template_name = "comics/comic_list.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+        # Call the base implementation first to get a context
+        context = super(ComicListByUserView, self).get_context_data(**kwargs)
+
+        # Add in a QuerySet of all user Comics ordered by inserted date
+        context['object_list'] = Comic.objects.filter(
+            users__username=self.kwargs['user_slug'])
+        context['total_comics'] = Comic.objects.filter(
+            users__username=self.kwargs['user_slug']).count()
         return context
 
 
