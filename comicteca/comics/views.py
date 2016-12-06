@@ -155,9 +155,16 @@ class ArtistDelete(DeleteView):
 class ColectionCreate(CreateView):
     """CBV for creating a new Collection."""
 
+    def get_form_kwargs(self, **kwargs):
+        """Override method for inyecting request.user to form."""
+        kwargs = super(ColectionCreate, self).get_form_kwargs()
+        kwargs.update({'current_user': self.request.user})
+        return kwargs
+
     model = Colection
     form_class = ColectionForm
     template_name = "comics/add_colection.html"
+    # form.fields['current_user'].queryset = request.user
     # success_url = reverse_lazy('colection_list')
     # If form_class is defined fields can not
     # fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
@@ -166,6 +173,12 @@ class ColectionCreate(CreateView):
 
 class ColectionUpdate(UpdateView):
     """CBV for updating a Collection."""
+
+    def get_form_kwargs(self, **kwargs):
+        """Override method for inyecting request.user to form."""
+        kwargs = super(ColectionUpdate, self).get_form_kwargs()
+        kwargs.update({'current_user': self.request.user})
+        return kwargs
 
     model = Colection
     form_class = ColectionForm
