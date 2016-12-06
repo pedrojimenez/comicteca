@@ -85,6 +85,13 @@ class ArtistCreateForm(forms.ModelForm):
 class ColectionForm(forms.ModelForm):
     """Colection form."""
 
+    def __init__(self, *args, **kwargs):
+        """Contructor for ColectionForm class."""
+        self.request_user = kwargs.pop('current_user')
+        # Now kwargs doesn't contain 'current_user' ==>
+        # so we can safely pass it to the base class method
+        super(ColectionForm, self).__init__(*args, **kwargs)
+
     image_manager = ImageManager()
     name = forms.CharField(max_length=128, label="Name",
                            help_text="Please enter the Colection name")
@@ -201,11 +208,23 @@ class ColectionForm(forms.ModelForm):
                 volume=self.cleaned_data['volume'])
             if col:
                 # custom actions once the Colection is saved
-                # 1.) if full_colection ==> Adding all related comics
+                # 1.) Add all related editors
+                if self.cleaned_data['editors']:
+                    for editor in self.cleaned_data['editors']:
+                        col.editors.add(editor)
+
+                # 2.) if full_colection / range  ==> Add all related comics
                 if self.cleaned_data['full_colection']:
-                    col.complete_colection()
+                    col.complete_colection(
+                        user=self.request_user,
+                        pages=self.cleaned_data['pages'],
+                        retail_price=self.cleaned_data['retail_price'],
+                        retail_unit=self.cleaned_data['retail_unit'],
+                        purchase_price=self.cleaned_data['purchase_price'],
+                        purchase_unit=self.cleaned_data['purchase_unit'])
                 elif self.cleaned_data['input_range']:
                     col.complete_colection(
+                        user=self.request_user,
                         rangeset=self.cleaned_data['input_range'],
                         pages=self.cleaned_data['pages'],
                         retail_price=self.cleaned_data['retail_price'],
@@ -213,6 +232,7 @@ class ColectionForm(forms.ModelForm):
                         purchase_price=self.cleaned_data['purchase_price'],
                         purchase_unit=self.cleaned_data['purchase_unit'])
 
+                # TODO: refactor previous code to make a single calling
         return collection
 
 
