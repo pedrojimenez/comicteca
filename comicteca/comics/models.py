@@ -301,10 +301,11 @@ class Colection(models.Model):
             total_pages += comic.pages
         return total_pages
 
-    def complete_colection(self, pages=24, rangeset=None,
+    def complete_colection(self, pages=24, rangeset=None, user=None,
                            retail_price=0, retail_unit='euros',
                            purchase_price='0', purchase_unit='euros'):
         """Complete all missing comics for the colection."""
+        current_user = User.objects.get(username=user)
         localrange = set()
         invalidrange = set()
         if not rangeset:
@@ -334,6 +335,7 @@ class Colection(models.Model):
                 comic.purchase_price = purchase_price
                 comic.purchase_unit = purchase_unit
                 comic.save()
+                comic.users.add(current_user)
             else:
                 print "Comic already exists, omitting . . ."
         self.update_comics_number()
