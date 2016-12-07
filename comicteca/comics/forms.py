@@ -82,7 +82,7 @@ class ArtistCreateForm(forms.ModelForm):
 #                        Collection Forms
 #
 # ------------------------------------------------------------------ #
-class ColectionForm(forms.ModelForm):
+class ColectionCreateForm(forms.ModelForm):
     """Colection form."""
 
     def __init__(self, *args, **kwargs):
@@ -90,7 +90,7 @@ class ColectionForm(forms.ModelForm):
         self.request_user = kwargs.pop('current_user')
         # Now kwargs doesn't contain 'current_user' ==>
         # so we can safely pass it to the base class method
-        super(ColectionForm, self).__init__(*args, **kwargs)
+        super(ColectionCreateForm, self).__init__(*args, **kwargs)
 
     image_manager = ImageManager()
     name = forms.CharField(max_length=128, label="Name",
@@ -182,7 +182,7 @@ class ColectionForm(forms.ModelForm):
 
     def save(self, commit=True):
         """Overrride of save method in Colection Form."""
-        collection = super(ColectionForm, self).save(commit=False)
+        collection = super(ColectionCreateForm, self).save(commit=False)
 
         # do custom stuff
         collection.colection_type = self.cleaned_data['colection_type']
@@ -233,6 +233,101 @@ class ColectionForm(forms.ModelForm):
                         purchase_unit=self.cleaned_data['purchase_unit'])
 
                 # TODO: refactor previous code to make a single calling
+        return collection
+
+
+class ColectionUpdateForm(forms.ModelForm):
+    """Colection form."""
+
+    def __init__(self, *args, **kwargs):
+        """Contructor for ColectionForm class."""
+        self.request_user = kwargs.pop('current_user')
+        # Now kwargs doesn't contain 'current_user' ==>
+        # so we can safely pass it to the base class method
+        super(ColectionUpdateForm, self).__init__(*args, **kwargs)
+
+    image_manager = ImageManager()
+    name = forms.CharField(max_length=128, label="Name",
+                           help_text="Please enter the Colection name")
+    subname = forms.CharField(max_length=128, label="Name", required=False,
+                              help_text="Please enter the Colection subname")
+    volume = forms.IntegerField(label="Volume", min_value=1,
+                                help_text='Volume')
+    colection_type = forms.ChoiceField(label="Type", required="True",
+                                       choices=Colection.TYPE_OF_COLECTION)
+
+    editors = forms.ModelMultipleChoiceField(queryset=Publisher.objects.all(),
+                                             help_text="Editors",
+                                             label="Edition Publishers")
+    distributor = forms.ModelChoiceField(queryset=Publisher.objects.all(),
+                                         help_text="Distributor",
+                                         label="Distribution Publishers",
+                                         required=True)
+    max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
+                                     help_text='Total numbers')
+    language = CountryField(blank_label='(select country)',
+                            help_text="Colection Language")
+    pub_date = forms.DateField(label="Publication Date",
+                               help_text="Colection publication date",
+                               required=False)
+    imageurl = forms.URLField(label="Colection Image URL", required=False,
+                              help_text="Formats: {}".format(
+                                  image_manager.valid_extensions))
+
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        """Meta class for Colection Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Colection
+        fields = ('name', 'subname', 'volume', 'editors', 'distributor',
+                  'max_numbers', 'language', 'pub_date')
+
+    def clean_imageurl(self):
+        """Clean method for imageurl form field."""
+        url = self.cleaned_data['imageurl']
+        if url:
+            if not self.image_manager.is_valid_image_extension(url):
+                msg = 'The given URL does not match valid image extensions.'
+                raise forms.ValidationError(msg)
+        return url
+
+    def save(self, commit=True):
+        """Overrride of save method in Colection Form."""
+        collection = super(ColectionUpdateForm, self).save(commit=False)
+
+        # do custom stuff
+        collection.colection_type = self.cleaned_data['colection_type']
+        image_url = self.cleaned_data['imageurl']
+
+        # download image from the given URL
+        if image_url:
+            response = self.image_manager.check_http_url(image_url)
+            if response:
+                image_type = image_url.rsplit('.', 1)[1].lower()
+                image_name = slugify(collection.name) + '_' + \
+                    slugify(collection.subname) + '_v' + \
+                    str(collection.volume) + '_' + \
+                    slugify(collection.distributor) + '.' + image_type
+                # Example: daredevil_fall-from-paradise_v1_forum.jpg
+                collection.image.save(image_name, ContentFile(response.read()),
+                                      save=False)
+
+        if commit:
+            collection.save()
+            col = Colection.objects.get(
+                name=self.cleaned_data['name'],
+                volume=self.cleaned_data['volume'])
+            if col:
+                # custom actions once the Colection is saved
+                # 1.) Add all related editors
+                if self.cleaned_data['editors']:
+                    col.update_editors(self.cleaned_data['editors'])
+                    # for editor in self.cleaned_data['editors']:
+                    #     col.editors.add(editor)
+                    #     col.update_editors(editors)
+
         return collection
 
 
