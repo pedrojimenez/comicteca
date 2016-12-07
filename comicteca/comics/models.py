@@ -301,6 +301,19 @@ class Colection(models.Model):
             total_pages += comic.pages
         return total_pages
 
+    def update_editors(self, editor_list=[]):
+        """Return the total of associated comics prices."""
+        if self.editors == editor_list:
+            return
+
+        for editor in self.editors.all():
+            if editor not in editor_list:
+                self.editors.remove(editor)
+
+        for editor in editor_list:
+            if editor not in self.editors.all():
+                self.editors.add(editor)
+
     def complete_colection(self, pages=24, rangeset=None, user=None,
                            retail_price=0, retail_unit='euros',
                            purchase_price='0', purchase_unit='euros'):
