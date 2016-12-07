@@ -18,7 +18,7 @@ from comics.models import Comic
 from comics.models import Profile
 # from comics.forms import ArtistCreateForm, ArtistUpdateForm
 from comics.forms import ArtistCreateForm
-from comics.forms import ColectionForm
+from comics.forms import ColectionCreateForm, ColectionUpdateForm
 from comics.forms import PublisherForm
 from comics.forms import ComicForm
 from comics.forms import LoginForm
@@ -162,7 +162,7 @@ class ColectionCreate(CreateView):
         return kwargs
 
     model = Colection
-    form_class = ColectionForm
+    form_class = ColectionCreateForm
     template_name = "comics/add_colection.html"
     # form.fields['current_user'].queryset = request.user
     # success_url = reverse_lazy('colection_list')
@@ -181,7 +181,7 @@ class ColectionUpdate(UpdateView):
         return kwargs
 
     model = Colection
-    form_class = ColectionForm
+    form_class = ColectionUpdateForm
     template_name = "comics/update_colection_form.html"
     # fields = ['name', 'subname', 'volume', 'max_numbers', 'language',
     #          'pub_date', 'distributor', 'editors', 'colection_type']
@@ -243,7 +243,7 @@ def colection(request, colection_name_slug):
 def add_colection(request):
     """."""
     if request.method == 'POST':
-        form = ColectionForm(request.POST)
+        form = ColectionCreateForm(request.POST)
 
         if form.is_valid():
             # Save the new category to the database.
@@ -257,7 +257,7 @@ def add_colection(request):
             print form.errors
     else:
         # If the request was not a POST, display the form to enter details.
-        form = ColectionForm()
+        form = ColectionCreateForm()
     return render(request, 'comics/add_colection.html', {'form': form})
 
 
