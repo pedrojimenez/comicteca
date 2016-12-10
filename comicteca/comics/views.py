@@ -19,6 +19,7 @@ from comics.models import Profile
 # from comics.forms import ArtistCreateForm, ArtistUpdateForm
 from comics.forms import ArtistCreateForm
 from comics.forms import ColectionCreateForm, ColectionUpdateForm
+from comics.forms import CollectionAddComicsForm
 from comics.forms import PublisherForm
 from comics.forms import ComicForm
 from comics.forms import LoginForm
@@ -211,6 +212,21 @@ class ColectionListView(ListView):
 
         # TODO: count of money for each colection ==> Annotate this count
         return context
+
+
+class CollectionAddComics(UpdateView):
+    """CBV for adding Comics to a collection object."""
+
+    def get_form_kwargs(self, **kwargs):
+        """Override method for inyecting additional parameters to form."""
+        kwargs = super(CollectionAddComics, self).get_form_kwargs()
+        kwargs.update({'current_user': self.request.user})
+        kwargs.update({'current_collection': kwargs['instance']})
+        return kwargs
+
+    model = Colection
+    template_name = "comics/collection_add_comics.html"
+    form_class = CollectionAddComicsForm
 
 
 @login_required
