@@ -331,7 +331,8 @@ class Colection(models.Model):
         # for n in range(1, self.max_numbers + 1):
         for n in range(0, len(localrange)):
             number = localrange.pop()
-            print "Filling comic n{} in colection {}".format(number, self.name)
+            print "[{}] - Adding comic n{} to collection {}".format(
+                user, number, self.name)
 
             try:
                 checkcomic = Comic.objects.get(colection=self, number=number)
@@ -350,7 +351,17 @@ class Colection(models.Model):
                 comic.save()
                 comic.users.add(current_user)
             else:
-                print "Comic already exists, omitting . . ."
+                # TODO: Use logger instead of prints
+                print "   --> Comic already exists, omitting ..."
+                # Update the ownership (if not exist)
+                if current_user in checkcomic.users.all():
+                    print "   --> Comic {} already owned by <{}>".format(
+                        checkcomic, current_user)
+                else:
+                    print "   --> Dup. Comic <{}> now also owned by <{}>".\
+                        format(checkcomic, current_user)
+                    comic.users.add(current_user)
+
         self.update_comics_number()
 
     class Meta:
