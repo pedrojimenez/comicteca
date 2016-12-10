@@ -1,0 +1,48 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Comic List{% endblock %}
+
+{% block side_block %}
+  <p>Search Comic List</p>
+  <p><center>
+    <a href="{{ colection.get_absolute_url }}">{{ colection.name }} v{{ colection.volume }}</a>
+  </center></p>
+{% endblock %}
+
+{% block body_block %}
+<h1>Add Comics to colection "{{ colection.name }}" </h1>
+  <!-- form action="." method="post"-->
+  <form role="form" id="colection_add_comics_form" method="post" action="."->
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+      {% endfor %}
+      {% for field in form.visible_fields %}
+          {{ field.errors }}
+          {% if form.help_text %}
+              {{ field.help_text }}
+          {% else %}
+              {{ field.name }}
+          {% endif %}
+          <p>{{ field }}</p>
+      {% endfor %}
+      <input type="submit" name="submit" value="Add Comics" />
+  </form>
+
+  {% if form.errors %}
+    {% for field in form %}
+      {% for error in field.errors %}
+        <p> {{ errors }} </p>
+      {% endfor %}
+    {% endfor %}
+
+    {% for error in form.non_field_errors %}
+      <p></p>
+      <p> {{ error }} </p>
+      <p></p>
+    {% endfor %}
+  {% endif %}
+
+{% endblock %}
