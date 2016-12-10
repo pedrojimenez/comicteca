@@ -12,7 +12,7 @@
 
 <h1>Add a new Colection</h1>
   <!-- form id="colection_form" method="post" action="/comicteca/add_colection/" -->
-  <form role="form" id="colection_form" method="post" action="."->
+  <form role="form" id="colection_form" method="post" action=".">
     {% csrf_token %}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
