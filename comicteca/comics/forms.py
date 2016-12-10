@@ -237,7 +237,7 @@ class ColectionCreateForm(forms.ModelForm):
 
 
 class ColectionUpdateForm(forms.ModelForm):
-    """Colection form."""
+    """Colection Update form."""
 
     def __init__(self, *args, **kwargs):
         """Contructor for ColectionForm class."""
@@ -328,6 +328,100 @@ class ColectionUpdateForm(forms.ModelForm):
                     #     col.editors.add(editor)
                     #     col.update_editors(editors)
 
+        return collection
+
+
+class CollectionAddComicsForm(forms.ModelForm):
+    """Collection Add Comics form."""
+
+    def __init__(self, *args, **kwargs):
+        """Contructor for ColectionForm class."""
+        self.request_user = kwargs.pop('current_user')
+        self.mycollection = kwargs.pop('current_collection')
+        # Now kwargs doesn't contain current_user / current_collection ==>
+        # so we can safely pass it to the base class method
+        super(CollectionAddComicsForm, self).__init__(*args, **kwargs)
+
+    full_colection = forms.BooleanField(
+        label="Add comics",
+        help_text="Fill the collection with all comics",
+        required=False)
+
+    input_range = forms.CharField(max_length=128, label="Range",
+                                  help_text="Please enter a valid range",
+                                  required=False)
+
+    pages = forms.IntegerField(label="Pages", min_value=1, required=False,
+                               help_text='Number of pages of each comic')
+
+    purchase_price = forms.FloatField(label="Purchase Price",
+                                      required=False,
+                                      help_text='Money paid for these comics')
+
+    purchase_unit = forms.ChoiceField(label="currency",
+                                      choices=Comic.CURRENCY_TYPES)
+
+    retail_price = forms.FloatField(label="Retail Price",
+                                    required=False,
+                                    help_text='Real price of each comic')
+
+    retail_unit = forms.ChoiceField(label="currency",
+                                    required=True,
+                                    choices=Comic.CURRENCY_TYPES)
+
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+    name = forms.CharField(widget=forms.HiddenInput(), required=False)
+    max_numbers = forms.IntegerField(widget=forms.HiddenInput(),
+                                     required=False)
+
+    class Meta:
+        """Meta class for Collection Add Comics Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Colection
+        fields = ('name', 'max_numbers')
+
+    def clean_input_range(self):
+        """Clean method for input_range form field."""
+        my_range = self.cleaned_data['input_range']
+        max_numbers = self.cleaned_data['max_numbers']
+        if my_range:
+            selection, invalid = parse_int_set(inputstr=my_range,
+                                               max=max_numbers)
+            if invalid:
+                # msg = 'Invalid input values: {}'.format(str(invalid))
+                msg = 'Invalid input values: {}'.format(
+                    ", ".join(str(item) for item in invalid))
+                raise forms.ValidationError(msg)
+        return my_range
+
+    def save(self, commit=True):
+        """Overrride of save method in Collection Add Comic Form."""
+        collection = super(CollectionAddComicsForm, self).save(commit=False)
+
+        if commit:
+            col = Colection.objects.get(id=self.mycollection.id)
+            if col:
+                # custom actions once the Collection is saved
+                # 2.) if full_colection / range  ==> Add all related comics
+                if self.cleaned_data['full_colection']:
+                    col.complete_colection(
+                        user=self.request_user,
+                        pages=self.cleaned_data['pages'],
+                        retail_price=self.cleaned_data['retail_price'],
+                        retail_unit=self.cleaned_data['retail_unit'],
+                        purchase_price=self.cleaned_data['purchase_price'],
+                        purchase_unit=self.cleaned_data['purchase_unit'])
+                elif self.cleaned_data['input_range']:
+                    col.complete_colection(
+                        user=self.request_user,
+                        rangeset=self.cleaned_data['input_range'],
+                        pages=self.cleaned_data['pages'],
+                        retail_price=self.cleaned_data['retail_price'],
+                        retail_unit=self.cleaned_data['retail_unit'],
+                        purchase_price=self.cleaned_data['purchase_price'],
+                        purchase_unit=self.cleaned_data['purchase_unit'])
+            # TODO: refactor previous code to make a single calling
         return collection
 
 
