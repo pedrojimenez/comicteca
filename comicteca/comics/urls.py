@@ -123,6 +123,14 @@ urlpatterns = patterns(
         login_required(ComicDelete.as_view()),
         name='comic_delete'),
 
+    url(r'^comics/(?P<comic_slug>[\w\-]+)/remove-user/(?P<usr_name>[\w\-]+)/$',
+        views.comic_remove_user,
+        name='comic_remove_user'),
+
+    url(r'^comics/(?P<comic_slug>[\w\-]+)/add-user/(?P<usr_name>[\w\-]+)/$',
+        views.comic_add_user,
+        name='comic_add_user'),
+
     # ---------- #
     # utils
     # ---------- #
