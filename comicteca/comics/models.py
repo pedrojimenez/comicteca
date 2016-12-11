@@ -293,6 +293,10 @@ class Colection(models.Model):
         """Return the total amount of money paid for all collection comics."""
         return self.get_currency(unit='euros', currency_type='purchase')
 
+    def get_comics(self):
+        """Return the comics of the Colection."""
+        return Comic.objects.filter(colection__id=self.id)
+
     def get_pages(self, unit='euros'):
         """Return the total of associated comics prices."""
         col_comics = Comic.objects.filter(colection__id=self.id)
