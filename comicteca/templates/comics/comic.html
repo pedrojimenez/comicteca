@@ -6,15 +6,45 @@
 {% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-{% if comic %}
-<p><center>
-  <a href="{% url 'comic_update' comic.slug %}" class="btn btn-warning" role="button">Edit</a>
-  <a href="{% url 'comic_delete' comic.slug %}" class="btn btn-danger" role="button">Delete</a>
-</center></p>
-{% endif %}
-<p><center>
-  <a href="{{ colection.get_absolute_url }}" class="btn btn-info" role="button">Return to<br>{{ colection.name }}</a>
-</center></p>
+  {% if comic %}
+    <h2><center>{{ comic.colection.name }}</center></h2>
+    {% if comic.colection.subname %}
+      <p><center>{{ comic.colection.subname }}</center></p>
+    {% endif %}
+    {% if comic.colection.colection_type == 'Regular' %}
+        <p><center>Volume {{ comic.colection.volume }}</center></p>
+    {% endif %}
+    <hr>
+    <!-- Buttons -->
+    <p><center>
+      <a href="{% url 'comic_update' comic.slug %}" class="btn btn-warning" role="button">
+        <i class="glyphicon glyphicon-pencil"></i>
+        Edit
+      </a>
+      <a href="{% url 'comic_delete' comic.slug %}" class="btn btn-danger" role="button">
+        <i class="glyphicon glyphicon-remove"></i>
+        Delete
+      </a>
+    </center></p>
+    <p><center>
+      <a href="{{ comic.colection.get_absolute_url }}" class="btn btn-info" role="button">
+        <i class="glyphicon glyphicon-share-alt"></i>
+        Back to {{ comic.colection.name }}
+      </a>
+    </center></p>
+    <hr>
+    <!-- List of Users -->
+    <h2><center>List</center></h2>
+    {% for user in comic.get_users %}
+      <p><center>
+      <a href="#" class="btn btn-info" role="button">
+        <i class="glyphicon glyphicon-user"></i>
+        {{ user }}
+      </a>
+      </center></p>
+    {% endfor %}
+
+  {% endif %}
 {% endblock %}
 
 {% block body_block %}
