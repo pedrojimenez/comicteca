@@ -5,14 +5,48 @@
 {% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-  <p>Search Comic List</p>
-  <p><center>
-    <a href="{{ colection.get_absolute_url }}">{{ colection.name }} v{{ colection.volume }}</a>
-  </center></p>
+ {% if colection %}
+    <!-- Name -->
+    <h2><center>{{ colection.name }}</center></h2>
+    {% if colection.subname %}
+      <p><center>{{ colection.subname }}</center></p>
+    {% endif %}
+    {% if colection.colection_type == 'Regular' %}
+        <p><center>Volume {{ colection.volume }}</center></p>
+    {% endif %}
+    <hr>
+
+    <!-- Info -->
+    <h2><center>Info</center></h2>
+    <p><center><u>Status:</u> <strong>{{ colection.colection_list }}</strong></center></p>
+    <p><center><u>Type:</u> <strong>{{ colection.colection_type }}</strong></center></p>
+
+    <!-- TODO: Create a colection.get_pubdate for checking if defined of number 1-->
+    {% if colection.pub_date  %}
+      <p><center><u>Pub Date:</u> <strong>{{ colection.pub_date }} </strong></center></p>
+    {% else %}
+      <p><center><u>Pub Date:</u> <strong>N/A</strong></center></p>
+    {% endif %}
+
+    <p><center><u>Total Pages:</u> <strong>{{ colection.get_pages }}</strong></center></p>
+    <p><center><u>Real Price:</u> <strong>{{ colection.get_currency }}</strong></center></p>
+    <p><center><u>Price Paid:</u> <strong>{{ colection.get_paid }}</strong></center></p>
+    <hr>
+
+    <!-- List -->
+    <h2><center>List</center></h2>
+    {% for comic in colection.get_comics %}
+      <a href="{{ comic.get_absolute_url }}" class="btn btn-info" role="button">
+        # {{ comic.number }}
+      </a>
+    {% endfor %}
+
+  {% endif %}
 {% endblock %}
 
+
 {% block body_block %}
-<h1>Add Comics to colection "{{ colection.name }}" </h1>
+<h1>Add Comics to collection {{ colection.name }} (v{{colection.volume}}) </h1>
   <!-- form action="." method="post"-->
   <form role="form" id="colection_add_comics_form" method="post" action="."->
       {% csrf_token %}
@@ -28,7 +62,18 @@
           {% endif %}
           <p>{{ field }}</p>
       {% endfor %}
-      <input type="submit" name="submit" value="Add Comics" />
+      <hr>
+
+      <!-- Buttons -->
+      <button type="submit" class="btn btn-info">
+        <i class="glyphicon glyphicon-plus"></i>
+        Add Comics
+      </button>
+
+      <a href="{{ colection.get_absolute_url }}" class="btn btn-info" role="button">
+        <i class="glyphicon glyphicon-share-alt"></i>
+        Back to {{ colection.name }}
+      </a>
   </form>
 
   {% if form.errors %}
