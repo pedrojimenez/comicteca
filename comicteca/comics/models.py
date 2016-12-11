@@ -364,7 +364,7 @@ class Colection(models.Model):
                 else:
                     print "   --> Dup. Comic <{}> now also owned by <{}>".\
                         format(checkcomic, current_user)
-                    comic.users.add(current_user)
+                    checkcomic.users.add(current_user)
 
         self.update_comics_number()
 
@@ -510,6 +510,10 @@ class Comic(models.Model):
         for role in colaborations.values('role'):
             role_list.append(role['role'])
         return ','.join(role_list)
+
+    def get_users(self):
+        """Return the list of users owning the comic."""
+        return User.objects.filter(Users__id=self.id)
 
     def get_price(self, unit='euros', currency_type='retail'):
         """Return the selected Comic price (retail or paid)."""
