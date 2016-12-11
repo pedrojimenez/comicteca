@@ -515,6 +515,12 @@ class Comic(models.Model):
         """Return the list of users owning the comic."""
         return User.objects.filter(Users__id=self.id)
 
+    def check_user(self, user):
+        """Return if current comic is owned by user."""
+        if user in self.users.all():
+            return True
+        return False
+
     def get_price(self, unit='euros', currency_type='retail'):
         """Return the selected Comic price (retail or paid)."""
         if currency_type == 'retail':
