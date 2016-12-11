@@ -69,6 +69,24 @@
        </div>
        <!-- Distributor / Info -->
        <div class="col-md-6">
+          <!-- Buttons -->
+          <div class="row pull-right">
+            {% if inmycollection %}
+              <p><center>
+                <a href="{% url 'comic_remove_user' comic.slug request_user %}" class="btn btn-success" role="button">
+                <i class="glyphicon glyphicon-check"></i>
+                LO TENGO
+                </a>
+              </center></p>
+            {% else %}
+              <p><center>
+                <a href="{% url 'comic_add_user' comic.slug request_user %}" class="btn btn-info" role="button">
+                <i class="glyphicon glyphicon-plus"></i>
+                AÑADIR A COLECCION
+                </a>
+              </center></p>
+            {% endif %}
+          </div>
          <!-- Distributor -->
          <div class="row">
            <!-- Distributor -->
@@ -155,8 +173,21 @@
 
 <hr/>
 {% if comic %}
-  <p><a href="/comicteca/comics/{{ comic.slug }}/edit/">Edit Comic</a></p>
-  <p><a href="/comicteca/comics/{{ comic.slug }}/delete/">Delete Comic</a></p>
+  {% if inmycollection %}
+    <p><center>
+      <a href="{% url 'comic_remove_user' comic.slug request_user %}" class="btn btn-success" role="button">
+      <i class="glyphicon glyphicon-check"></i>
+      LO TENGO
+      </a>
+    </center></p>
+  {% else %}
+    <p><center>
+      <a href="{% url 'comic_add_user' comic.slug request_user %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      AÑADIR A COLECCION
+      </a>
+    </center></p>
+  {% endif %}
 {% endif %}
 
 {% endblock %}
