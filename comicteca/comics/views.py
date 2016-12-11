@@ -373,7 +373,7 @@ class PublisherDelete(DeleteView):
 # ------------------------------------------------------------------ #
 @login_required
 def comic(request, comic_name_slug):
-    """."""
+    """Detailed view for a single comic."""
     context_dict = {}
     try:
         comic = Comic.objects.get(slug=comic_name_slug)
@@ -381,6 +381,79 @@ def comic(request, comic_name_slug):
         colection = Colection.objects.get(id=comic.colection.id)
         context_dict['comic'] = comic
         context_dict['colection'] = colection
+        context_dict['request_user'] = request.user
+        context_dict['inmycollection'] = comic.check_user(request.user)
+        print "xxxxxxx"
+        print context_dict
+        print "xxxxxxx"
+
+    except Comic.DoesNotExist:
+        # We get here if we didn't find the specified Comic
+        # Don't do anything - the template displays the "no comic"
+        # message for us.
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'comics/comic.html', context_dict)
+
+
+@login_required
+def comic_add_user(request, comic_slug, usr_name):
+    """Generic View for adding a comic to user collection."""
+    context_dict = {}
+    try:
+        comic = Comic.objects.get(slug=comic_slug)
+        user = User.objects.get(username=usr_name)
+
+        if user not in comic.users.all():
+            comic.users.add(user)
+        else:
+            # TODO: pass it to messages and/or logger
+            print "ERROR: User {} already own this comic: {}".format(
+                user, comic)
+
+        colection = Colection.objects.get(id=comic.colection.id)
+        context_dict['comic'] = comic
+        context_dict['colection'] = colection
+        context_dict['request_user'] = request.user
+        context_dict['inmycollection'] = comic.check_user(request.user)
+        print "xxxxxxx"
+        print context_dict
+        print "xxxxxxx"
+
+    except Comic.DoesNotExist:
+        # We get here if we didn't find the specified Comic
+        # Don't do anything - the template displays the "no comic"
+        # message for us.
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'comics/comic.html', context_dict)
+
+
+@login_required
+def comic_remove_user(request, comic_slug, usr_name):
+    """Generic View for removing a comic to user collection."""
+    context_dict = {}
+    try:
+        comic = Comic.objects.get(slug=comic_slug)
+        user = User.objects.get(username=usr_name)
+
+        if user in comic.users.all():
+            comic.users.remove(user)
+        else:
+            # TODO: pass it to messages and/or logger
+            print "ERROR: User {} does NOT own this comic: {}".format(
+                user, comic)
+
+        colection = Colection.objects.get(id=comic.colection.id)
+        context_dict['comic'] = comic
+        context_dict['colection'] = colection
+        context_dict['request_user'] = request.user
+        context_dict['inmycollection'] = comic.check_user(request.user)
+        print "xxxxxxx"
+        print context_dict
+        print "xxxxxxx"
 
     except Comic.DoesNotExist:
         # We get here if we didn't find the specified Comic
