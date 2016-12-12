@@ -383,9 +383,6 @@ def comic(request, comic_name_slug):
         context_dict['colection'] = colection
         context_dict['request_user'] = request.user
         context_dict['inmycollection'] = comic.check_user(request.user)
-        print "xxxxxxx"
-        print context_dict
-        print "xxxxxxx"
 
     except Comic.DoesNotExist:
         # We get here if we didn't find the specified Comic
@@ -417,9 +414,6 @@ def comic_add_user(request, comic_slug, usr_name):
         context_dict['colection'] = colection
         context_dict['request_user'] = request.user
         context_dict['inmycollection'] = comic.check_user(request.user)
-        print "xxxxxxx"
-        print context_dict
-        print "xxxxxxx"
 
     except Comic.DoesNotExist:
         # We get here if we didn't find the specified Comic
@@ -451,9 +445,6 @@ def comic_remove_user(request, comic_slug, usr_name):
         context_dict['colection'] = colection
         context_dict['request_user'] = request.user
         context_dict['inmycollection'] = comic.check_user(request.user)
-        print "xxxxxxx"
-        print context_dict
-        print "xxxxxxx"
 
     except Comic.DoesNotExist:
         # We get here if we didn't find the specified Comic
