@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased - master]
+
+## [0.3.0 - 2016-12-12]
 - [comicteca] Added "Lo Tengo" button in Comic template
 - [comicteca] Improved duplicated Comics management
 - [comicteca] Improved Comic and Collection templates
