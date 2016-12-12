@@ -99,8 +99,14 @@ class ColectionCreateForm(forms.ModelForm):
                               help_text="Please enter the Colection subname")
     volume = forms.IntegerField(label="Volume", min_value=1,
                                 help_text='Volume')
-    colection_type = forms.ChoiceField(label="Type", required="True",
-                                       choices=Colection.TYPE_OF_COLECTION)
+
+    colection_type = forms.ChoiceField(
+        label="Type", required="True",
+        choices=Colection.TYPE_OF_COLECTION)
+
+    collection_format = forms.ChoiceField(
+        label="Format", required="True",
+        choices=Colection.FORMAT_OF_COLLECTION)
 
     editors = forms.ModelMultipleChoiceField(queryset=Publisher.objects.all(),
                                              help_text="Editors",
@@ -186,6 +192,7 @@ class ColectionCreateForm(forms.ModelForm):
 
         # do custom stuff
         collection.colection_type = self.cleaned_data['colection_type']
+        collection.colection_format = self.cleaned_data['collection_format']
         image_url = self.cleaned_data['imageurl']
 
         # download image from the given URL
@@ -253,8 +260,14 @@ class ColectionUpdateForm(forms.ModelForm):
                               help_text="Please enter the Colection subname")
     volume = forms.IntegerField(label="Volume", min_value=1,
                                 help_text='Volume')
-    colection_type = forms.ChoiceField(label="Type", required="True",
-                                       choices=Colection.TYPE_OF_COLECTION)
+
+    colection_type = forms.ChoiceField(
+        label="Type", required="True",
+        choices=Colection.TYPE_OF_COLECTION)
+
+    collection_format = forms.ChoiceField(
+        label="Format", required="True",
+        choices=Colection.FORMAT_OF_COLLECTION)
 
     editors = forms.ModelMultipleChoiceField(queryset=Publisher.objects.all(),
                                              help_text="Editors",
@@ -299,6 +312,7 @@ class ColectionUpdateForm(forms.ModelForm):
 
         # do custom stuff
         collection.colection_type = self.cleaned_data['colection_type']
+        collection.colection_format = self.cleaned_data['collection_format']
         image_url = self.cleaned_data['imageurl']
 
         # download image from the given URL
