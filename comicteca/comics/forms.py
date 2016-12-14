@@ -93,67 +93,102 @@ class ColectionCreateForm(forms.ModelForm):
         super(ColectionCreateForm, self).__init__(*args, **kwargs)
 
     image_manager = ImageManager()
-    name = forms.CharField(max_length=128, label="Name",
-                           help_text="Please enter the Colection name")
-    subname = forms.CharField(max_length=128, label="Name", required=False,
-                              help_text="Please enter the Colection subname")
-    volume = forms.IntegerField(label="Volume", min_value=1,
-                                help_text='Volume')
+    name = forms.CharField(
+        max_length=128,
+        label="Name",
+        help_text="Please enter the Colection name")
+
+    subname = forms.CharField(
+        max_length=128,
+        label="Name",
+        required=False,
+        help_text="Please enter the Colection subname")
+
+    volume = forms.IntegerField(
+        label="Volume",
+        min_value=0,
+        initial=1,
+        help_text='Volume')
 
     colection_type = forms.ChoiceField(
-        label="Type", required="True",
+        label="Type",
         choices=Colection.TYPE_OF_COLECTION)
 
     collection_format = forms.ChoiceField(
-        label="Format", required="True",
+        label="Format",
         choices=Colection.FORMAT_OF_COLLECTION)
 
-    editors = forms.ModelMultipleChoiceField(queryset=Publisher.objects.all(),
-                                             help_text="Editors",
-                                             label="Edition Publishers")
-    distributor = forms.ModelChoiceField(queryset=Publisher.objects.all(),
-                                         help_text="Distributor",
-                                         label="Distribution Publishers",
-                                         required=True)
-    max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
-                                     help_text='Total numbers')
-    language = CountryField(blank_label='(select country)',
-                            help_text="Colection Language")
-    pub_date = forms.DateField(label="Publication Date",
-                               help_text="Colection publication date",
-                               required=False)
-    imageurl = forms.URLField(label="Colection Image URL", required=False,
-                              help_text="Formats: {}".format(
-                                  image_manager.valid_extensions))
+    editors = forms.ModelMultipleChoiceField(
+        queryset=Publisher.objects.all(),
+        label="Edition Publishers",
+        help_text="Editors")
+
+    distributor = forms.ModelChoiceField(
+        queryset=Publisher.objects.all(),
+        label="Distribution Publishers",
+        help_text="Distributor")
+
+    max_numbers = forms.IntegerField(
+        label="Total numbers",
+        min_value=1,
+        initial=1,
+        help_text='Total numbers')
+
+    language = CountryField(
+        blank_label='(select country)',
+        help_text="Colection Language")
+
+    pub_date = forms.DateField(
+        label="Publication Date",
+        required=False,
+        help_text="Colection publication date")
+
+    imageurl = forms.URLField(
+        label="Colection Image URL",
+        required=False,
+        help_text="Formats: {}".format(image_manager.valid_extensions))
 
     full_colection = forms.BooleanField(
         label="Add comics",
-        help_text="Fill the colection with all comics",
+        required=False,
+        help_text="Fill the colection with all comics")
+
+    input_range = forms.CharField(
+        max_length=128,
+        label="Range",
+        required=False,
+        help_text="Please enter a valid range")
+
+    pages = forms.IntegerField(
+        label="Pages",
+        min_value=1,
+        initial=24,
+        required=False,
+        help_text='Number of pages of each comic')
+
+    purchase_price = forms.FloatField(
+        label="Purchase Price",
+        initial=0,
+        required=False,
+        help_text='Money paid for these comics')
+
+    purchase_unit = forms.ChoiceField(
+        label="currency",
+        choices=Comic.CURRENCY_TYPES)
+
+    retail_price = forms.FloatField(
+        label="Retail Price",
+        initial=0,
+        required=False,
+        help_text='Real price of each comic')
+
+    retail_unit = forms.ChoiceField(
+        label="currency",
+        choices=Comic.CURRENCY_TYPES)
+
+    slug = forms.CharField(
+        widget=forms.HiddenInput(),
         required=False)
-
-    input_range = forms.CharField(max_length=128, label="Range",
-                                  help_text="Please enter a valid range",
-                                  required=False)
-
-    pages = forms.IntegerField(label="Pages", min_value=1, required=False,
-                               help_text='Number of pages of each comic')
-
-    purchase_price = forms.FloatField(label="Purchase Price",
-                                      required=False,
-                                      help_text='Money paid for these comics')
-
-    purchase_unit = forms.ChoiceField(label="currency",
-                                      choices=Comic.CURRENCY_TYPES)
-
-    retail_price = forms.FloatField(label="Retail Price",
-                                    required=False,
-                                    help_text='Real price of each comic')
-
-    retail_unit = forms.ChoiceField(label="currency",
-                                    required=True,
-                                    choices=Comic.CURRENCY_TYPES)
-
-    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         """Meta class for Colection Form."""
@@ -254,35 +289,7 @@ class ColectionUpdateForm(forms.ModelForm):
         super(ColectionUpdateForm, self).__init__(*args, **kwargs)
 
     image_manager = ImageManager()
-    name = forms.CharField(max_length=128, label="Name",
-                           help_text="Please enter the Colection name")
-    subname = forms.CharField(max_length=128, label="Name", required=False,
-                              help_text="Please enter the Colection subname")
-    volume = forms.IntegerField(label="Volume", min_value=1,
-                                help_text='Volume')
 
-    colection_type = forms.ChoiceField(
-        label="Type", required="True",
-        choices=Colection.TYPE_OF_COLECTION)
-
-    collection_format = forms.ChoiceField(
-        label="Format", required="True",
-        choices=Colection.FORMAT_OF_COLLECTION)
-
-    editors = forms.ModelMultipleChoiceField(queryset=Publisher.objects.all(),
-                                             help_text="Editors",
-                                             label="Edition Publishers")
-    distributor = forms.ModelChoiceField(queryset=Publisher.objects.all(),
-                                         help_text="Distributor",
-                                         label="Distribution Publishers",
-                                         required=True)
-    max_numbers = forms.IntegerField(label="Total numbers", min_value=0,
-                                     help_text='Total numbers')
-    language = CountryField(blank_label='(select country)',
-                            help_text="Colection Language")
-    pub_date = forms.DateField(label="Publication Date",
-                               help_text="Colection publication date",
-                               required=False)
     imageurl = forms.URLField(label="Colection Image URL", required=False,
                               help_text="Formats: {}".format(
                                   image_manager.valid_extensions))
@@ -295,7 +302,8 @@ class ColectionUpdateForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
         model = Colection
         fields = ('name', 'subname', 'volume', 'editors', 'distributor',
-                  'max_numbers', 'language', 'pub_date')
+                  'max_numbers', 'language', 'colection_type',
+                  'colection_format')
 
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
@@ -311,8 +319,6 @@ class ColectionUpdateForm(forms.ModelForm):
         collection = super(ColectionUpdateForm, self).save(commit=False)
 
         # do custom stuff
-        collection.colection_type = self.cleaned_data['colection_type']
-        collection.colection_format = self.cleaned_data['collection_format']
         image_url = self.cleaned_data['imageurl']
 
         # download image from the given URL
@@ -519,8 +525,8 @@ class ComicForm(forms.ModelForm):
     title = forms.CharField(max_length=128, label="Name", required=False,
                             help_text="Comic title")
 
-    number = forms.IntegerField(label="Volume", min_value=1,
-                                help_text='Volume')
+    number = forms.IntegerField(label="Number", min_value=0,
+                                help_text='Number')
 
     pages = forms.IntegerField(label="Pages", min_value=1,
                                help_text='Number of pages')
