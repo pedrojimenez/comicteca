@@ -290,11 +290,14 @@ class ColectionUpdateForm(forms.ModelForm):
 
     image_manager = ImageManager()
 
-    imageurl = forms.URLField(label="Colection Image URL", required=False,
-                              help_text="Formats: {}".format(
-                                  image_manager.valid_extensions))
+    imageurl = forms.URLField(
+        label="Colection Image URL",
+        required=False,
+        help_text="Formats: {}".format(image_manager.valid_extensions))
 
-    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+    slug = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False)
 
     class Meta:
         """Meta class for Colection Form."""

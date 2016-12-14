@@ -1,3 +1,3 @@
-__version__ = 'v0.3.0-7-g82fbf36'
+__version__ = 'v0.3.0-8-g802cb0a'
 VERSION = __version__
 
