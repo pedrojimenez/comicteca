@@ -364,42 +364,54 @@ class CollectionAddComicsForm(forms.ModelForm):
 
     full_colection = forms.BooleanField(
         label="Add comics",
-        help_text="Fill the collection with all comics",
+        required=False,
+        help_text="Fill the collection with all comics")
+
+    input_range = forms.CharField(
+        max_length=128,
+        label="Range",
+        required=False,
+        help_text="Please enter a valid range")
+
+    pages = forms.IntegerField(
+        label="Pages",
+        min_value=1,
+        required=False,
+        help_text='Number of pages of each comic')
+
+    purchase_price = forms.FloatField(
+        label="Purchase Price",
+        required=False,
+        help_text='Money paid for these comics')
+
+    purchase_unit = forms.ChoiceField(
+        label="currency",
+        choices=Comic.CURRENCY_TYPES)
+
+    retail_price = forms.FloatField(
+        label="Retail Price",
+        required=False,
+        help_text='Real price of each comic')
+
+    retail_unit = forms.ChoiceField(
+        label="currency",
+        required=True,
+        choices=Comic.CURRENCY_TYPES)
+
+    slug = forms.CharField(
+        widget=forms.HiddenInput(),
         required=False)
 
-    input_range = forms.CharField(max_length=128, label="Range",
-                                  help_text="Please enter a valid range",
-                                  required=False)
-
-    pages = forms.IntegerField(label="Pages", min_value=1, required=False,
-                               help_text='Number of pages of each comic')
-
-    purchase_price = forms.FloatField(label="Purchase Price",
-                                      required=False,
-                                      help_text='Money paid for these comics')
-
-    purchase_unit = forms.ChoiceField(label="currency",
-                                      choices=Comic.CURRENCY_TYPES)
-
-    retail_price = forms.FloatField(label="Retail Price",
-                                    required=False,
-                                    help_text='Real price of each comic')
-
-    retail_unit = forms.ChoiceField(label="currency",
-                                    required=True,
-                                    choices=Comic.CURRENCY_TYPES)
-
-    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
-    name = forms.CharField(widget=forms.HiddenInput(), required=False)
-    max_numbers = forms.IntegerField(widget=forms.HiddenInput(),
-                                     required=False)
+    max_numbers = forms.IntegerField(
+        widget=forms.HiddenInput(),
+        required=False)
 
     class Meta:
         """Meta class for Collection Add Comics Form."""
 
         # Provide an association between the ModelForm and a model
         model = Colection
-        fields = ('name', 'max_numbers')
+        fields = ('max_numbers',)
 
     def clean_input_range(self):
         """Clean method for input_range form field."""
