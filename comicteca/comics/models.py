@@ -190,7 +190,7 @@ class Colection(models.Model):
     colection_type = models.CharField('Type', max_length=15,
                                       choices=TYPE_OF_COLECTION,
                                       default='Regular')
-    colection_format = models.CharField('Type', max_length=15,
+    colection_format = models.CharField('Format', max_length=15,
                                         choices=FORMAT_OF_COLLECTION,
                                         default='Grapa')
     numbers = models.IntegerField(default=0)
