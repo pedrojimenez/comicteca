@@ -195,7 +195,6 @@ class Colection(models.Model):
                                         default='Grapa')
     numbers = models.IntegerField(default=0)
 
-    pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     image = models.ImageField(default='', upload_to='images/colections/',
@@ -213,6 +212,15 @@ class Colection(models.Model):
     def my_url(self):
         """Return the absolute url as model property."""
         return self.get_absolute_url()
+
+    @property
+    def my_pub_date(self):
+        """Return the Pub Date of the first comic of the Collection."""
+        comics_set = Comic.objects.filter(colection__id=self.id)
+        for comic in comics_set:
+            if comic.pub_date:
+                return comic.pub_date
+        return "N/A"
 
     @property
     def my_image(self):
@@ -267,7 +275,7 @@ class Colection(models.Model):
     def colection_list(self):
         """Count number of colection comics and return string."""
         if (self.max_numbers != 0) and (self.max_numbers == self.numbers):
-            return "Complete"
+            return "Complete ({})".format(self.max_numbers)
         else:
             return str(self.numbers) + "/" + str(self.max_numbers)
 
