@@ -50,7 +50,8 @@
 {% block body_block %}
 {% if comic %}
   <h1>{{ colection.name }}
-  {% if colection.subname %} - {{ colection.subname }} {% endif %} #{{ comic.number }}
+  {% if colection.subname %} - {{ colection.subname }} {% endif %}
+  {% if colection.colection_type != 'Special' %} #{{ comic.number }}{% endif %}
   </h1>
   {% if comic.title %}<h2>{{ comic.title }}</h2>{% endif %}
 
