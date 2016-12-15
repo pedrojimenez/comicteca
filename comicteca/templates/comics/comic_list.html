@@ -13,42 +13,46 @@
 
 {% block body_block %}
 
-<h2><u>Comic List</u> ({{ total_comics }})</h2>
-{% if object_list %}
-  <table>
-    <tr>
-      <th>Comic</th>
-     	<th>Distributor</th>
-      <th>Editors</th>
-     	<th>Pages</th>
-      <th>Language</th>
-      <th>RetailPrice</th>
-      <th>PurchasePrice</th>
-     	<th>Pub Date</th>
-		</tr>
-    {% for comic in object_list|dictsortreversed:"updated" %}
-    <tr>
-	    <td><a href="{{ comic.get_absolute_url }}">{{ comic.colection.name }}
-	               (v{{ comic.colection.volume }}) n{{ comic.number }}</a></td>
-      <td>{{ comic.colection.distributor }}</td>
-      <td>{{ comic.colection.editor_list }}</td>
-      <td>{{ comic.pages }}</td>
-	    <td>{{ comic.colection.language }}</td>
+<div class="panel panel-default">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Collection List ({{ colection_list.count }})</div>
 
-      <td>{{ comic.retail_price }} {{ comic.retail_unit }}</td>
-      <td>{{ comic.purchase_price }} {{ comic.purchase_unit }}</td>
-
-		  {% if comic.colection.pub_date %}
-		    <td>{{ comic.colection.pub_date }}</td>
-		  {% else %}
-		    <td>N/A</td>
-		  {% endif %}
-		</tr>
-    {% endfor %}
-  </table>
-{% else %}
-  <strong>There are no comics present yet.</strong>
-{% endif %}
-
-
+      <!-- Table -->
+      <table class="table">
+        <tr>
+          <th>Comic</th>
+          <th>Distributor</th>
+          <th>Editors</th>
+          <th>Pages</th>
+          <th>Language</th>
+          <th>RetailPrice</th>
+          <th>PurchasePrice</th>
+          <th>Pub Date</th>
+        </tr>
+      {% for comic in object_list|dictsortreversed:"updated" %}
+        <tr>
+          <td>
+            <a href="{{ comic.get_absolute_url }}">{{ comic.colection.name }}
+              <!-- Special Collection comics only shown as Collection Name -->
+              {% if comic.colection.colection_type != 'Special' %}
+                <!-- Volume only shown in Regular Collection comics -->
+                {% if comic.colection.colection_type == 'Regular' %}
+                  (v{{ comic.colection.volume }})
+                {% endif %}
+                <!-- Number only shown in Regular/Limited Collection comics -->
+                #{{ comic.number }}
+              {% endif %}
+            </a></td>
+          <td>{{ comic.colection.distributor }}</td>
+          <td>{{ comic.colection.editor_list }}</td>
+          <td>{{ comic.pages }}</td>
+          <td>{{ comic.colection.language }}</td>
+          <td>{{ comic.retail_price }} {{ comic.retail_unit }}</td>
+          <td>{{ comic.purchase_price }} {{ comic.purchase_unit }}</td>
+          <td>{{ comic.colection.my_pub_date }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+</div>
 {% endblock %}
