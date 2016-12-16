@@ -5,14 +5,23 @@
 {% block title %}Comicteca Colection List{% endblock %}
 
 {% block side_block %}
-  <p>Search Comic List</p>
+  <h2><center>TOTAL</center></h2>
+  <h3><center>{{ colection_list.count }}</center></h3>
+  <hr>
+  <p><center>
+    <a href="{% url 'colection_add' %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Collection
+    </a>
+  </center></p>
 {% endblock %}
 
 {% block body_block %}
   <div class="panel panel-default">
-      <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">Collection List ({{ colection_list.count }})</div>
+      <div class="panel-heading">
+        <h2><center>Collection List ({{ colection_list.count }})</center></h2>
+      </div>
 
       <!-- Table -->
 	    <table class="table">
