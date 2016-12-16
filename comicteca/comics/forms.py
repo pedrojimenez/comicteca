@@ -584,9 +584,9 @@ class ComicForm(forms.ModelForm):
 
         # Provide an association between the ModelForm and a model
         model = Comic
-        fields = ('title', 'number', 'pages', 'extrainfo', 'comments',
-                  'pub_date', 'colection', 'purchase_price', 'purchase_unit',
-                  'retail_price', 'retail_unit')
+        fields = ('title', 'number', 'pages', 'color', 'digital', 'extrainfo',
+                  'comments', 'pub_date', 'colection', 'purchase_price',
+                  'purchase_unit', 'retail_price', 'retail_unit')
 
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
