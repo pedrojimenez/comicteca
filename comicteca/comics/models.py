@@ -535,6 +535,17 @@ class Comic(models.Model):
         """Return the list of users owning the comic."""
         return User.objects.filter(Users__id=self.id)
 
+    def get_color(self):
+        """Return if comic is printed in color or black/white."""
+        if not self.color:
+            return "B/W"
+        return "Color"
+
+    def get_pub_date(self):
+        """Return the comic pub_date formatted."""
+        # TODO: format the output of PubDate
+        return self.pub_date
+
     def check_user(self, user):
         """Return if current comic is owned by user."""
         if user in self.users.all():
