@@ -5,9 +5,16 @@
 {% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-<p>Search Comic List</p>
-<p><a href="/comicteca/comics/add/">Add new Comic</a></p>
-<a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
+
+  <h2><center>TOTAL</center></h2>
+  <h3><center>{{ comic_list.count }}</center></h3>
+  <hr>
+  <p><center>
+    <a href="{% url 'comic_add' %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Comic
+    </a>
+  </center></p>
 
 {% endblock %}
 
@@ -16,7 +23,7 @@
 <div class="panel panel-default">
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">Collection List ({{ colection_list.count }})</div>
+      <div class="panel-heading">Comic List ({{ comic_list.count }})</div>
 
       <!-- Table -->
       <table class="table">
