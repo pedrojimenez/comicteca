@@ -507,8 +507,7 @@ class ComicListByUserView(ListView):
         # Add in a QuerySet of all user Comics ordered by inserted date
         context['object_list'] = Comic.objects.filter(
             users__username=self.kwargs['user_slug'])
-        context['total_comics'] = Comic.objects.filter(
-            users__username=self.kwargs['user_slug']).count()
+        context['total_comics'] = context['object_list'].count()
         return context
 
 

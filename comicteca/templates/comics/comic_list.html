@@ -7,7 +7,7 @@
 {% block side_block %}
 
   <h2><center>TOTAL</center></h2>
-  <h3><center>{{ comic_list.count }}</center></h3>
+  <h3><center>{{ total_comics }}</center></h3>
   <hr>
   <p><center>
     <a href="{% url 'comic_add' %}" class="btn btn-info" role="button">
@@ -23,7 +23,10 @@
 <div class="panel panel-default">
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">Comic List ({{ comic_list.count }})</div>
+      <div class="panel-heading">
+        <h2><center>Comic List ({{ total_comics }})</center></h2>
+      </div>
+      <!-- div class="panel-heading">Comic List ({{ comic_list.count }})</div -->
 
       <!-- Table -->
       <table class="table">
