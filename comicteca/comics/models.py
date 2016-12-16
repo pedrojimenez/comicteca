@@ -419,6 +419,8 @@ class Comic(models.Model):
     title = models.CharField(max_length=128, blank=True, null=True)
     number = models.IntegerField(default=1)
     pages = models.IntegerField(default=24)
+    digital = models.BooleanField(default=False)
+    color = models.BooleanField(default=True)
     slug = models.SlugField()
 
     # texts
@@ -431,8 +433,6 @@ class Comic(models.Model):
     updated = models.DateTimeField(default=timezone.now)
 
     # prices
-    # purchase_price = PriceField(amount=0, unit='EURO')
-    # retail_price = PriceField(amount=0, unit='EURO')
     purchase_price = models.FloatField(default=0)
     purchase_unit = models.CharField('Type', max_length=15,
                                      choices=CURRENCY_TYPES,
