@@ -113,6 +113,9 @@
              <span class="label label-info">{{ comic.pages }} pp</span>
              <span class="label label-info">{{ comic.get_color }}</span>
              <span class="label label-info">{{ colection.colection_format }}</span>
+             {% if comic.extrainfo %}
+             <span class="label label-info">Digital</span>
+             {% endif %}
            </h3>
            <h3>
             <span class="label label-default">
