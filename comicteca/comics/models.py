@@ -692,7 +692,7 @@ class Profile(models.Model):
 class ComicsInSaga(models.Model):
     """."""
 
-    comic = models.ForeignKey(Publisher)
+    comic = models.ForeignKey(Comic)
     saga = models.ForeignKey(Saga)
     number_in_saga = models.IntegerField(default=1)
 
