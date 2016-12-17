@@ -468,6 +468,9 @@ class Comic(models.Model):
 
     users = models.ManyToManyField(User, related_name='Users')
 
+    sagas = models.ManyToManyField(Saga, related_name='Saga',
+                                   through='ComicsInSaga')
+
     class Meta:
         """Meta class for Comic model."""
 
@@ -679,6 +682,20 @@ class Profile(models.Model):
     def __unicode__(self):
         """str/unicode function of Profile class."""
         return 'Profile for user {}'.format(self.user.username)
+
+
+# ------------------------------------------------------------------ #
+#
+#                    ComicsSaga intermediate Class
+#
+# ------------------------------------------------------------------ #
+class ComicsInSaga(models.Model):
+    """."""
+
+    comic = models.ForeignKey(Publisher)
+    saga = models.ForeignKey(Saga)
+    number_in_saga = models.IntegerField(default=1)
+
 
 # class Distributor(models.Model):
 #     """Distributor intermediate model."""
