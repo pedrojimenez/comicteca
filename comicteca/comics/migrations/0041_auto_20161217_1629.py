@@ -18,10 +18,9 @@ class Migration(migrations.Migration):
                 ('number_in_saga', models.IntegerField(default=1)),
             ],
         ),
-        migrations.AlterField(
+        migrations.RemoveField(
             model_name='comic',
             name='sagas',
-            field=models.ManyToManyField(related_name='Saga', through='comics.ComicsInSaga', to='comics.Saga'),
         ),
         migrations.AddField(
             model_name='comicsinsaga',
@@ -32,5 +31,14 @@ class Migration(migrations.Migration):
             model_name='comicsinsaga',
             name='saga',
             field=models.ForeignKey(to='comics.Saga'),
+        ),
+        migrations.AddField(
+            model_name='comic',
+            name='my_sagas',
+            field=models.ManyToManyField(to='comics.Saga', through='comics.ComicsInSaga'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='comicsinsaga',
+            unique_together=set([('comic', 'saga', 'number_in_saga')]),
         ),
     ]

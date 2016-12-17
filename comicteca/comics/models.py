@@ -468,8 +468,7 @@ class Comic(models.Model):
 
     users = models.ManyToManyField(User, related_name='Users')
 
-    sagas = models.ManyToManyField(Saga, related_name='Saga',
-                                   through='ComicsInSaga')
+    my_sagas = models.ManyToManyField(Saga, through='ComicsInSaga')
 
     class Meta:
         """Meta class for Comic model."""
@@ -690,11 +689,22 @@ class Profile(models.Model):
 #
 # ------------------------------------------------------------------ #
 class ComicsInSaga(models.Model):
-    """."""
+    """ComicsInSaga model."""
 
     comic = models.ForeignKey(Comic)
     saga = models.ForeignKey(Saga)
     number_in_saga = models.IntegerField(default=1)
+
+    class Meta:
+        """Meta class for Colaborator model."""
+
+        unique_together = ('comic', 'saga', 'number_in_saga')
+
+    def __unicode__(self):
+        """str/unicode function of Comic class."""
+        return str(self.saga) + " - "\
+            + str(self.number_in_saga) + " - "\
+            + str(self.comic)
 
 
 # class Distributor(models.Model):
