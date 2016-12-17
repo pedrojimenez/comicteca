@@ -15,6 +15,22 @@ from comics.utils import parse_int_set
 
 # ------------------------------------------------------------------ #
 #
+#                        Saga Model
+#
+# ------------------------------------------------------------------ #
+class Saga(models.Model):
+    """Colaborator model."""
+
+    name = models.CharField(max_length=50)
+    total_numbers = models.IntegerField(default=1)
+
+    def __unicode__(self):
+        """str/unicode function of Profile class."""
+        return self.name
+
+
+# ------------------------------------------------------------------ #
+#
 #                         Artist Model
 #
 # ------------------------------------------------------------------ #
