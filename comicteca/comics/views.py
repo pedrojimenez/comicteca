@@ -27,6 +27,7 @@ from comics.forms import LoginForm
 from comics.forms import UserEditForm
 from comics.forms import ProfileEditForm
 from comics.forms import SagaUpdateForm
+from comics.forms import SagaCreateForm
 
 
 # ------------------------------------------------------------------ #
@@ -620,6 +621,20 @@ def profile_edit(request):
 #                            Saga Views
 #
 # ------------------------------------------------------------------ #
+class SagaCreate(CreateView):
+    """CBV for creating a new Saga."""
+
+    def get_form_kwargs(self, **kwargs):
+        """Override method for inyecting request.user to form."""
+        kwargs = super(SagaCreate, self).get_form_kwargs()
+        kwargs.update({'current_user': self.request.user})
+        return kwargs
+
+    model = Saga
+    form_class = SagaCreateForm
+    template_name = "comics/add_saga.html"
+
+
 class SagaUpdate(UpdateView):
     """CBV for updating a Saga."""
 
