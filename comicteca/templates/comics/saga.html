@@ -1,0 +1,99 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+{% load text_tags %}
+
+{% block title %}Comicteca Saga List{% endblock %}
+
+{% block side_block %}
+  {% if saga %}
+    <!-- Name -->
+    <h2><center>{{ saga.name }}</center></h2>
+    <hr>
+    <!-- Buttons -->
+    <p><center>
+      <a href="{% url 'saga_list' %}" class="btn btn-warning" role="button">
+        <i class="glyphicon glyphicon-pencil"></i>
+        Edit
+      </a>
+      <a href="{% url 'saga_list' %}" class="btn btn-danger" role="button">
+        <i class="glyphicon glyphicon-remove"></i>
+        Delete
+      </a>
+    </center></p>
+
+    <p><center>
+      <a href="{% url 'saga_list' %}" class="btn btn-info" role="button">
+        <i class="glyphicon glyphicon-plus"></i>
+        Add Comic
+      </a>
+    </center></p>
+
+    <hr style="height:5px">
+    <!-- Info -->
+    <h2><center>Info</center></h2>
+    <p><center><u>Status:</u> <strong>{{ saga.get_saga_status }}</strong></center></p>
+    <p><center><u>Pub Date:</u> <strong>{{ saga.get_saga_pubdate }}</strong></center></p>
+    <p><center><u>Total Pages:</u> <strong>{{ saga.get_saga_totalpages }}</strong></center></p>
+    <p><center><u>Real Price:</u> <strong>{{ colection.get_currency }}</strong></center></p>
+    <p><center><u>Price Paid:</u> <strong>{{ colection.get_paid }}</strong></center></p>
+
+  {% endif %}
+{% endblock %}
+
+{% block body_block %}
+  {% if saga %}
+    <div class="page-header"><h1>{{ saga.name }}</h1></div>
+    <!-- Cover and Info -->
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-6 col-l-6">
+              <!-- Colection Image -->
+              {% load thumbnail %}
+              {% thumbnail saga.my_image "400" as thumb_image %}
+                <a href="{{ MEDIA_URL }}{{ saga.my_image }}">
+                <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border: thin solid black;">
+                </a>
+              {% endthumbnail %}
+            </div>
+            <div class="col-md-6">
+            <div class="page-header"><h2>Argument</h2></div>
+              {{ saga.argument|markdown }}
+            </div>
+
+          </div> <!-- ROW del container -->
+        </div> <!-- container -->
+
+    <!-- Collection Comics -->
+    <div class="page-header"><h2>Comics</h2></div>
+      <ul>
+        <div class="container-fluid">
+          <div class="row">
+            <!-- comic_list from context data -->
+            {% for comic, number_in_saga in comic_list %}
+              <div class="col-xs-12 col-md-4 col-lg-3 col-xl-2" style="height: 350px;">
+                {% if comic.cover %}
+                  {% thumbnail comic.cover "200x280" as thumb_image %}
+                    <a href="{{ comic.my_url }}">
+                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+                    <br/>
+                    <a href="{% url 'comic_detail' comic.slug %}"><strong>Number {{ number_in_saga }}</strong> ({{ comic.pages }} pags)</a>
+                  {% endthumbnail %}
+                {% else %}
+                  <a href="{{ comic.my_url }}">
+                  <img src="/media/images/noimage.png" class="image-detail" style="padding:1px;border:thin solid black;"></a>
+                  <a href="/comicteca/comics/{{ comic.slug }}/"><strong>Number {{ number_in_saga }}</strong> ({{ comic.pages }} pags)</a>
+                {% endif %}
+                <div class="clearfix visible-sm-block visible-lg-block"></div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </ul>
+
+  {% else %}
+    <h1>Saga Unknown</h1>
+      This Saga does not exist!
+  {% endif %}
+
+{% endblock %}

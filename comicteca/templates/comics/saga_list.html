@@ -1,0 +1,59 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Colection List{% endblock %}
+
+{% block side_block %}
+  <h2><center>TOTAL</center></h2>
+  <h3><center>{{ object_list.count }}</center></h3>
+  <hr>
+  <p><center>
+    <a href="{% url 'colection_add' %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Saga
+    </a>
+  </center></p>
+{% endblock %}
+
+{% block body_block %}
+  <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+        <h2><center>Saga List ({{ object_list.count }})</center></h2>
+      </div>
+
+      <!-- Table -->
+	    <table class="table">
+		    <tr>
+     		  <th>Name</th>
+     		  <th>Volume</th>
+          <th>Type</th>
+          <th>Pages</th>
+          <th>Distributor</th>
+          <th>Cost</th>
+          <th>Language</th>
+     		  <th>Pub Date</th>
+     		  <th>Numbers</th>
+		    </tr>
+      {% for saga in object_list %}
+		    <tr>
+	        <td><a href="/comicteca/sagas/{{ saga.slug }}/">{{ saga.name }}</a></td>
+          {% if colection.colection_type == 'Regular' %}
+	          <td>v{{ colection.volume }}</td>
+          {% else %}
+            <td> - </td>
+          {% endif %}
+          <!-- TODO: set a different icon for each class -->
+          <td>{{ saga.colection_type }}</td>
+          <td>{{ colection.get_pages }}</td>
+          <td><a href="/comicteca/publishers/{{ colection.distributor.slug }}">{{ colection.distributor.name }}</a></td>
+          <td>{{ colection.get_currency }}</td>
+          <td>{{ colection.language }}</td>
+		      <td>{{ colection.my_pub_date }}</td>
+		      <td>{{ colection.colection_list }}</td>
+		    </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}
