@@ -89,7 +89,17 @@ class Saga(models.Model):
             comic_tuple_list.append(tup)
 
         return comic_tuple_list
-        # return Comic.objects.filter(my_sagas__id=self.id)
+
+    def get_saga_currency(self, unit='euros', output_format='string',
+                          currency_type='retail'):
+        """Return the total price of Colection (retail or paid)."""
+        col_comics = Comic.objects.filter(my_sagas__id=self.id)
+        total_currency = 0
+        for comic in col_comics:
+            total_currency += comic.get_price(unit, currency_type)
+        if output_format == 'string':
+            return str(total_currency) + ' ' + str(unit)
+        return total_currency
 
 
 # ------------------------------------------------------------------ #
