@@ -77,6 +77,20 @@ class Saga(models.Model):
             totalpages += comic.pages
         return totalpages
 
+    def get_saga_comics(self):
+        """Return the comics and saga_number of each one of the Saga."""
+        saga_comics = ComicsInSaga.objects.filter(saga=self.id).order_by(
+            'number_in_saga')
+
+        comic_tuple_list = []
+        for saga in saga_comics:
+            c = Comic.objects.get(id=saga.comic.id)
+            tup = (c, saga.number_in_saga)
+            comic_tuple_list.append(tup)
+
+        return comic_tuple_list
+        # return Comic.objects.filter(my_sagas__id=self.id)
+
 
 # ------------------------------------------------------------------ #
 #
