@@ -13,7 +13,7 @@ from comics.views import PublisherListView
 from comics.views import ComicListView, ComicListByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
 from comics.views import CollectionAddComics
-from comics.views import SagaListView
+from comics.views import SagaListView, SagaUpdate
 
 
 urlpatterns = patterns(
@@ -176,6 +176,10 @@ urlpatterns = patterns(
     # -------------------- #
     # change password urls
     # -------------------- #
+    url(r'^sagas/(?P<slug>[\w\-]+)/edit/$',
+        login_required(SagaUpdate.as_view()),
+        name='saga_update'),
+
     url(r'^profiles/password-change/$',
         'django.contrib.auth.views.password_change',
         name='password_change'),
