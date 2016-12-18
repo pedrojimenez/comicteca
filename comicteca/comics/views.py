@@ -16,6 +16,7 @@ from comics.models import Colection
 from comics.models import Publisher
 from comics.models import Comic
 from comics.models import Profile
+from comics.models import Saga, ComicsInSaga
 # from comics.forms import ArtistCreateForm, ArtistUpdateForm
 from comics.forms import ArtistCreateForm
 from comics.forms import ColectionCreateForm, ColectionUpdateForm
@@ -611,3 +612,59 @@ def profile_edit(request):
     return render(
         request, 'profiles/edit.html',
         {'user_form': user_form, 'profile_form': profile_form})
+
+
+# ------------------------------------------------------------------ #
+#
+#                            Saga Views
+#
+# ------------------------------------------------------------------ #
+class SagaListView(ListView):
+    """CBV for listing all Saga objects."""
+
+    model = Saga
+    template_name = "comics/saga_list.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+        # Call the base implementation first to get a context
+        context = super(SagaListView, self).get_context_data(**kwargs)
+
+        # Add in a QuerySet of all the Sagas
+        context['object_list'] = Saga.objects.all()
+
+        # TODO: count of money for each saga ==> Annotate this count
+        return context
+
+
+@login_required
+def saga(request, saga_slug):
+    """."""
+    context_dict = {}
+    try:
+        s = Saga.objects.get(slug=saga_slug)
+        saga_comics = ComicsInSaga.objects.filter(saga=s.id).order_by(
+            'number_in_saga')
+
+        comic_tuple_list = []
+        for saga in saga_comics:
+            c = Comic.objects.get(id=saga.comic.id)
+            tup = (c, saga.number_in_saga)
+            comic_tuple_list.append(tup)
+
+        # Output Example:
+        # Comic List Tuple:  [
+        # (<Comic: los-vengadores-forum-v1-n1>, 1),
+        # (<Comic: los-vengadores-forum-v1-n2>, 2),
+        # (<Comic: los-vengadores-forum-v1-n3>, 12)]
+
+        context_dict['comic_list'] = comic_tuple_list
+        context_dict['saga'] = s
+    except Saga.DoesNotExist:
+        # We get here if we didn't find the specified Saga
+        # Don't do anything - the template displays the "no saga"
+        # message for us.
+        pass
+
+    # Go render the response and return it to the client.
+    return render(request, 'comics/saga.html', context_dict)
