@@ -1,0 +1,47 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Add Saga{% endblock %}
+
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
+
+{% block body_block %}
+
+<h1>Add a new Saga</h1>
+  <form role="form" id="saga_form" method="post" action=".">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+        {{ field.errors }}
+        {% if form.help_text %}
+            {{ field.help_text }}
+        {% else %}
+            {{ field.name }}
+        {% endif %}
+        {{ field }}
+		</br>
+    {% endfor %}
+
+    <input type="submit" name="submit" value="Add Saga" />
+  </form>
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p> {{ errors }} </p>
+                {% endfor %}
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+                <p></p>
+                <p> {{ error }} </p>
+                <p></p>
+            {% endfor %}
+        {% endif %}
+
+{% endblock %}
+
