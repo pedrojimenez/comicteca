@@ -78,6 +78,10 @@ urlpatterns = patterns(
     # ---------- #
     # sagas
     # ---------- #
+    url(r'^sagas/(?P<slug>[\w\-]+)/edit/$',
+        login_required(SagaUpdate.as_view()),
+        name='saga_update'),
+
     url(r'^sagas/(?P<saga_slug>[\w\-]+)/$',
         views.saga,
         name='saga_detail'),
@@ -176,10 +180,6 @@ urlpatterns = patterns(
     # -------------------- #
     # change password urls
     # -------------------- #
-    url(r'^sagas/(?P<slug>[\w\-]+)/edit/$',
-        login_required(SagaUpdate.as_view()),
-        name='saga_update'),
-
     url(r'^profiles/password-change/$',
         'django.contrib.auth.views.password_change',
         name='password_change'),
