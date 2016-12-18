@@ -13,6 +13,8 @@ from comics.views import PublisherListView
 from comics.views import ComicListView, ComicListByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
 from comics.views import CollectionAddComics
+from comics.views import SagaListView
+
 
 urlpatterns = patterns(
     '',
@@ -72,6 +74,17 @@ urlpatterns = patterns(
     url(r'colections/$',
         login_required(ColectionListView.as_view()),
         name='colection_list'),
+
+    # ---------- #
+    # sagas
+    # ---------- #
+    url(r'^sagas/(?P<saga_slug>[\w\-]+)/$',
+        views.saga,
+        name='saga_detail'),
+
+    url(r'sagas/$',
+        login_required(SagaListView.as_view()),
+        name='saga_list'),
 
     # ---------- #
     # publishers
