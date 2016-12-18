@@ -1,0 +1,54 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca edit Saga{% endblock %}
+
+{% block side_block %}
+  {% if saga %}
+    <!-- Name -->
+    <h2><center>{{ saga.name }}</center></h2>
+    {% if colection.subname %}
+      <p><center>{{ colection.subname }}</center></p>
+    {% endif %}
+    {% if colection.colection_type == 'Regular' %}
+        <p><center>Volume {{ colection.volume }}</center></p>
+    {% endif %}
+
+    <hr>
+
+    <!-- Info -->
+    <h2><center>Info</center></h2>
+    <p><center><u>Status:</u> <strong>{{ saga.get_saga_status }}</strong></center></p>
+    <p><center><u>Pub Date:</u> <strong>{{ saga.get_saga_pubdate }}</strong></center></p>
+    <p><center><u>Total Pages:</u> <strong>{{ saga.get_saga_totalpages }}</strong></center></p>
+    <hr>
+
+    <!-- List -->
+    <h2><center>List</center></h2>
+    {% for comic, saga_number in saga.get_saga_comics %}
+      <a href="{{ comic.get_absolute_url }}" class="btn btn-info" role="button">
+        # {{ saga_number }}
+      </a>
+    {% endfor %}
+
+  {% endif %}
+{% endblock %}
+
+{% block body_block %}
+  <h1>Edit Saga</h1>
+  <form action="" method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <hr>
+      <!-- Buttons -->
+      <button type="submit" class="btn btn-info">
+        <i class="glyphicon glyphicon-ok"></i>
+        Update Info
+      </button>
+
+      <a href="{{ saga.get_absolute_url }}" class="btn btn-info" role="button">
+        <i class="glyphicon glyphicon-share-alt"></i>
+        Back to {{ saga.name }}
+      </a>
+  </form>
+{% endblock %}
