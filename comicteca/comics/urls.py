@@ -13,7 +13,7 @@ from comics.views import PublisherListView
 from comics.views import ComicListView, ComicListByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
 from comics.views import CollectionAddComics
-from comics.views import SagaListView, SagaUpdate, SagaCreate
+from comics.views import SagaListView, SagaUpdate, SagaCreate, SagaDelete
 
 
 urlpatterns = patterns(
@@ -93,6 +93,10 @@ urlpatterns = patterns(
     url(r'sagas/$',
         login_required(SagaListView.as_view()),
         name='saga_list'),
+
+    url(r'^sagas/(?P<slug>[\w\-]+)/delete/$',
+        login_required(SagaDelete.as_view()),
+        name='saga_delete'),
 
     # ---------- #
     # publishers
