@@ -23,10 +23,59 @@ class Saga(models.Model):
 
     name = models.CharField(max_length=50)
     total_numbers = models.IntegerField(default=1)
+    argument = models.TextField(blank=True, null=True, max_length=3000)
+    slug = models.SlugField()
 
     def __unicode__(self):
         """str/unicode function of Profile class."""
         return self.name
+
+    def save(self, *args, **kwargs):
+        """Overriding of save function in Saga class."""
+        self.slug = slugify(self.name)
+        super(Saga, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        """Return the absolute url of Saga model."""
+        # return reverse('artist-detail', kwargs={'pk': self.pk})
+        return reverse('saga_detail',
+                       kwargs={'saga_slug': self.slug})
+
+    @property
+    def my_image(self):
+        """Return the absolute url of colection image as property.
+
+        If the colection has no image it will search in all the comics
+        but if no image is found, it will return the empty image url
+        """
+        # comics_set = Comic.objects.filter(colection__id=self.id)
+        comics_set = Comic.objects.filter(my_sagas__id=self.id)
+        for comic in comics_set:
+            if comic.cover:
+                return comic.cover
+        return "images/noimage.png"
+
+    def get_saga_status(self):
+        """."""
+        # current_numbers = ComicsInSaga.objects(saga=self.id)
+        current_numbers = Comic.objects.filter(my_sagas__id=self.id).count()
+        return str(current_numbers) + " / " + str(self.total_numbers)
+
+    def get_saga_pubdate(self):
+        """."""
+        comics_set = Comic.objects.filter(my_sagas__id=self.id)
+        for comic in comics_set:
+            if comic.pub_date:
+                return comic.pub_date
+        return "N/A"
+
+    def get_saga_totalpages(self):
+        """."""
+        comics_set = Comic.objects.filter(my_sagas__id=self.id)
+        totalpages = 0
+        for comic in comics_set:
+            totalpages += comic.pages
+        return totalpages
 
 
 # ------------------------------------------------------------------ #
@@ -698,7 +747,7 @@ class ComicsInSaga(models.Model):
     class Meta:
         """Meta class for Colaborator model."""
 
-        unique_together = ('comic', 'saga', 'number_in_saga')
+        unique_together = ('saga', 'number_in_saga')
 
     def __unicode__(self):
         """str/unicode function of Comic class."""
