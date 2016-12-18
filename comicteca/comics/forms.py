@@ -672,6 +672,27 @@ class ProfileEditForm(forms.ModelForm):
 #                        Profile Forms
 #
 # ------------------------------------------------------------------ #
+class SagaCreateForm(forms.ModelForm):
+    """Saga Creation form."""
+
+    def __init__(self, *args, **kwargs):
+        """Contructor for SagaCreateForm class."""
+        self.request_user = kwargs.pop('current_user')
+        # Now kwargs doesn't contain 'current_user' ==>
+        # so we can safely pass it to the base class method
+        super(SagaCreateForm, self).__init__(*args, **kwargs)
+
+    slug = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False)
+
+    class Meta:
+        """Meta class for Colection Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Saga
+        fields = ('name', 'total_numbers', 'argument')
+
 
 class SagaUpdateForm(forms.ModelForm):
     """Saga Update form."""
