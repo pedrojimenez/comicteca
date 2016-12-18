@@ -27,32 +27,20 @@
 	    <table class="table">
 		    <tr>
      		  <th>Name</th>
-     		  <th>Volume</th>
-          <th>Type</th>
+          <th>Numbers</th>
           <th>Pages</th>
-          <th>Distributor</th>
-          <th>Cost</th>
-          <th>Language</th>
-     		  <th>Pub Date</th>
-     		  <th>Numbers</th>
-		    </tr>
+          <th>Value</th>
+          <th>Pub Date</th>
+        </tr>
       {% for saga in object_list %}
 		    <tr>
-	        <td><a href="/comicteca/sagas/{{ saga.slug }}/">{{ saga.name }}</a></td>
-          {% if colection.colection_type == 'Regular' %}
-	          <td>v{{ colection.volume }}</td>
-          {% else %}
-            <td> - </td>
-          {% endif %}
+	        <td><a href="{% url 'saga_detail' saga.slug %}">{{ saga.name }}</a></td>
           <!-- TODO: set a different icon for each class -->
-          <td>{{ saga.colection_type }}</td>
-          <td>{{ colection.get_pages }}</td>
-          <td><a href="/comicteca/publishers/{{ colection.distributor.slug }}">{{ colection.distributor.name }}</a></td>
-          <td>{{ colection.get_currency }}</td>
-          <td>{{ colection.language }}</td>
-		      <td>{{ colection.my_pub_date }}</td>
-		      <td>{{ colection.colection_list }}</td>
-		    </tr>
+          <td>{{ saga.total_numbers }}</td>
+          <td>{{ saga.get_saga_totalpages }}</td>
+          <td>{{ saga.get_saga_currency }}</td>
+          <td>{{ saga.get_saga_pubdate }}</td>
+        </tr>
       {% endfor %}
     </table>
   </div>
