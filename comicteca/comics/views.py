@@ -667,6 +667,14 @@ class SagaListView(ListView):
         return context
 
 
+class SagaDelete(DeleteView):
+    """CBV for deleting a Saga."""
+
+    model = Saga
+    success_url = reverse_lazy('saga_list')
+    template_name = "comics/delete_saga_confirm.html"
+
+
 @login_required
 def saga(request, saga_slug):
     """."""
