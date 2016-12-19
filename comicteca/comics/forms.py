@@ -669,10 +669,6 @@ class ComicAddSagaForm(forms.ModelForm):
         saganame = self.cleaned_data['saga']
         number = self.cleaned_data['saganumber']
 
-        print ""
-        print saganame
-        print number
-
         if saganame and number:
             s = Saga.objects.get(name=saganame)
             if not s.is_available(number):
@@ -682,9 +678,6 @@ class ComicAddSagaForm(forms.ModelForm):
 
     def save(self, commit=True):
         """Overrride of save method in ComicAddSaga Form."""
-        print ""
-        print "entering save of ComicAddSagaForm ..."
-
         saga = super(ComicAddSagaForm, self).save(commit=False)
 
         if commit:
@@ -692,12 +685,6 @@ class ComicAddSagaForm(forms.ModelForm):
             # Atatch the current number to the list of Saga Comics
             mysaga = Saga.objects.get(name=self.cleaned_data['saga'])
             mycomic = Comic.objects.get(slug=self.current_comic)
-
-            print ""
-            print "x.x.x.x.x.x.x"
-            print "Saga: ", mysaga
-            print "Comic: ", mycomic
-            print "Number: ", self.cleaned_data['saganumber']
 
             comic_in_saga = ComicsInSaga()
             comic_in_saga.saga = mysaga
