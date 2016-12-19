@@ -36,7 +36,7 @@
 		    <tr>
 	        <td><a href="{% url 'saga_detail' saga.slug %}">{{ saga.name }}</a></td>
           <!-- TODO: set a different icon for each class -->
-          <td>{{ saga.total_numbers }}</td>
+          <td>{{ saga.get_saga_status }}</td>
           <td>{{ saga.get_saga_totalpages }}</td>
           <td>{{ saga.get_saga_currency }}</td>
           <td>{{ saga.get_saga_pubdate }}</td>
