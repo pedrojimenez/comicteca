@@ -8,6 +8,7 @@ from comics.models import Publisher
 from comics.models import Comic
 from comics.models import Profile
 from comics.models import Saga
+from comics.models import ComicsInSaga
 from image_manager.models import ImageManager
 from comics.utils import parse_int_set
 
@@ -628,6 +629,83 @@ class ComicForm(forms.ModelForm):
         if commit:
             comic.save()
         return comic
+
+
+class ComicAddSagaForm(forms.ModelForm):
+    """Comic Add Saga form."""
+
+    def __init__(self, *args, **kwargs):
+        """Contructor for ColectionForm class."""
+        self.request_user = kwargs.pop('current_user')
+        self.current_comic = kwargs.pop('current_comic')
+        # Now kwargs doesn't contain 'current_user' ==>
+        # so we can safely pass it to the base class method
+        super(ComicAddSagaForm, self).__init__(*args, **kwargs)
+
+    saga = forms.ModelChoiceField(
+        queryset=Saga.objects.all(),
+        label="Available Saga",
+        help_text="Saga")
+
+    saganumber = forms.IntegerField(
+        label="Number",
+        min_value=1,
+        initial=1,
+        help_text='Number in Saga')
+
+    slug = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False)
+
+    class Meta:
+        """Meta class for Comic Add Saga Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Comic
+        fields = ('slug',)
+
+    def clean_saganumber(self):
+        """."""
+        saganame = self.cleaned_data['saga']
+        number = self.cleaned_data['saganumber']
+
+        print ""
+        print saganame
+        print number
+
+        if saganame and number:
+            s = Saga.objects.get(name=saganame)
+            if not s.is_available(number):
+                msg = 'This number is already is use, choose a valid one.'
+                raise forms.ValidationError(msg)
+        return number
+
+    def save(self, commit=True):
+        """Overrride of save method in ComicAddSaga Form."""
+        print ""
+        print "entering save of ComicAddSagaForm ..."
+
+        saga = super(ComicAddSagaForm, self).save(commit=False)
+
+        if commit:
+            saga.save()
+            # Atatch the current number to the list of Saga Comics
+            mysaga = Saga.objects.get(name=self.cleaned_data['saga'])
+            mycomic = Comic.objects.get(slug=self.current_comic)
+
+            print ""
+            print "x.x.x.x.x.x.x"
+            print "Saga: ", mysaga
+            print "Comic: ", mycomic
+            print "Number: ", self.cleaned_data['saganumber']
+
+            comic_in_saga = ComicsInSaga()
+            comic_in_saga.saga = mysaga
+            comic_in_saga.comic = mycomic
+            comic_in_saga.number_in_saga = self.cleaned_data['saganumber']
+            comic_in_saga.save()
+
+        return saga
 
 
 # ------------------------------------------------------------------ #
