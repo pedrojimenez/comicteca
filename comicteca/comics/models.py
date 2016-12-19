@@ -637,7 +637,7 @@ class Comic(models.Model):
 
     def get_sagas(self):
         """Return the list of users owning the comic."""
-        return self.my_sagas.all()
+        return self.my_sagas.all().distinct()
 
     def get_users(self):
         """Return the list of users owning the comic."""
