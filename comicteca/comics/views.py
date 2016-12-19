@@ -28,6 +28,7 @@ from comics.forms import UserEditForm
 from comics.forms import ProfileEditForm
 from comics.forms import SagaUpdateForm
 from comics.forms import SagaCreateForm
+from comics.forms import ComicAddSagaForm
 
 
 # ------------------------------------------------------------------ #
@@ -539,6 +540,21 @@ class ComicDelete(DeleteView):
     model = Comic
     success_url = reverse_lazy('comic_list')
     template_name = "comics/delete_comic_confirm.html"
+
+
+class ComicAddSaga(UpdateView):
+    """CBV for updating a Saga to with Comic object."""
+
+    def get_form_kwargs(self, **kwargs):
+        """Override method for inyecting additional parameters to form."""
+        kwargs = super(ComicAddSaga, self).get_form_kwargs()
+        kwargs.update({'current_user': self.request.user})
+        kwargs.update({'current_comic': kwargs['instance']})
+        return kwargs
+
+    model = Comic
+    template_name = "comics/update_comic_saga_form.html"
+    form_class = ComicAddSagaForm
 
 
 # ------------------------------------------------------------------ #
