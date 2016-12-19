@@ -14,6 +14,7 @@ from comics.views import ComicListView, ComicListByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
 from comics.views import CollectionAddComics
 from comics.views import SagaListView, SagaUpdate, SagaCreate, SagaDelete
+from comics.views import ComicAddSaga
 
 
 urlpatterns = patterns(
@@ -155,6 +156,10 @@ urlpatterns = patterns(
     url(r'^comics/(?P<comic_slug>[\w\-]+)/add-user/(?P<usr_name>[\w\-]+)/$',
         views.comic_add_user,
         name='comic_add_user'),
+
+    url(r'^comics/(?P<slug>[\w\-]+)/add-saga/$',
+        login_required(ComicAddSaga.as_view()),
+        name='comic_add_saga'),
 
     # ---------- #
     # utils
