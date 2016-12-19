@@ -27,9 +27,15 @@
       </a>
     </center></p>
     <p><center>
+      <a href="{% url 'comic_add_saga' comic.slug %}" class="btn btn-success" role="button">
+        <i class="glyphicon glyphicon-plus"></i>
+        Add to Saga
+      </a>
+    </center></p>
+    <p><center>
       <a href="{{ comic.colection.get_absolute_url }}" class="btn btn-info" role="button">
         <i class="glyphicon glyphicon-share-alt"></i>
-        Back to {{ comic.colection.name }}
+        Back to Collection
       </a>
     </center></p>
     <hr>
