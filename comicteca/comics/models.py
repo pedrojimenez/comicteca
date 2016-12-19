@@ -101,6 +101,19 @@ class Saga(models.Model):
             return str(total_currency) + ' ' + str(unit)
         return total_currency
 
+    def is_available(self, number):
+        """Check if comic number is already is use."""
+        saga_comics = ComicsInSaga.objects.filter(saga=self.id).order_by(
+            'number_in_saga')
+
+        print ""
+        print "SagaComics: ", saga_comics
+
+        for comic in saga_comics:
+            if number == comic.number_in_saga:
+                return False
+        return True
+
 
 # ------------------------------------------------------------------ #
 #
