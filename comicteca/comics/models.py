@@ -635,6 +635,10 @@ class Comic(models.Model):
             role_list.append(role['role'])
         return ','.join(role_list)
 
+    def get_sagas(self):
+        """Return the list of users owning the comic."""
+        return self.my_sagas.all()
+
     def get_users(self):
         """Return the list of users owning the comic."""
         return User.objects.filter(Users__id=self.id)
