@@ -17,12 +17,14 @@ from comics.models import Publisher
 from comics.models import Comic
 from comics.models import Profile
 from comics.models import Saga, ComicsInSaga
+from comics.models import Ownership
 # from comics.forms import ArtistCreateForm, ArtistUpdateForm
 from comics.forms import ArtistCreateForm
 from comics.forms import ColectionCreateForm, ColectionUpdateForm
 from comics.forms import CollectionAddComicsForm
 from comics.forms import PublisherForm
 from comics.forms import ComicForm
+from comics.forms import ComicUpdateForm
 from comics.forms import LoginForm
 from comics.forms import UserEditForm
 from comics.forms import ProfileEditForm
@@ -388,6 +390,13 @@ def comic(request, comic_name_slug):
         context_dict['request_user'] = request.user
         context_dict['inmycollection'] = comic.check_user(request.user)
 
+        try:
+            o = Ownership.objects.get(comic=comic.id, user=request.user)
+            context_dict['comic_purchase_price'] = o.purchase_price
+            context_dict['comic_purchase_unit'] = o.purchase_unit
+        except Ownership.DoesNotExist:
+            pass
+
     except Comic.DoesNotExist:
         # We get here if we didn't find the specified Comic
         # Don't do anything - the template displays the "no comic"
@@ -406,8 +415,12 @@ def comic_add_user(request, comic_slug, usr_name):
         comic = Comic.objects.get(slug=comic_slug)
         user = User.objects.get(username=usr_name)
 
-        if user not in comic.users.all():
-            comic.users.add(user)
+        if user not in comic.my_users.all():
+            o = Ownership()
+            o.comic = comic
+            o.user = user
+            o.save()
+            # comic.my_users.add(user)
         else:
             # TODO: pass it to messages and/or logger
             print "ERROR: User {} already own this comic: {}".format(
@@ -437,8 +450,10 @@ def comic_remove_user(request, comic_slug, usr_name):
         comic = Comic.objects.get(slug=comic_slug)
         user = User.objects.get(username=usr_name)
 
-        if user in comic.users.all():
-            comic.users.remove(user)
+        if user in comic.my_users.all():
+            o = Ownership.objects.get(comic=comic, user=user)
+            o.delete()
+            # comic.users.remove(user)
         else:
             # TODO: pass it to messages and/or logger
             print "ERROR: User {} does NOT own this comic: {}".format(
@@ -470,8 +485,7 @@ class ComicDetailView(DetailView):
         """Overwriting of method to pass additional info to the template."""
         # Call the base implementation first to get a context
         context = super(ComicDetailView, self).get_context_data(**kwargs)
-        print "entrando en Comic Detail View"
-        print self.kwargs
+
         # Add in a QuerySet of all the Comics ordered by inserted date
         # context['comic_list'] = Comic.objects.order_by('slug')
         # cntext['colection'] = Colection.objects.get(slug=colection_name_slug)
@@ -528,10 +542,39 @@ class ComicCreate(CreateView):
 class ComicUpdate(UpdateView):
     """CBV for updating a Comic object."""
 
+    def get_initial(self):
+        """Returns the initial data to use for forms on this view."""
+        initial = super(ComicUpdate, self).get_initial()
+        try:
+            o = Ownership.objects.get(
+                comic=self.object.id, user=self.request.user)
+            initial['purchase_unit'] = o.purchase_unit
+            initial['purchase_price'] = o.purchase_price
+        except Ownership.DoesNotExist:
+            initial['purchase_unit'] = 'euros'
+            initial['purchase_price'] = 0
+        return initial
+
+    def get_form_kwargs(self, **kwargs):
+        """Override method for inyecting additional parameters to form."""
+        kwargs = super(ComicUpdate, self).get_form_kwargs()
+        kwargs.update({'current_user': self.request.user})
+        kwargs.update({'current_comic': kwargs['instance']})
+
+        try:
+            o = Ownership.objects.get(comic=kwargs['instance'],
+                                      user=self.request.user)
+            kwargs.update({'purchase_price': o.purchase_price})
+            kwargs.update({'purchase_unit': o.purchase_unit})
+        except Ownership.DoesNotExist:
+            kwargs.update({'purchase_price': 0})
+            kwargs.update({'purchase_unit': 'euros'})
+            pass
+        return kwargs
+
     model = Comic
     template_name = "comics/update_comic_form.html"
-    form_class = ComicForm
-    # fields = ['title', 'number', 'pages', 'extrainfo']
+    form_class = ComicUpdateForm
 
 
 class ComicDelete(DeleteView):
