@@ -8,6 +8,7 @@ from comics.models import Colaborator
 from comics.models import Profile
 from comics.models import Saga
 from comics.models import ComicsInSaga
+from comics.models import Ownership
 
 from comics.actions import duplicate_colection
 from comics.actions import duplicate_publisher
@@ -150,6 +151,12 @@ class ComicsInSagaAdmin(admin.ModelAdmin):
     list_display = ['saga', 'comic', 'number_in_saga']
 
 
+class OwnershipAdmin(admin.ModelAdmin):
+    """."""
+
+    list_display = ['comic', 'user', 'purchase_price', 'purchase_unit']
+
+
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(Colection, ColectionAdmin)
 admin.site.register(Publisher, PublisherAdmin)
@@ -158,3 +165,4 @@ admin.site.register(Colaborator, ColaboratorAdmin)
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Saga, SagaAdmin)
 admin.site.register(ComicsInSaga, ComicsInSagaAdmin)
+admin.site.register(Ownership, OwnershipAdmin)
