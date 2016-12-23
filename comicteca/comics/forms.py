@@ -9,6 +9,7 @@ from comics.models import Comic
 from comics.models import Profile
 from comics.models import Saga
 from comics.models import ComicsInSaga
+from comics.models import Ownership
 from image_manager.models import ImageManager
 from comics.utils import parse_int_set
 
@@ -626,6 +627,126 @@ class ComicForm(forms.ModelForm):
 
                 comic.cover.save(image_name, ContentFile(response.read()),
                                  save=False)
+        if commit:
+            comic.save()
+        return comic
+
+
+class ComicUpdateForm(forms.ModelForm):
+    """Comic Update form."""
+
+    def get_initial(self):
+        initial = super(ComicUpdateForm, self).get_initial()
+        # conv_date = self.get_object().start_date.astimezone(time_zone)
+        # initial["start_time"] = conv_date.strftime(TIME_FORMAT)
+        initial["purchase_price"] = 25
+        initial["purchase_unit"] = 'dollars'
+
+        return initial
+
+    def __init__(self, *args, **kwargs):
+        """Contructor for ColectionForm class."""
+        self.current_user = kwargs.pop('current_user')
+        self.current_comic = kwargs.pop('current_comic')
+        self.purchase_price = kwargs.pop('purchase_price')
+        self.purchase_unit = kwargs.pop('purchase_unit')
+        # Now kwargs doesn't contain 'current_user' ==>
+        # so we can safely pass it to the base class method
+        super(ComicUpdateForm, self).__init__(*args, **kwargs)
+
+    image_manager = ImageManager()
+    title = forms.CharField(max_length=128, label="Name", required=False,
+                            help_text="Comic title")
+
+    pages = forms.IntegerField(label="Pages", min_value=1,
+                               help_text='Number of pages')
+
+    purchase_price = forms.FloatField(label="Purchase Price",
+                                      required=False,
+                                      help_text='Money paid for this comic')
+
+    purchase_unit = forms.ChoiceField(label="currency",
+                                      choices=Comic.CURRENCY_TYPES)
+
+    retail_price = forms.FloatField(label="Retail Price",
+                                    required=False,
+                                    help_text='Real price of comic (cover)')
+
+    retail_unit = forms.ChoiceField(label="currency",
+                                    required=True,
+                                    choices=Comic.CURRENCY_TYPES)
+
+    extrainfo = forms.URLField(label="External Info (URL)",
+                               required=False,
+                               help_text="Comic External Info")
+
+    comments = forms.CharField(widget=forms.Textarea, max_length=3000,
+                               label="Comments",
+                               required=False,
+                               help_text="Comic comments")
+
+    pub_date = forms.DateField(label="Publication Date",
+                               help_text="Colection publication date",
+                               required=False)
+    imageurl = forms.URLField(label="Comic Image URL", required=False,
+                              help_text="Formats: {}".format(
+                                  image_manager.valid_extensions))
+
+    slug = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        """Meta class for Comic Form."""
+
+        # Provide an association between the ModelForm and a model
+        model = Comic
+        fields = ('title', 'pages', 'color', 'digital', 'extrainfo',
+                  'comments', 'pub_date', 'retail_price', 'retail_unit')
+
+    def clean_imageurl(self):
+        """Clean method for imageurl form field."""
+        url = self.cleaned_data['imageurl']
+        if url:
+            if not self.image_manager.is_valid_image_extension(url):
+                msg = 'The given URL does not match valid image extensions.'
+                raise forms.ValidationError(msg)
+        return url
+
+    def clean_extrainfo(self):
+        """Clean method for extrainfo form field."""
+        url = self.cleaned_data['extrainfo']
+        if url:
+            response = self.image_manager.check_http_url(url)
+            if not response:
+                msg = 'The given URL does not match a valid link.'
+                raise forms.ValidationError(msg)
+        return url
+
+    def save(self, force_insert=False, force_update=False, commit=True):
+        """Overrride of save method in ComicUpdate Form."""
+        comic = super(ComicUpdateForm, self).save(commit=False)
+
+        # Image section
+        image_url = self.cleaned_data['imageurl']
+        cd_purchase_price = self.cleaned_data['purchase_price']
+        cd_purchase_unit = self.cleaned_data['purchase_unit']
+        # download image from the given URL
+        if image_url:
+            response = self.image_manager.check_http_url(image_url)
+            if response:
+                image_type = image_url.rsplit('.', 1)[1].lower()
+                image_name = slugify(comic.colection) + \
+                    '_n' + str(comic.number) + \
+                    '.' + image_type
+
+                comic.cover.save(image_name, ContentFile(response.read()),
+                                 save=False)
+
+        o = Ownership.objects.get(comic=self.current_comic,
+                                  user=self.current_user)
+        o.purchase_price = cd_purchase_price
+        o.purchase_unit = cd_purchase_unit
+        o.save()
+
         if commit:
             comic.save()
         return comic
