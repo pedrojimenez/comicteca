@@ -552,7 +552,7 @@ class Comic(models.Model):
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     colaborators = models.ManyToManyField(Artist, through='Colaborator')
 
-    users = models.ManyToManyField(User, related_name='Users')
+    my_users = models.ManyToManyField(User, through='Ownership')
 
     my_sagas = models.ManyToManyField(Saga, through='ComicsInSaga')
 
@@ -599,7 +599,7 @@ class Comic(models.Model):
         self.colection.update_comics_number()
 
     def get_absolute_url(self):
-        """."""
+        """Get the absolute url a comic model."""
         return reverse('comic_detail',
                        kwargs={'comic_name_slug': self.slug})
 
@@ -641,7 +641,7 @@ class Comic(models.Model):
 
     def get_users(self):
         """Return the list of users owning the comic."""
-        return User.objects.filter(Users__id=self.id)
+        return User.objects.filter(ownership__comic=self.id)
 
     def get_color(self):
         """Return if comic is printed in color or black/white."""
@@ -656,7 +656,7 @@ class Comic(models.Model):
 
     def check_user(self, user):
         """Return if current comic is owned by user."""
-        if user in self.users.all():
+        if user in self.my_users.all():
             return True
         return False
 
@@ -680,6 +680,7 @@ class Comic(models.Model):
 
     def price_purchase(self, unit='euros'):
         """Return the comic purchase price in the desired unit."""
+        # TODO: REFAACTOR with Ownership class
         if self.purchase_price == 0.0:
                 return 0.0
 
@@ -795,6 +796,37 @@ class ComicsInSaga(models.Model):
         return str(self.saga) + " - "\
             + str(self.number_in_saga) + " - "\
             + str(self.comic)
+
+
+# ------------------------------------------------------------------ #
+#
+#                    Ownership intermediate Class
+#
+# ------------------------------------------------------------------ #
+class Ownership(models.Model):
+    """Ownership model."""
+
+    comic = models.ForeignKey(Comic)
+    user = models.ForeignKey(User)
+    purchase_price = models.FloatField(default=0)
+    purchase_unit = models.CharField(
+        'Unit',
+        max_length=15,
+        choices=Comic.CURRENCY_TYPES,
+        default='euros')
+
+    class Meta:
+        """Meta class for Ownership model."""
+
+        unique_together = ('comic', 'user')
+
+    def __unicode__(self):
+        """str/unicode function of Comic class."""
+        return str(self.comic) + " - "\
+            + str(self.user) + " - "\
+            + str(self.purchase_price)
+
+
 
 
 # class Distributor(models.Model):
