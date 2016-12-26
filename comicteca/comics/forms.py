@@ -635,15 +635,6 @@ class ComicForm(forms.ModelForm):
 class ComicUpdateForm(forms.ModelForm):
     """Comic Update form."""
 
-    def get_initial(self):
-        initial = super(ComicUpdateForm, self).get_initial()
-        # conv_date = self.get_object().start_date.astimezone(time_zone)
-        # initial["start_time"] = conv_date.strftime(TIME_FORMAT)
-        initial["purchase_price"] = 25
-        initial["purchase_unit"] = 'dollars'
-
-        return initial
-
     def __init__(self, *args, **kwargs):
         """Contructor for ColectionForm class."""
         self.current_user = kwargs.pop('current_user')
@@ -741,11 +732,15 @@ class ComicUpdateForm(forms.ModelForm):
                 comic.cover.save(image_name, ContentFile(response.read()),
                                  save=False)
 
-        o = Ownership.objects.get(comic=self.current_comic,
-                                  user=self.current_user)
-        o.purchase_price = cd_purchase_price
-        o.purchase_unit = cd_purchase_unit
-        o.save()
+        try:
+            o = Ownership.objects.get(comic=self.current_comic,
+                                      user=self.current_user)
+            o.purchase_price = cd_purchase_price
+            o.purchase_unit = cd_purchase_unit
+            o.save()
+        except Ownership.DoesNotExist:
+            print "There is no Ownership of this comic: {}".format(
+                self.current_comic)
 
         if commit:
             comic.save()
