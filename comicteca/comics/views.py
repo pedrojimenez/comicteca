@@ -522,9 +522,12 @@ class ComicListByUserView(ListView):
         # Call the base implementation first to get a context
         context = super(ComicListByUserView, self).get_context_data(**kwargs)
 
+        # Catch the logged User object
+        current_user = User.objects.get(username=self.kwargs['user_slug'])
+
         # Add in a QuerySet of all user Comics ordered by inserted date
         context['object_list'] = Comic.objects.filter(
-            users__username=self.kwargs['user_slug'])
+            ownership__user=current_user)
         context['total_comics'] = context['object_list'].count()
         return context
 
@@ -543,7 +546,7 @@ class ComicUpdate(UpdateView):
     """CBV for updating a Comic object."""
 
     def get_initial(self):
-        """Returns the initial data to use for forms on this view."""
+        """Return the initial data to use for forms on this view."""
         initial = super(ComicUpdate, self).get_initial()
         try:
             o = Ownership.objects.get(
