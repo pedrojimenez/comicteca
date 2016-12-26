@@ -739,8 +739,11 @@ class ComicUpdateForm(forms.ModelForm):
             o.purchase_unit = cd_purchase_unit
             o.save()
         except Ownership.DoesNotExist:
-            print "There is no Ownership of this comic: {}".format(
-                self.current_comic)
+            if cd_purchase_price:
+                o = Ownership(comic=self.current_comic, user=self.current_user)
+                o.purchase_price = cd_purchase_price
+                o.purchase_unit = cd_purchase_unit
+                o.save()
 
         if commit:
             comic.save()
