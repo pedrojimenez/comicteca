@@ -75,7 +75,7 @@
                         <li><a href="/admin/">Admin page</a></li>
                         <li class="divider"></li>
                       {% endif %}
-                      <li><a href="#">Stats</a></li>
+                      <li><a href="{% url 'user_stats' request.user %}">Stats</a></li>
                       <li><a href="{% url 'user_collection' request.user %}">My Comics</a></li>
                       <li><a href="{% url 'profile_edit' %}">Edit account</a></li>
                       <li><a href="{% url 'password_change' %}">Change password</a></li>
