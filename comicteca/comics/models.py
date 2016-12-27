@@ -457,15 +457,16 @@ class Colection(models.Model):
         # for n in range(1, self.max_numbers + 1):
         for n in range(0, len(localrange)):
             number = localrange.pop()
-            print "[{}] - Adding comic n{} to collection {}".format(
+            print "[{}] - Adding comic #{} to collection {}".format(
                 user, number, self.name)
 
             try:
-                checkcomic = Comic.objects.get(colection=self, number=number)
+                current_comic = Comic.objects.get(
+                    colection=self, number=number)
             except Comic.DoesNotExist:
-                checkcomic = None
+                current_comic = None
 
-            if not checkcomic:
+            if not current_comic:
                 comic = Comic()
                 comic.number = number
                 comic.pages = pages
@@ -475,18 +476,30 @@ class Colection(models.Model):
                 comic.purchase_price = purchase_price
                 comic.purchase_unit = purchase_unit
                 comic.save()
-                comic.users.add(current_user)
+                # o = Ownership(comic=current_comic, user=current_user)
+                # o.purchase_price = purchase_price
+                # o.purchase_unit = purchase_unit
+                # o.save()
+                current_comic = comic
             else:
                 # TODO: Use logger instead of prints
                 print "   --> Comic already exists, omitting ..."
-                # Update the ownership (if not exist)
-                if current_user in checkcomic.users.all():
-                    print "   --> Comic {} already owned by <{}>".format(
-                        checkcomic, current_user)
-                else:
-                    print "   --> Dup. Comic <{}> now also owned by <{}>".\
-                        format(checkcomic, current_user)
-                    checkcomic.users.add(current_user)
+
+            # Update the ownership (if not exist)
+            try:
+                o = Ownership.objects.get(comic=current_comic,
+                                          user=current_user)
+                print "   --> Comic {} already owned by <{}>".format(
+                    current_comic, current_user)
+
+            except Ownership.DoesNotExist:
+                o = Ownership(comic=current_comic, user=current_user)
+                print "   --> Dup. Comic <{}> now also owned by <{}>".\
+                    format(current_comic, current_user)
+
+            o.purchase_price = purchase_price
+            o.purchase_unit = purchase_unit
+            o.save()
 
         self.update_comics_number()
 
@@ -825,8 +838,6 @@ class Ownership(models.Model):
         return str(self.comic) + " - "\
             + str(self.user) + " - "\
             + str(self.purchase_price)
-
-
 
 
 # class Distributor(models.Model):
