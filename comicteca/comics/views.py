@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
+from django.db.models import Sum, Count
+
 from comics.models import Artist
 from comics.models import Colection
 from comics.models import Publisher
@@ -512,7 +514,7 @@ class ComicListView(ListView):
 
 
 class ComicListByUserView(ListView):
-    """Generic class view for all Comics from a given User ."""
+    """Generic class view for all Comics from a given User."""
 
     model = Comic
     template_name = "comics/comic_list.html"
@@ -529,6 +531,64 @@ class ComicListByUserView(ListView):
         context['object_list'] = Comic.objects.filter(
             ownership__user=current_user)
         context['total_comics'] = context['object_list'].count()
+        return context
+
+
+class ComicStatsByUserView(ListView):
+    """Generic class view for all stats of a given User."""
+
+    model = Comic
+    template_name = "comics/user_stats.html"
+
+    def get_context_data(self, **kwargs):
+        """Overwriting of method to pass additional info to the template."""
+        # Call the base implementation first to get a context
+        context = super(ComicStatsByUserView, self).get_context_data(**kwargs)
+
+        # Catch the logged User object
+        current_user = User.objects.get(username=self.kwargs['user_slug'])
+
+        # Add in a QuerySet of all user Comics ordered by inserted date
+        context['object_list'] = Comic.objects.filter(
+            ownership__user=current_user)
+
+        # Retail Prices
+        total_retail = 0
+        total_collections = set()
+        for tmp_comic in Comic.objects.filter(ownership__user=current_user):
+            total_retail += tmp_comic.price_retail()
+            total_collections.add(tmp_comic.colection)
+
+        # Purchase price: pesetas
+        context['total_purchase_ptas'] = Ownership.objects.filter(
+            user=current_user,
+            purchase_unit='pesetas').aggregate(Sum('purchase_price')).get(
+                'purchase_price__sum', 0.00)
+
+        # Purchase price: euros
+        context['total_purchase_euros'] = Ownership.objects.filter(
+            user=current_user,
+            purchase_unit='euros').aggregate(Sum('purchase_price')).get(
+                'purchase_price__sum', 0.00)
+
+        # Purchase price: TOTAL
+        context['total_purchase'] = round(
+            ((context['total_purchase_ptas'] / 166.66) +
+                context['total_purchase_euros']), 2)
+
+        # Pages
+        context['total_pages'] = Comic.objects.filter(
+            ownership__user=current_user).aggregate(
+            Sum('pages')).get('pages__sum', 0.00)
+
+        # Collections
+        # packages = Package.objects.annotate(
+        #   bid_count=Count('items__bids', distinct = True))
+        context['total_collections'] = len(list(total_collections))
+
+        # res = queryset.annotate(Count("name"))
+        context['total_retail'] = total_retail
+
         return context
 
 
