@@ -59,7 +59,10 @@ class Saga(models.Model):
         """."""
         # current_numbers = ComicsInSaga.objects(saga=self.id)
         current_numbers = Comic.objects.filter(my_sagas__id=self.id).count()
-        return str(current_numbers) + " / " + str(self.total_numbers)
+        if current_numbers == self.total_numbers:
+            return "Complete (" + str(current_numbers) + ")"
+        else:
+            return str(current_numbers) + " / " + str(self.total_numbers)
 
     def get_saga_pubdate(self):
         """."""
