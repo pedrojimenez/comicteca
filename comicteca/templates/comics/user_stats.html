@@ -1,0 +1,82 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Comic List{% endblock %}
+
+{% block side_block %}
+
+  <h2><center>TOTAL</center></h2>
+  <h3><center>{{ total_comics }}</center></h3>
+  <hr>
+  <p><center>
+    <a href="{% url 'comic_add' %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Comic
+    </a>
+  </center></p>
+
+{% endblock %}
+
+{% block body_block %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2><center>USER STATS</center></h2>
+    </div>
+</div>
+<p>TOTAL COLLECTIONS: {{ total_collections }}</p>
+<p>TOTAL COMICS: {{ object_list.count }}</p>
+<hr>
+<p>TOTAL PAGES: {{ total_pages }}</p>
+<p>TOTAL READ: (in progress)</p>
+<hr>
+<p>TOTAL PURCHASE: {{ total_purchase }} euros</p>
+<p>TOTAL PTAS: {{ total_purchase_ptas }} ptas</p>
+<p>TOTAL EUROS: {{ total_purchase_euros }} euros</p>
+<p><br></p>
+<p>RETAIL VALUE: {{ total_retail }} euros</p>
+<hr>
+
+<div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+        <h2><center>Comic List ({{ object_list.count }})</center></h2>
+      </div>
+      <!-- div class="panel-heading">Comic List ({{ comic_list.count }})</div -->
+
+      <!-- Table -->
+      <table class="table">
+        <tr>
+          <th>Comic</th>
+          <th>Distributor</th>
+          <th>Editors</th>
+          <th>Pages</th>
+          <th>Language</th>
+          <th>Retail Price</th>
+          <th>Pub Date</th>
+        </tr>
+      {% for comic in object_list|dictsortreversed:"updated" %}
+        <tr>
+          <td>
+            <a href="{{ comic.get_absolute_url }}">{{ comic.colection.name }}
+              <!-- Special Collection comics only shown as Collection Name -->
+              {% if comic.colection.colection_type != 'Special' %}
+                <!-- Volume only shown in Regular Collection comics -->
+                {% if comic.colection.colection_type == 'Regular' %}
+                  (v{{ comic.colection.volume }})
+                {% endif %}
+                <!-- Number only shown in Regular/Limited Collection comics -->
+                #{{ comic.number }}
+              {% endif %}
+            </a></td>
+          <td>{{ comic.colection.distributor }}</td>
+          <td>{{ comic.colection.editor_list }}</td>
+          <td>{{ comic.pages }}</td>
+          <td>{{ comic.colection.language }}</td>
+          <td>{{ comic.retail_price }} {{ comic.retail_unit }}</td>
+          <td>{{ comic.pub_date }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+</div>
+{% endblock %}
