@@ -11,6 +11,7 @@ from comics.views import ColectionListView
 from comics.views import PublisherCreate, PublisherUpdate, PublisherDelete
 from comics.views import PublisherListView
 from comics.views import ComicListView, ComicListByUserView
+from comics.views import ComicStatsByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
 from comics.views import CollectionAddComics
 from comics.views import SagaListView, SagaUpdate, SagaCreate, SagaDelete
@@ -189,6 +190,11 @@ urlpatterns = patterns(
     url(r'^profiles/(?P<user_slug>[\w\-]+)/my-collection/$',
         login_required(ComicListByUserView.as_view()),
         name='user_collection'),
+
+    url(r'^profiles/(?P<user_slug>[\w\-]+)/stats/$',
+        login_required(ComicStatsByUserView.as_view()),
+        name='user_stats'),
+
 
     # -------------------- #
     # change password urls
