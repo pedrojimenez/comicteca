@@ -68,6 +68,21 @@
             </div>
             <!-- Distributor / Editor -->
             <div class="col-md-6">
+              <!-- Buttons -->
+              <div class="row pull-right">
+                {% if not all_comics_owned  %}
+                  <a href="{% url 'collection_add_all_comics' colection.slug  %}" class="btn btn-info" role="button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    ADD ALL COMICS
+                  </a>
+                {% else %}
+                    <a href="{% url 'collection_remove_all_comics' colection.slug  %}" class="btn btn-danger" role="button">
+                      <i class="glyphicon glyphicon-minus"></i>
+                      REMOVE ALL COMICS
+                    </a>
+                {% endif %}
+              </div>
+
               <div class="row">
                 <!-- Distributor -->
                 <h2>Distributor</h2>
@@ -109,20 +124,27 @@
         <div class="container-fluid">
           <div class="row">
             <!-- comic_list from context data -->
-            {% for comic in comic_list %}
+            {% for comic,owned in comic_list %}
               <div class="col-xs-12 col-md-4 col-lg-3 col-xl-2" style="height: 350px;">
-                {% if comic.cover %}
-                  {% thumbnail comic.cover "200x280" as thumb_image %}
+
+                  {% thumbnail comic.my_cover "200x280" as thumb_image %}
                     <a href="{{ comic.my_url }}">
                     <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
-                    <br/>
-                    <a href="/comicteca/comics/{{ comic.slug }}/"><strong>Number {{ comic.number }}</strong> ({{ comic.pages }} pags)</a>
                   {% endthumbnail %}
-                {% else %}
-                  <a href="{{ comic.my_url }}">
-                  <img src="/media/images/noimage.png" class="image-detail" style="padding:1px;border:thin solid black;"></a>
-                  <a href="/comicteca/comics/{{ comic.slug }}/"><strong>Number {{ comic.number }}</strong> ({{ comic.pages }} pags)</a>
-                {% endif %}
+
+                  <h2>
+                    {% if owned %}
+                      <span class="label label-danger">
+                      #{{ comic.number }}
+                      </span>
+                    {% else %}
+                      <span class="label label-default">
+                      #{{ comic.number }}
+                      </span>
+                    {% endif %}
+                  </h2>
+
+
                 <div class="clearfix visible-sm-block visible-lg-block"></div>
               </div>
             {% endfor %}
