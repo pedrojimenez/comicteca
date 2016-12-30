@@ -1,6 +1,7 @@
 """Comic App views."""
 
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse_lazy
@@ -11,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 
-from django.db.models import Sum, Count
+from django.db.models import Sum
 
 from comics.models import Artist
 from comics.models import Colection
@@ -238,21 +239,96 @@ class CollectionAddComics(UpdateView):
 
 
 @login_required
+def collection_add_all_comics(request, slug):
+    """Generic View for adding all comics to user collection."""
+    try:
+        comic_list = Comic.objects.filter(colection__slug=slug)
+        user = User.objects.get(username=request.user)
+
+        for comic in comic_list:
+            if user not in comic.my_users.all():
+                o = Ownership()
+                o.comic = comic
+                o.user = user
+                print "INFO: User {} - Comic <{}> added to owned".format(
+                    user, comic)
+                o.save()
+                # comic.my_users.add(user)
+            else:
+                # TODO: pass it to messages and/or logger
+                print "INFO: User {} already own this comic: {}".format(
+                    user, comic)
+
+    except Colection.DoesNotExist:
+        # We get here if we didn't find the specified Comic
+        # Don't do anything - the template displays the "no comic"
+        # message for us.
+        pass
+    return redirect('colection_detail', colection_name_slug=slug)
+
+
+@login_required
+def collection_remove_all_comics(request, slug):
+    """Generic View for removing all comics of user collection."""
+    try:
+        comic_list = Comic.objects.filter(colection__slug=slug)
+        user = User.objects.get(username=request.user)
+
+        for comic in comic_list:
+            if user in comic.my_users.all():
+                o = Ownership.objects.get(comic=comic, user=user)
+                print "INFO: User {} - Comic <{}> removed".format(
+                    user, comic)
+                o.delete()
+            else:
+                # TODO: pass it to messages and/or logger
+                print "INFO: User {} does not own this comic: {}".format(
+                    user, comic)
+
+    except Colection.DoesNotExist:
+        # We get here if we didn't find the specified Comic
+        # Don't do anything - the template displays the "no comic"
+        # message for us.
+        pass
+    return redirect('colection_detail', colection_name_slug=slug)
+
+
+@login_required
 def colection(request, colection_name_slug):
-    """."""
+    """Generic view for showing a single Collection."""
     context_dict = {}
     try:
         colection = Colection.objects.get(slug=colection_name_slug)
+        user = User.objects.get(username=request.user)
+
         colection_editors = Colection.objects.get(
             slug=colection_name_slug).editors.all().order_by('slug')
+
         colection_comics = Comic.objects.filter(
             colection__id=colection.id).order_by('number')
+
+        comic_list = []
+        total_owned = 0
+        for comic in colection_comics:
+            try:
+                Ownership.objects.get(comic=comic, user=user)
+                my_tuple = (comic, True)
+                total_owned += 1
+            except Ownership.DoesNotExist:
+                my_tuple = (comic, False)
+            comic_list.append(my_tuple)
 
         # filter(colection__editors__set)
         context_dict['colection_name'] = colection.name
         context_dict['colection'] = colection
         context_dict['editor_list'] = colection_editors
-        context_dict['comic_list'] = colection_comics
+        context_dict['comic_list'] = comic_list
+
+        if total_owned == len(comic_list):
+            context_dict['all_comics_owned'] = True
+        else:
+            context_dict['all_comics_owned'] = False
+
     except Colection.DoesNotExist:
         # We get here if we didn't find the specified Colection
         # Don't do anything - the template displays the "no colection"
@@ -554,22 +630,37 @@ class ComicStatsByUserView(ListView):
 
         # Retail Prices
         total_retail = 0
+        total_purchase_ptas = 0
+        total_purchase_euros = 0
         total_collections = set()
+
         for tmp_comic in Comic.objects.filter(ownership__user=current_user):
             total_retail += tmp_comic.price_retail()
             total_collections.add(tmp_comic.colection)
+            o = Ownership.objects.get(comic=tmp_comic, user=current_user)
+
+            print "-----------------"
+            print "Ownership: {} ({} {})".format(
+                o, o.purchase_price, o.purchase_unit)
+
+            if o.purchase_unit == 'pesetas':
+                total_purchase_ptas += o.purchase_price
+                print "PTAS ACUMULADO: ", total_purchase_ptas
+
+            elif o.purchase_unit == 'euros':
+                total_purchase_euros += o.purchase_price
+                print "EUROS ACUMULADO: ", total_purchase_euros
+
+            else:
+                print "INFO: Omitting this value for count: {} {}".format(
+                    o.purchase_price, o.purchase_unit)
 
         # Purchase price: pesetas
-        context['total_purchase_ptas'] = Ownership.objects.filter(
-            user=current_user,
-            purchase_unit='pesetas').aggregate(Sum('purchase_price')).get(
-                'purchase_price__sum', 0.00)
-
+        context['total_purchase_ptas'] = total_purchase_ptas
+        print "PTAS: ", total_purchase_ptas
         # Purchase price: euros
-        context['total_purchase_euros'] = Ownership.objects.filter(
-            user=current_user,
-            purchase_unit='euros').aggregate(Sum('purchase_price')).get(
-                'purchase_price__sum', 0.00)
+        context['total_purchase_euros'] = total_purchase_euros
+        print "EUROS: ", total_purchase_euros
 
         # Purchase price: TOTAL
         context['total_purchase'] = round(
