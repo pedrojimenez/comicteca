@@ -77,6 +77,14 @@ urlpatterns = patterns(
         login_required(ColectionListView.as_view()),
         name='colection_list'),
 
+    url(r'^colections/(?P<slug>[\w\-]+)/add-all-comics/$',
+        views.collection_add_all_comics,
+        name='collection_add_all_comics'),
+
+    url(r'^colections/(?P<slug>[\w\-]+)/remove-all-comics/$',
+        views.collection_remove_all_comics,
+        name='collection_remove_all_comics'),
+
     # ---------- #
     # sagas
     # ---------- #
