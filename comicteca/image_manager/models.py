@@ -20,8 +20,7 @@ class ImageManager(models.Model):
             print msg
             return False
 
-        # Get the last part of the url and check against
-        extension = url.rsplit('.', 1)[1].lower()
+        extension = self.get_extension_from_url_image(url)
 
         return extension in self.valid_extensions
 
@@ -42,3 +41,9 @@ class ImageManager(models.Model):
             # TODO: logger.error(msg)
             print msg
             return None
+
+    def get_extension_from_url_image(self, url):
+        """Get the last part of the url and check against."""
+        if not url:
+            return None
+        return url.rsplit('.', 1)[1].lower()
