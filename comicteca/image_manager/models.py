@@ -18,18 +18,12 @@ class ImageManager(models.Model):
             msg = 'The given URL is empty'
             # TODO: logger.error(msg)
             print msg
-            return 0
+            return False
 
         # Get the last part of the url and check against
         extension = url.rsplit('.', 1)[1].lower()
 
-        if extension not in self.__valid_extensions:
-            msg = 'The given URL does not match valid image extensions.'
-            # TODO: logger.error(msg)
-            print msg
-            return 0
-
-        return 1
+        return extension in self.valid_extensions
 
     def check_http_url(self, url):
         """Check if current url is accesible and return the http response."""
