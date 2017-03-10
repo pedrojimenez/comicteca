@@ -1,5 +1,7 @@
 """Models for the comicteca project."""
 from django.db import models
+from django.contrib.auth.models import User
+
 from django.conf import settings
 from django.utils import timezone
 from django.core.urlresolvers import reverse
@@ -9,6 +11,111 @@ from django_countries.fields import CountryField
 
 from comics.storage import OverwriteStorage
 from comics.utils import parse_int_set
+
+
+# ------------------------------------------------------------------ #
+#
+#                        Saga Model
+#
+# ------------------------------------------------------------------ #
+class Saga(models.Model):
+    """Colaborator model."""
+
+    name = models.CharField(max_length=50)
+    total_numbers = models.IntegerField(default=1)
+    argument = models.TextField(blank=True, null=True, max_length=3000)
+    slug = models.SlugField()
+
+    def __unicode__(self):
+        """str/unicode function of Profile class."""
+        return self.name
+
+    def save(self, *args, **kwargs):
+        """Overriding of save function in Saga class."""
+        self.slug = slugify(self.name)
+        super(Saga, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        """Return the absolute url of Saga model."""
+        # return reverse('artist-detail', kwargs={'pk': self.pk})
+        return reverse('saga_detail',
+                       kwargs={'saga_slug': self.slug})
+
+    @property
+    def my_image(self):
+        """Return the absolute url of colection image as property.
+
+        If the colection has no image it will search in all the comics
+        but if no image is found, it will return the empty image url
+        """
+        # comics_set = Comic.objects.filter(colection__id=self.id)
+        comics_set = Comic.objects.filter(my_sagas__id=self.id)
+        for comic in comics_set:
+            if comic.cover:
+                return comic.cover
+        return "images/noimage.png"
+
+    def get_saga_status(self):
+        """."""
+        # current_numbers = ComicsInSaga.objects(saga=self.id)
+        current_numbers = Comic.objects.filter(my_sagas__id=self.id).count()
+        if current_numbers == self.total_numbers:
+            return "Complete (" + str(current_numbers) + ")"
+        else:
+            return str(current_numbers) + " / " + str(self.total_numbers)
+
+    def get_saga_pubdate(self):
+        """."""
+        comics_set = Comic.objects.filter(my_sagas__id=self.id)
+        for comic in comics_set:
+            if comic.pub_date:
+                return comic.pub_date
+        return "N/A"
+
+    def get_saga_totalpages(self):
+        """."""
+        comics_set = Comic.objects.filter(my_sagas__id=self.id)
+        totalpages = 0
+        for comic in comics_set:
+            totalpages += comic.pages
+        return totalpages
+
+    def get_saga_comics(self):
+        """Return the comics and saga_number of each one of the Saga."""
+        saga_comics = ComicsInSaga.objects.filter(saga=self.id).order_by(
+            'number_in_saga')
+
+        comic_tuple_list = []
+        for saga in saga_comics:
+            c = Comic.objects.get(id=saga.comic.id)
+            tup = (c, saga.number_in_saga)
+            comic_tuple_list.append(tup)
+
+        return comic_tuple_list
+
+    def get_saga_currency(self, unit='euros', output_format='string',
+                          currency_type='retail'):
+        """Return the total price of Colection (retail or paid)."""
+        col_comics = Comic.objects.filter(my_sagas__id=self.id)
+        total_currency = 0
+        for comic in col_comics:
+            total_currency += comic.get_price(unit, currency_type)
+        if output_format == 'string':
+            return str(total_currency) + ' ' + str(unit)
+        return total_currency
+
+    def is_available(self, number):
+        """Check if comic number is already is use."""
+        saga_comics = ComicsInSaga.objects.filter(saga=self.id).order_by(
+            'number_in_saga')
+
+        print ""
+        print "SagaComics: ", saga_comics
+
+        for comic in saga_comics:
+            if number == comic.number_in_saga:
+                return False
+        return True
 
 
 # ------------------------------------------------------------------ #
@@ -171,6 +278,15 @@ class Colection(models.Model):
         ('Limited', 'Limited Serie'),
         ('Special', 'Special Number'),
     )
+
+    FORMAT_OF_COLLECTION = (
+        ('Grapa', 'Grapa'),
+        ('Retapado', 'Retapado'),
+        ('Rustica', 'Rustica'),
+        ('Cartone', 'Cartone'),
+        ('Oversize', 'Oversize'),
+    )
+
     name = models.CharField(max_length=50)
     subname = models.CharField(max_length=50, blank=True)
     volume = models.IntegerField(default=1)
@@ -179,9 +295,11 @@ class Colection(models.Model):
     colection_type = models.CharField('Type', max_length=15,
                                       choices=TYPE_OF_COLECTION,
                                       default='Regular')
+    colection_format = models.CharField('Format', max_length=15,
+                                        choices=FORMAT_OF_COLLECTION,
+                                        default='Grapa')
     numbers = models.IntegerField(default=0)
 
-    pub_date = models.DateField(blank=True, null=True)
     inserted = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(default=timezone.now)
     image = models.ImageField(default='', upload_to='images/colections/',
@@ -199,6 +317,15 @@ class Colection(models.Model):
     def my_url(self):
         """Return the absolute url as model property."""
         return self.get_absolute_url()
+
+    @property
+    def my_pub_date(self):
+        """Return the Pub Date of the first comic of the Collection."""
+        comics_set = Comic.objects.filter(colection__id=self.id)
+        for comic in comics_set:
+            if comic.pub_date:
+                return comic.pub_date
+        return "N/A"
 
     @property
     def my_image(self):
@@ -253,7 +380,7 @@ class Colection(models.Model):
     def colection_list(self):
         """Count number of colection comics and return string."""
         if (self.max_numbers != 0) and (self.max_numbers == self.numbers):
-            return "Complete"
+            return "Complete ({})".format(self.max_numbers)
         else:
             return str(self.numbers) + "/" + str(self.max_numbers)
 
@@ -291,6 +418,10 @@ class Colection(models.Model):
         """Return the total amount of money paid for all collection comics."""
         return self.get_currency(unit='euros', currency_type='purchase')
 
+    def get_comics(self):
+        """Return the comics of the Colection."""
+        return Comic.objects.filter(colection__id=self.id)
+
     def get_pages(self, unit='euros'):
         """Return the total of associated comics prices."""
         col_comics = Comic.objects.filter(colection__id=self.id)
@@ -299,10 +430,24 @@ class Colection(models.Model):
             total_pages += comic.pages
         return total_pages
 
-    def complete_colection(self, pages=24, rangeset=None,
+    def update_editors(self, editor_list=[]):
+        """Return the total of associated comics prices."""
+        if self.editors == editor_list:
+            return
+
+        for editor in self.editors.all():
+            if editor not in editor_list:
+                self.editors.remove(editor)
+
+        for editor in editor_list:
+            if editor not in self.editors.all():
+                self.editors.add(editor)
+
+    def complete_colection(self, pages=24, rangeset=None, user=None,
                            retail_price=0, retail_unit='euros',
                            purchase_price='0', purchase_unit='euros'):
         """Complete all missing comics for the colection."""
+        current_user = User.objects.get(username=user)
         localrange = set()
         invalidrange = set()
         if not rangeset:
@@ -315,14 +460,16 @@ class Colection(models.Model):
         # for n in range(1, self.max_numbers + 1):
         for n in range(0, len(localrange)):
             number = localrange.pop()
-            print "Filling comic n{} in colection {}".format(number, self.name)
+            print "[{}] - Adding comic #{} to collection {}".format(
+                user, number, self.name)
 
             try:
-                checkcomic = Comic.objects.get(colection=self, number=number)
+                current_comic = Comic.objects.get(
+                    colection=self, number=number)
             except Comic.DoesNotExist:
-                checkcomic = None
+                current_comic = None
 
-            if not checkcomic:
+            if not current_comic:
                 comic = Comic()
                 comic.number = number
                 comic.pages = pages
@@ -332,8 +479,31 @@ class Colection(models.Model):
                 comic.purchase_price = purchase_price
                 comic.purchase_unit = purchase_unit
                 comic.save()
+                # o = Ownership(comic=current_comic, user=current_user)
+                # o.purchase_price = purchase_price
+                # o.purchase_unit = purchase_unit
+                # o.save()
+                current_comic = comic
             else:
-                print "Comic already exists, omitting . . ."
+                # TODO: Use logger instead of prints
+                print "   --> Comic already exists, omitting ..."
+
+            # Update the ownership (if not exist)
+            try:
+                o = Ownership.objects.get(comic=current_comic,
+                                          user=current_user)
+                print "   --> Comic {} already owned by <{}>".format(
+                    current_comic, current_user)
+
+            except Ownership.DoesNotExist:
+                o = Ownership(comic=current_comic, user=current_user)
+                print "   --> Dup. Comic <{}> now also owned by <{}>".\
+                    format(current_comic, current_user)
+
+            o.purchase_price = purchase_price
+            o.purchase_unit = purchase_unit
+            o.save()
+
         self.update_comics_number()
 
     class Meta:
@@ -367,6 +537,8 @@ class Comic(models.Model):
     title = models.CharField(max_length=128, blank=True, null=True)
     number = models.IntegerField(default=1)
     pages = models.IntegerField(default=24)
+    digital = models.BooleanField(default=False)
+    color = models.BooleanField(default=True)
     slug = models.SlugField()
 
     # texts
@@ -379,8 +551,6 @@ class Comic(models.Model):
     updated = models.DateTimeField(default=timezone.now)
 
     # prices
-    # purchase_price = PriceField(amount=0, unit='EURO')
-    # retail_price = PriceField(amount=0, unit='EURO')
     purchase_price = models.FloatField(default=0)
     purchase_unit = models.CharField('Type', max_length=15,
                                      choices=CURRENCY_TYPES,
@@ -397,6 +567,10 @@ class Comic(models.Model):
     # Relations
     colection = models.ForeignKey(Colection, on_delete=models.CASCADE)
     colaborators = models.ManyToManyField(Artist, through='Colaborator')
+
+    my_users = models.ManyToManyField(User, through='Ownership')
+
+    my_sagas = models.ManyToManyField(Saga, through='ComicsInSaga')
 
     class Meta:
         """Meta class for Comic model."""
@@ -441,7 +615,7 @@ class Comic(models.Model):
         self.colection.update_comics_number()
 
     def get_absolute_url(self):
-        """."""
+        """Get the absolute url a comic model."""
         return reverse('comic_detail',
                        kwargs={'comic_name_slug': self.slug})
 
@@ -477,6 +651,31 @@ class Comic(models.Model):
             role_list.append(role['role'])
         return ','.join(role_list)
 
+    def get_sagas(self):
+        """Return the list of users owning the comic."""
+        return self.my_sagas.all().distinct()
+
+    def get_users(self):
+        """Return the list of users owning the comic."""
+        return User.objects.filter(ownership__comic=self.id)
+
+    def get_color(self):
+        """Return if comic is printed in color or black/white."""
+        if not self.color:
+            return "B/W"
+        return "Color"
+
+    def get_pub_date(self):
+        """Return the comic pub_date formatted."""
+        # TODO: format the output of PubDate
+        return self.pub_date
+
+    def check_user(self, user):
+        """Return if current comic is owned by user."""
+        if user in self.my_users.all():
+            return True
+        return False
+
     def get_price(self, unit='euros', currency_type='retail'):
         """Return the selected Comic price (retail or paid)."""
         if currency_type == 'retail':
@@ -497,6 +696,7 @@ class Comic(models.Model):
 
     def price_purchase(self, unit='euros'):
         """Return the comic purchase price in the desired unit."""
+        # TODO: REFAACTOR with Ownership class
         if self.purchase_price == 0.0:
                 return 0.0
 
@@ -588,6 +788,60 @@ class Profile(models.Model):
     def __unicode__(self):
         """str/unicode function of Profile class."""
         return 'Profile for user {}'.format(self.user.username)
+
+
+# ------------------------------------------------------------------ #
+#
+#                    ComicsSaga intermediate Class
+#
+# ------------------------------------------------------------------ #
+class ComicsInSaga(models.Model):
+    """ComicsInSaga model."""
+
+    comic = models.ForeignKey(Comic)
+    saga = models.ForeignKey(Saga)
+    number_in_saga = models.IntegerField(default=1)
+
+    class Meta:
+        """Meta class for Colaborator model."""
+
+        unique_together = ('saga', 'number_in_saga')
+
+    def __unicode__(self):
+        """str/unicode function of Comic class."""
+        return str(self.saga) + " - "\
+            + str(self.number_in_saga) + " - "\
+            + str(self.comic)
+
+
+# ------------------------------------------------------------------ #
+#
+#                    Ownership intermediate Class
+#
+# ------------------------------------------------------------------ #
+class Ownership(models.Model):
+    """Ownership model."""
+
+    comic = models.ForeignKey(Comic)
+    user = models.ForeignKey(User)
+    purchase_price = models.FloatField(default=0)
+    purchase_unit = models.CharField(
+        'Unit',
+        max_length=15,
+        choices=Comic.CURRENCY_TYPES,
+        default='euros')
+
+    class Meta:
+        """Meta class for Ownership model."""
+
+        unique_together = ('comic', 'user')
+
+    def __unicode__(self):
+        """str/unicode function of Comic class."""
+        return str(self.comic) + " - "\
+            + str(self.user) + " - "\
+            + str(self.purchase_price)
+
 
 # class Distributor(models.Model):
 #     """Distributor intermediate model."""

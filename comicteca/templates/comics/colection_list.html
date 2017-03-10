@@ -5,17 +5,33 @@
 {% block title %}Comicteca Colection List{% endblock %}
 
 {% block side_block %}
-  <p>Search Comic List</p>
+  <h2><center>TOTAL</center></h2>
+  <h3><center>{{ colection_list.count }}</center></h3>
+  <hr>
+  <p><center>
+    <a href="{% url 'colection_add' %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Collection
+    </a>
+  </center></p>
 {% endblock %}
 
 {% block body_block %}
-  <h2><u>Colections List</u></h2>
-    {% if colection_list %}
-	    <table>
+  <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+        <h2><center>Collection List ({{ colection_list.count }})</center></h2>
+      </div>
+
+      <!-- Table -->
+	    <table class="table">
 		    <tr>
      		  <th>Name</th>
      		  <th>Volume</th>
+          <th>Type</th>
+          <th>Pages</th>
           <th>Distributor</th>
+          <th>Cost</th>
           <th>Language</th>
      		  <th>Pub Date</th>
      		  <th>Numbers</th>
@@ -23,27 +39,21 @@
       {% for colection in colection_list %}
 		    <tr>
 	        <td><a href="/comicteca/colections/{{ colection.slug }}">{{ colection.name }}</a></td>
-	        <td>v{{ colection.volume }}</td>
+          {% if colection.colection_type == 'Regular' %}
+	          <td>v{{ colection.volume }}</td>
+          {% else %}
+            <td> - </td>
+          {% endif %}
+          <!-- TODO: set a different icon for each class -->
+          <td>{{ colection.colection_type }}</td>
+          <td>{{ colection.get_pages }}</td>
           <td><a href="/comicteca/publishers/{{ colection.distributor.slug }}">{{ colection.distributor.name }}</a></td>
+          <td>{{ colection.get_currency }}</td>
           <td>{{ colection.language }}</td>
-
-		      {% if colection.pub_date %}
-		        <td>{{ colection.pub_date }}</td>
-		      {% else %}
-		        <td>N/A</td>
-		      {% endif %}
-
+		      <td>{{ colection.my_pub_date }}</td>
 		      <td>{{ colection.colection_list }}</td>
 		    </tr>
       {% endfor %}
     </table>
-    {% else %}
-      <strong>There are no colections present yet.</strong>
-    {% endif %}
-
-    <hr>
-    <br/>
-    <a href="/comicteca/colections/add/">Add new colection</a><br />
-    <a href="/comicteca/">Back to Index</a>
-
+  </div>
 {% endblock %}

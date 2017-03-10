@@ -1,0 +1,47 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Colection List{% endblock %}
+
+{% block side_block %}
+  <h2><center>TOTAL</center></h2>
+  <h3><center>{{ object_list.count }}</center></h3>
+  <hr>
+  <p><center>
+    <a href="{% url 'saga_add' %}" class="btn btn-info" role="button">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Saga
+    </a>
+  </center></p>
+{% endblock %}
+
+{% block body_block %}
+  <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">
+        <h2><center>Saga List ({{ object_list.count }})</center></h2>
+      </div>
+
+      <!-- Table -->
+	    <table class="table">
+		    <tr>
+     		  <th>Name</th>
+          <th>Numbers</th>
+          <th>Pages</th>
+          <th>Value</th>
+          <th>Pub Date</th>
+        </tr>
+      {% for saga in object_list %}
+		    <tr>
+	        <td><a href="{% url 'saga_detail' saga.slug %}">{{ saga.name }}</a></td>
+          <!-- TODO: set a different icon for each class -->
+          <td>{{ saga.get_saga_status }}</td>
+          <td>{{ saga.get_saga_totalpages }}</td>
+          <td>{{ saga.get_saga_currency }}</td>
+          <td>{{ saga.get_saga_pubdate }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

@@ -10,8 +10,13 @@ from comics.views import ColectionCreate, ColectionUpdate, ColectionDelete
 from comics.views import ColectionListView
 from comics.views import PublisherCreate, PublisherUpdate, PublisherDelete
 from comics.views import PublisherListView
-from comics.views import ComicListView
+from comics.views import ComicListView, ComicListByUserView
+from comics.views import ComicStatsByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
+from comics.views import CollectionAddComics
+from comics.views import SagaListView, SagaUpdate, SagaCreate, SagaDelete
+from comics.views import ComicAddSaga
+
 
 urlpatterns = patterns(
     '',
@@ -56,9 +61,9 @@ urlpatterns = patterns(
         login_required(ColectionUpdate.as_view()),
         name='colection_update'),
 
-    url(r'^colections/(?P<slug>[\w\-]+)/add-comic/$',
-        login_required(ComicCreate.as_view()),
-        name='colection_comic_add'),
+    url(r'^colections/(?P<slug>[\w\-]+)/add-comics/$',
+        login_required(CollectionAddComics.as_view()),
+        name='colection_add_comics'),
 
     url(r'^colections/(?P<slug>[\w\-]+)/delete/$',
         login_required(ColectionDelete.as_view()),
@@ -71,6 +76,37 @@ urlpatterns = patterns(
     url(r'colections/$',
         login_required(ColectionListView.as_view()),
         name='colection_list'),
+
+    url(r'^colections/(?P<slug>[\w\-]+)/add-all-comics/$',
+        views.collection_add_all_comics,
+        name='collection_add_all_comics'),
+
+    url(r'^colections/(?P<slug>[\w\-]+)/remove-all-comics/$',
+        views.collection_remove_all_comics,
+        name='collection_remove_all_comics'),
+
+    # ---------- #
+    # sagas
+    # ---------- #
+    url(r'sagas/add/$',
+        login_required(SagaCreate.as_view()),
+        name='saga_add'),
+
+    url(r'^sagas/(?P<slug>[\w\-]+)/edit/$',
+        login_required(SagaUpdate.as_view()),
+        name='saga_update'),
+
+    url(r'^sagas/(?P<saga_slug>[\w\-]+)/$',
+        views.saga,
+        name='saga_detail'),
+
+    url(r'sagas/$',
+        login_required(SagaListView.as_view()),
+        name='saga_list'),
+
+    url(r'^sagas/(?P<slug>[\w\-]+)/delete/$',
+        login_required(SagaDelete.as_view()),
+        name='saga_delete'),
 
     # ---------- #
     # publishers
@@ -122,6 +158,18 @@ urlpatterns = patterns(
         login_required(ComicDelete.as_view()),
         name='comic_delete'),
 
+    url(r'^comics/(?P<comic_slug>[\w\-]+)/remove-user/(?P<usr_name>[\w\-]+)/$',
+        views.comic_remove_user,
+        name='comic_remove_user'),
+
+    url(r'^comics/(?P<comic_slug>[\w\-]+)/add-user/(?P<usr_name>[\w\-]+)/$',
+        views.comic_add_user,
+        name='comic_add_user'),
+
+    url(r'^comics/(?P<slug>[\w\-]+)/add-saga/$',
+        login_required(ComicAddSaga.as_view()),
+        name='comic_add_saga'),
+
     # ---------- #
     # utils
     # ---------- #
@@ -146,6 +194,15 @@ urlpatterns = patterns(
     # profile urls
     # ------------ #
     url(r'^profiles/edit/$', views.profile_edit, name='profile_edit'),
+
+    url(r'^profiles/(?P<user_slug>[\w\-]+)/my-collection/$',
+        login_required(ComicListByUserView.as_view()),
+        name='user_collection'),
+
+    url(r'^profiles/(?P<user_slug>[\w\-]+)/stats/$',
+        login_required(ComicStatsByUserView.as_view()),
+        name='user_stats'),
+
 
     # -------------------- #
     # change password urls

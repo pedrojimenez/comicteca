@@ -2,7 +2,7 @@
 
 {% load staticfiles %}
 
-{% block title %}Comicteca Add Collection{% endblock %}
+{% block title %}Comicteca Add Saga{% endblock %}
 
 {% block side_block %}
   <p>Search Comic List</p>
@@ -10,9 +10,8 @@
 
 {% block body_block %}
 
-<h1>Add a new Colection</h1>
-  <!-- form id="colection_form" method="post" action="/comicteca/add_colection/" -->
-  <form role="form" id="colection_form" method="post" action=".">
+<h1>Add a new Saga</h1>
+  <form role="form" id="saga_form" method="post" action=".">
     {% csrf_token %}
     {% for hidden in form.hidden_fields %}
         {{ hidden }}
@@ -28,7 +27,7 @@
 		</br>
     {% endfor %}
 
-    <input type="submit" name="submit" value="Add Colection" />
+    <input type="submit" name="submit" value="Add Saga" />
   </form>
         {% if form.errors %}
             {% for field in form %}

@@ -1,0 +1,17 @@
+{% extends 'comics/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Comicteca Adding Saga to Comic{% endblock %}
+
+{% block side_block %}
+  <p>Search Comic List</p>
+{% endblock %}
+
+{% block body_block %}
+  <h1>Add Comic "{{ object }}" to Saga</h1>
+  <form action="" method="post">{% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Add Saga" />
+  </form>
+{% endblock %}

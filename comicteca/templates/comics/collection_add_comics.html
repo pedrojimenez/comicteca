@@ -2,10 +2,10 @@
 
 {% load staticfiles %}
 
-{% block title %}Comicteca edit Collection{% endblock %}
+{% block title %}Comicteca Comic List{% endblock %}
 
 {% block side_block %}
-  {% if colection %}
+ {% if colection %}
     <!-- Name -->
     <h2><center>{{ colection.name }}</center></h2>
     {% if colection.subname %}
@@ -14,7 +14,6 @@
     {% if colection.colection_type == 'Regular' %}
         <p><center>Volume {{ colection.volume }}</center></p>
     {% endif %}
-
     <hr>
 
     <!-- Info -->
@@ -45,15 +44,30 @@
   {% endif %}
 {% endblock %}
 
+
 {% block body_block %}
-  <h1>Edit Collection</h1>
-  <form action="" method="post">{% csrf_token %}
-      {{ form.as_p }}
+<h1>Add Comics to collection {{ colection.name }} (v{{colection.volume}}) </h1>
+  <!-- form action="." method="post"-->
+  <form role="form" id="colection_add_comics_form" method="post" action="."->
+      {% csrf_token %}
+      {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+      {% endfor %}
+      {% for field in form.visible_fields %}
+          {{ field.errors }}
+          {% if form.help_text %}
+              {{ field.help_text }}
+          {% else %}
+              {{ field.name }}
+          {% endif %}
+          <p>{{ field }}</p>
+      {% endfor %}
       <hr>
+
       <!-- Buttons -->
       <button type="submit" class="btn btn-info">
-        <i class="glyphicon glyphicon-ok"></i>
-        Update Info
+        <i class="glyphicon glyphicon-plus"></i>
+        Add Comics
       </button>
 
       <a href="{{ colection.get_absolute_url }}" class="btn btn-info" role="button">
@@ -61,4 +75,19 @@
         Back to {{ colection.name }}
       </a>
   </form>
+
+  {% if form.errors %}
+    {% for field in form %}
+      {% for error in field.errors %}
+        <p> {{ errors }} </p>
+      {% endfor %}
+    {% endfor %}
+
+    {% for error in form.non_field_errors %}
+      <p></p>
+      <p> {{ error }} </p>
+      <p></p>
+    {% endfor %}
+  {% endif %}
+
 {% endblock %}
