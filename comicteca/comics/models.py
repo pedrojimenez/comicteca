@@ -309,7 +309,7 @@ class Colection(models.Model):
 
     # Relations
     distributor = models.ForeignKey(Publisher, on_delete=models.CASCADE,
-                                    default='Marvel')
+                                    default=1)
     editors = models.ManyToManyField(Publisher,
                                      related_name='Publishers')
 
