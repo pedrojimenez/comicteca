@@ -26,7 +26,7 @@ apt-mark hold grub-pc
 apt-get update
 apt-get upgrade $APT_OPTS
 
-apt-get install git vim htop $APT_OPTS
+apt-get install git vim htop ipython tree $APT_OPTS
 
 # install pip
 apt-get install python-pip $APT_OPTS
