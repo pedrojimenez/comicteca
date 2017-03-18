@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased - master]
+- [comicteca] Added buttons prev/next to collection comics
 - [comicteca] Added Vagranfile to project
 - [comicteca] Added 'formats' to Collections 
 
