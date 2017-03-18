@@ -33,8 +33,8 @@
         Add Comics
       </a>
     </center></p>
-
     <hr style="height:5px">
+
     <!-- Info -->
     <h2><center>Info</center></h2>
     <p><center><u>Status:</u> <strong>{{ colection.colection_list }}</strong></center></p>
@@ -44,126 +44,85 @@
     <p><center><u>Total Pages:</u> <strong>{{ colection.get_pages }}</strong></center></p>
     <p><center><u>Real Price:</u> <strong>{{ colection.get_currency }}</strong></center></p>
     <p><center><u>Price Paid:</u> <strong>{{ colection.get_paid }}</strong></center></p>
+    <hr style="height:5px">
 
+    <!-- Publishers -->
+    <h2><center>Publishers</center></h2>
+
+    <p><center><u>Distributor:</u> <strong><a href="{% url 'publisher_detail' colection.distributor.slug %}">{{ colection.distributor.name }}</a></strong></center></p>
+
+    {% for editor in editor_list %}
+      <p><center><u>Editor:</u> <strong><a href="{% url 'publisher_detail' editor.slug %}">{{ editor.name }}</a></strong></center></p>
+    {% endfor %}
   {% endif %}
 {% endblock %}
 
 {% block body_block %}
   {% if colection %}
-    <h1>{{ colection_name }}
-      {% if colection.colection_type == 'Regular' %} (v{{ colection.volume }})
-      {% endif %}
-    </h1>
-        <!-- Cover and Info -->
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-6">
-              <!-- Colection Image -->
-              {% load thumbnail %}
-              {% thumbnail colection.my_image "400" as thumb_image %}
-                <a href="{{ MEDIA_URL }}{{ colection.my_image }}">
-                <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border: thin solid black;">
-                </a>
-              {% endthumbnail %}
-            </div>
-            <!-- Distributor / Editor -->
-            <div class="col-md-6">
-              <!-- Buttons -->
-              <div class="row pull-right">
-                {% if not all_comics_owned  %}
-                  <a href="{% url 'collection_add_all_comics' colection.slug  %}" class="btn btn-info" role="button">
-                    <i class="glyphicon glyphicon-plus"></i>
-                    ADD ALL COMICS
-                  </a>
-                {% else %}
-                    <a href="{% url 'collection_remove_all_comics' colection.slug  %}" class="btn btn-danger" role="button">
-                      <i class="glyphicon glyphicon-minus"></i>
-                      REMOVE ALL COMICS
-                    </a>
-                {% endif %}
-              </div>
-
-              <div class="row">
-                <!-- Distributor -->
-                <h2>Distributor</h2>
-                {% if colection.distributor.image %}
-                  {% load thumbnail %}
-                    {% thumbnail colection.distributor.image "200" as thumb_image %}
-                    <!-- a href="{{ MEDIA_URL }}{{ colection.distributor.image }}" -->
-                    <a href="{{ colection.distributor.my_url }}">
-                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
-                  {% endthumbnail %}
-                {% else %}
-                  <ul>
-                    <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</a></li>
-                  </ul>
-                {% endif %}
-              </div> <!-- Distributor row -->
-              <div class="row">
-                <!-- Editors -->
-                  <h2>Editors</h2>
-                    {% for editor in editor_list %}
-                  {% if editor.image %}
-                    {% thumbnail editor.image "200" as thumb_image %}
-                      <a href="{{ editor.my_url }}">
-                      <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
-                    {% endthumbnail %}
-                  {% else %}
-                    <li><a href="/comicteca/publishers/{{ editor.slug }}">{{ editor.name }} (NO)</a></li>
-                  {% endif %}
-                  {% endfor %}
-              </div> <!-- Editors row -->
-            </div> <!-- Distributor / Editor col md 6-->
-          </div> <!-- ROW del container -->
-        </div> <!-- container -->
-
+    <!-- Name and Buttons -->
+    <div class="row">
+      <h1 class="page-header">
+        {{ colection_name }}
+        {% if colection.colection_type == 'Regular' %} (v{{ colection.volume }})
+        {% endif %}
+      </h1>
+      <!-- Buttons -->
+      <div class="row pull-right">
+        {% if not all_comics_owned  %}
+          <a href="{% url 'collection_add_all_comics' colection.slug  %}" class="btn btn-info" role="button">
+          <i class="glyphicon glyphicon-plus"></i>
+          ADD ALL COMICS
+          </a>
+        {% else %}
+          <a href="{% url 'collection_remove_all_comics' colection.slug  %}" class="btn btn-danger" role="button">
+          <i class="glyphicon glyphicon-minus"></i>
+          REMOVE ALL COMICS
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    <br>
 
     <!-- Collection Comics -->
-    <h2>Comics</h2>
-      <ul>
-        <div class="container-fluid">
-          <div class="row">
-            <!-- comic_list from context data -->
-            {% for comic,owned in comic_list %}
-              <div class="col-xs-12 col-md-4 col-lg-3 col-xl-2" style="height: 350px;">
+    <div class="row">
+      <h2 class="sub-header">Comics</h2>
+      <!-- comic_list from context data -->
+      {% for comic,owned in comic_list %}
+        <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2" style="relative">
+          {% load thumbnail %}
+          {% thumbnail comic.my_cover "200x280" as thumb_image %}
+            <a href="{{ comic.my_url }}">
+              <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-thumbnail"
+                   style="padding:2px;border:thin solid black;"
+                   height="280" width="200";>
+            </a>
+          {% endthumbnail %}
+           <div style="position: absolute;
+           top: 220px;
+           left: 20px;
+           font-size: 32px;">
 
-                  {% thumbnail comic.my_cover "200x280" as thumb_image %}
-                    <a href="{{ comic.my_url }}">
-                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail" style="padding:1px;border:thin solid black;"></a>
-                  {% endthumbnail %}
+          {% if owned %}
+            <span class="label label-success">
+              #{{ comic.number }}
+            </span>
+          {% else %}
+            <span class="label label-default">
+              #{{ comic.number }}
+            </span>
+          {% endif %}
+          </div> <!-- button div -->
 
-                  <h2>
-                    {% if owned %}
-                      <span class="label label-danger">
-                      #{{ comic.number }}
-                      </span>
-                    {% else %}
-                      <span class="label label-default">
-                      #{{ comic.number }}
-                      </span>
-                    {% endif %}
-                  </h2>
-
-
-                <div class="clearfix visible-sm-block visible-lg-block"></div>
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      </ul>
+          <div class="clearfix visible-sm-block visible-lg-block"></div>
+        </div> <!-- end div of class comic -->
+      {% endfor %}
+    </div>
 
   {% else %}
     <h1>Colection Unknown</h1>
-      This colection does not exist!
+      This collection does not exist!
+      <a href="{% url 'index' %}">Back to Index</a>
+      <br/>
   {% endif %}
-
-  <hr>
-  {% if colection %}
-    <a href="/comicteca/colections/{{ colection.slug }}/add-comic/">Add Comic</a><br/>
-    <a href="/comicteca/colections/{{ colection.slug }}/edit/">Edit Colection</a><br/>
-    <a href="/comicteca/colections/{{ colection.slug }}/delete/">Delete Colection</a><br/>
-  {% endif %}
-    <a href="/comicteca/colections/">Back to Colections</a><br/>
-	<a href="/comicteca/">Back to Index</a><br/>
 
 {% endblock %}
