@@ -101,16 +101,16 @@
         </div>
 	<!-- body block -->
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        {% if messages %}
-          <ul class="messages">
+          {% if messages %}
+            <ul class="messages">
             {% for message in messages %}
               <li class="{{ message.tags }}">
                 {{ message|safe }}
                 <a href="#" class="close">✖</a>
               </li>
             {% endfor %}
-          </ul>
-  {% endif %}
+            </ul>
+          {% endif %}
           <div>
             {% block body_block %}
             {% endblock %}
