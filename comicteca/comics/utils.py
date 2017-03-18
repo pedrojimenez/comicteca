@@ -44,9 +44,33 @@ def parse_int_set(inputstr="", max=1):
     # Report invalid tokens before returning valid selection
     # print "Invalid set: " + str(invalid)
     return selection, invalid
+
+
 # ---------------------------------------------- #
+def get_previous_next(input_list=[], element=None):
+    # lista=['alpha flight','xmen','factor x','masacre']
+    # TODO: Refactor this method for getting next/prev
+    #       of any project queryset
+    prev_ = None
+    next_ = None
+    item_found = False
+
+    print "type input: ", type(input_list)
+    print "type element: ", type(element)
+
+    for item in input_list:
+        if item_found:
+            next_ = item
+            break
+        if item == element:
+            # print "Prev: ", prev
+            item_found = True
+        else:
+            prev_ = item
+    return prev_, next_
 
 
+# ---------------------------------------------- #
 def main():
     print 'Generate a list of selected items!'
     inputstr = raw_input('Enter a list of items: ')
