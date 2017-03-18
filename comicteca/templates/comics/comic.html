@@ -67,10 +67,33 @@
 
 {% block body_block %}
 {% if comic %}
-  <h1>{{ colection.name }}
+<h1>
+  {% if previous_comic %}
+    <a href="{% url 'comic_detail' previous_comic.slug %}" class="btn btn-success active" role="button">
+      <i class="glyphicon glyphicon-triangle-left"></i>
+    </a>
+  {% else %}
+    <a href="#" class="btn btn-default disabled" role="button">
+      <i class="glyphicon glyphicon-triangle-left"></i>
+    </a>
+  {% endif %}
+
+  {{ colection.name }}
   {% if colection.subname %} - {{ colection.subname }} {% endif %}
   {% if colection.colection_type != 'Special' %} #{{ comic.number }}{% endif %}
-  </h1>
+
+  {% if next_comic %}
+    <a href="{% url 'comic_detail' next_comic.slug %}" class="btn btn-success active" role="button">
+      <i class="glyphicon glyphicon-triangle-right"></i>
+    </a>
+  {% else %}
+    <a href="#" class="btn btn-default disabled" role="button">
+      <i class="glyphicon glyphicon-triangle-right"></i>
+    </a>
+  {% endif %}
+</h1>
+
+
   {% if comic.title %}<h2>{{ comic.title }}</h2>{% endif %}
 
    <!-- Cover and Info -->
@@ -119,7 +142,7 @@
              {% endthumbnail %}
            {% else %}
              <ul>
-               <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }</li>
+               <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</li>
              </ul>
            {% endif %}
          </div> <!-- Distributor row -->
