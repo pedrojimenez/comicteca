@@ -455,6 +455,25 @@ class PublisherDelete(DeleteView):
 #                         Comic Views
 #
 # ------------------------------------------------------------------ #
+def get_previous_next_comics(collection=None, element_id=None):
+    # lista=['alpha flight','xmen','factor x','masacre']
+    prev_ = None
+    next_ = None
+    item_found = False
+    if collection and element_id:
+        comic_list = Comic.objects.filter(
+            colection__id=collection.id).order_by('number')
+        for comic in comic_list:
+            if item_found:
+                next_ = comic
+                break
+            if comic.id == element_id:
+                item_found = True
+            else:
+                prev_ = comic
+    return prev_, next_
+
+
 @login_required
 def comic(request, comic_name_slug):
     """Detailed view for a single comic."""
@@ -467,6 +486,9 @@ def comic(request, comic_name_slug):
         context_dict['colection'] = colection
         context_dict['request_user'] = request.user
         context_dict['inmycollection'] = comic.check_user(request.user)
+
+        context_dict['previous_comic'], context_dict['next_comic'] = \
+            get_previous_next_comics(comic.colection, comic.id)
 
         try:
             o = Ownership.objects.get(comic=comic.id, user=request.user)
