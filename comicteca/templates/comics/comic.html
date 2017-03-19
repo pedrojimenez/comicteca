@@ -66,163 +66,174 @@
 {% endblock %}
 
 {% block body_block %}
-{% if comic %}
-<h1>
-  {% if previous_comic %}
-    <a href="{% url 'comic_detail' previous_comic.slug %}" class="btn btn-success active" role="button">
-      <i class="glyphicon glyphicon-triangle-left"></i>
-    </a>
-  {% else %}
-    <a href="#" class="btn btn-default disabled" role="button">
-      <i class="glyphicon glyphicon-triangle-left"></i>
-    </a>
-  {% endif %}
+  {% if comic %}
+    <!-- Name and Buttons -->
+    <div class="row">
+      <h1 class="page-header">
+        {% if previous_comic %}
+          <a href="{% url 'comic_detail' previous_comic.slug %}" class="btn btn-success active" role="button">
+          <i class="glyphicon glyphicon-triangle-left"></i>
+          </a>
+        {% else %}
+          <a href="#" class="btn btn-default disabled" role="button">
+          <i class="glyphicon glyphicon-triangle-left"></i>
+          </a>
+        {% endif %}
 
-  {{ colection.name }}
-  {% if colection.subname %} - {{ colection.subname }} {% endif %}
-  {% if colection.colection_type != 'Special' %} #{{ comic.number }}{% endif %}
+        {{ colection.name }}
+        {% if colection.subname %} - {{ colection.subname }} {% endif %}
+        {% if colection.colection_type != 'Special' %} #{{ comic.number }}{% endif %}
 
-  {% if next_comic %}
-    <a href="{% url 'comic_detail' next_comic.slug %}" class="btn btn-success active" role="button">
-      <i class="glyphicon glyphicon-triangle-right"></i>
-    </a>
-  {% else %}
-    <a href="#" class="btn btn-default disabled" role="button">
-      <i class="glyphicon glyphicon-triangle-right"></i>
-    </a>
-  {% endif %}
-</h1>
+        {% if next_comic %}
+          <a href="{% url 'comic_detail' next_comic.slug %}" class="btn btn-success active" role="button">
+          <i class="glyphicon glyphicon-triangle-right"></i>
+          </a>
+        {% else %}
+          <a href="#" class="btn btn-default disabled" role="button">
+          <i class="glyphicon glyphicon-triangle-right"></i>
+          </a>
+        {% endif %}
+        {% if comic.title %}<h2>{{ comic.title }}</h2>{% endif %}
+      </h1>
 
+      <div class="row pull-right">
+        {% if inmycollection %}
+          <p><center>
+            <a href="{% url 'comic_remove_user' comic.slug request_user %}" class="btn btn-success" role="button">
+            <i class="glyphicon glyphicon-check"></i>
+            LO TENGO
+            </a>
+          </center></p>
+        {% else %}
+          <p><center>
+            <a href="{% url 'comic_add_user' comic.slug request_user %}" class="btn btn-info" role="button">
+            <i class="glyphicon glyphicon-plus"></i>
+            AÑADIR A COLECCION
+            </a>
+          </center></p>
+        {% endif %}
+      </div> <!-- row pull right-->
+    </div> <!-- row -->
 
-  {% if comic.title %}<h2>{{ comic.title }}</h2>{% endif %}
-
-   <!-- Cover and Info -->
-   <div class="container-fluid">
-     <div class="row">
-       <div class="col-md-6">
-         <!-- Colection Image -->
-         {% load thumbnail %}
-         {% thumbnail comic.my_cover "400" as thumb_image %}
-           <a href="{{ MEDIA_URL }}{{ comic.my_cover }}">
-                <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail"
-                style="padding:1px;border: thin solid black;">
+    <!-- Cover Distributor and Info -->
+    <div class="row">
+      <!-- Cover -->
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="page-header"><h2>Cover</h2></div>
+        <!-- Colection Image -->
+        {% load thumbnail %}
+        {% thumbnail comic.my_cover "400" as thumb_image %}
+          <a href="{{ MEDIA_URL }}{{ comic.my_cover }}">
+          <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail"
+               style="padding:1px;border: thin solid black;">
            </a>
-         {% endthumbnail %}
-       </div>
-       <!-- Distributor / Info -->
-       <div class="col-md-6">
-          <!-- Buttons -->
-          <div class="row pull-right">
-            {% if inmycollection %}
-              <p><center>
-                <a href="{% url 'comic_remove_user' comic.slug request_user %}" class="btn btn-success" role="button">
-                <i class="glyphicon glyphicon-check"></i>
-                LO TENGO
-                </a>
-              </center></p>
-            {% else %}
-              <p><center>
-                <a href="{% url 'comic_add_user' comic.slug request_user %}" class="btn btn-info" role="button">
-                <i class="glyphicon glyphicon-plus"></i>
-                AÑADIR A COLECCION
-                </a>
-              </center></p>
-            {% endif %}
-          </div>
-         <!-- Distributor -->
-         <div class="row">
-           <div class="page-header"><h2>Distributor</h2></div>
-           {% if colection.distributor.image %}
-             {% load thumbnail %}
-               {% thumbnail colection.distributor.image "200" as thumb_image %}
-               <!-- a href="{{ MEDIA_URL }}{{ colection.distributor.image }}" -->
-               <a href="{{ colection.distributor.my_url }}">
-                    <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail"
-                    style="padding:1px;border:thin solid black;"></a>
-             {% endthumbnail %}
-           {% else %}
-             <ul>
-               <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</li>
-             </ul>
-           {% endif %}
-         </div> <!-- Distributor row -->
-         <!-- Info -->
-         <div class="row">
-           <div class="page-header"><h2>Info</h2></div>
-           <!-- Labels -->
-           <h3>
-             <span class="label label-info">{{ comic.pages }} pp</span>
-             <span class="label label-info">{{ comic.get_color }}</span>
-             <span class="label label-info">{{ colection.colection_format }}</span>
-             {% if comic.digital %}
-             <span class="label label-info">Digital</span>
-             {% endif %}
-           </h3>
-           <h3>
-            <span class="label label-default">
-              <i class="glyphicon glyphicon-shopping-cart"></i>  {{ comic.retail_price }} {{ comic.retail_unit }}
-            </span>
-           </h3>
+        {% endthumbnail %}
+      </div> <!-- Cover div -->
 
-           {% if comic_purchase_price > 0 %}
-           <h3>
-           <span class="label label-default">
-             <i class="glyphicon glyphicon-piggy-bank"></i>  {{ comic_purchase_price }} {{ comic_purchase_unit }}
-           </span>
-           </h3>
-           {% endif %}
+      <!-- Distributor / Info -->
+      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <!-- Distributor -->
+        <div class="row">
+          <div class="page-header pull-right"><h2>Distributor</h2></div>
+          <div class="clearfix"></div>
+          {% if colection.distributor.image %}
+            {% load thumbnail %}
+            {% thumbnail colection.distributor.image "200" as thumb_image %}
+            <!-- a href="{{ MEDIA_URL }}{{ colection.distributor.image }}" -->
+              <a href="{{ colection.distributor.my_url }}">
+              <img src="{{ MEDIA_URL }}{{ thumb_image }}" class="image-detail pull-right"
+                   style="padding:1px;border:thin solid black;"></a>
+            {% endthumbnail %}
+          {% else %}
+            <ul>
+              <li><a href="/comicteca/publishers/{{ distributor.slug }}">{{ distributor.name }}</li>
+            </ul>
+          {% endif %}
+          </hr>
+        </div>
 
-           {% if comic.pub_date %}
-           <h3>
-            <span class="label label-default">
-              <i class="glyphicon glyphicon-calendar"></i>  {{ comic.get_pub_date }}
-            </span>
-           </h3>
-           {% endif %}
-           {% if comic.extrainfo %}
-           <h3>
-            <a href="{{ comic.extrainfo }}" class="btn btn-default" role="button">
+        <!-- Info -->
+        <div class="row">
+          <div class="page-header pull-right"><h2>Info</h2></div>
+          <div class="clearfix"></div>
+
+          <!-- Labels -->
+          <!-- 1st row -->
+          <div class="page-header pull-right">
+            <h3>
+              <span class="label label-info">{{ comic.pages }} pp</span>
+              <span class="label label-info">{{ comic.get_color }}</span>
+              <span class="label label-info">{{ colection.colection_format }}</span>
+              {% if comic.digital %}
+                <span class="label label-info">Digital</span>
+              {% endif %}
+            </h3>
+          </div> <!-- labels 1st row -->
+          <div class="clearfix"></div>
+
+          <!-- 2nd row -->
+          {% if comic.pub_date %}
+            <div class="page-header pull-right">
+              <h3>
+                <span class="label label-default">
+                  <i class="glyphicon glyphicon-calendar"></i>  {{ comic.get_pub_date }}</span>
+              </h3>
+            </div> <!-- labels 2nd row -->
+            <div class="clearfix"></div>
+          {% endif %}
+
+          <!-- 3rd row -->
+          <div class="page-header pull-right">
+            <h3>
+              <span class="label label-default">
+                <i class="glyphicon glyphicon-shopping-cart"></i>  {{ comic.retail_price }} {{ comic.retail_unit }}</span>
+
+              {% if comic_purchase_price > 0 %}
+                <span class="label label-default">
+                  <i class="glyphicon glyphicon-piggy-bank"></i>  {{ comic_purchase_price }} {{ comic_purchase_unit }}</span>
+              {% endif %}
+            </h3>
+          </div> <!-- labels 3rd row -->
+          <div class="clearfix"></div>
+
+          <!-- 4th row -->
+          <div class="page-header pull-right">
+            <h3>
+              {% if comic.extrainfo %}
+                <a href="{{ comic.extrainfo }}" class="btn btn-default" role="button">
                 <i class="glyphicon glyphicon-link"></i>
                 Additional info
-            </a>
-           </h3>
-           {% endif %}
-         </div> <!-- Info row -->
+                </a>
+              {% endif %}
+            </h3>
+          </div> <!-- labels 4th row -->
+          <div class="clearfix"></div>
 
-       </div> <!-- Distributor / Editor col md 6-->
-     </div> <!-- ROW del container -->
-   </div> <!-- container -->
-   <hr/>
+        </div> <!-- Distributor / Info row div -->
+      </div> <!-- Distributor / Info row div -->
 
-   <!-- Comments -->
-   <div class="container-fluid">
-     <div class="row">
-       <div class="col-md-12">
-         {% if comic.comments  %}
-           <div class="panel-heading"><h3><center><u>Comments</u></center></h3></div>
-           {{ comic.comments|markdown }}</li>
-         {% else  %}
-           <u>Comments</u>: <strong>N/A</strong></li>
-         {% endif %}
-       </div> <!-- Comments 12-->
-     </div> <!-- ROW del container -->
-   </div> <!-- container -->
-   <hr/>
+    </div> <!-- row Cover and Info -->
+    <hr/>
 
-   <!-- Colaborators -->
-   <div class="container-fluid">
-     <div class="row">
-       <div class="col-md-12">
-         <div class="panel-heading"><h3><center><u>Colaborators</u></center></h3></div>
-         <ul>
-         {% for artist,roles in comic.get_all_artists_roles %}
-           <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
+    <!-- Comments -->
+    {% if comic.comments  %}
+      <div class="row">
+        <h2 class="sub-header"><u>Comments</u></h2>
+        {{ comic.comments|markdown }}
+      </div> <!-- ROW del container -->
+    {% endif %}
+    <hr/>
+
+    <!-- Colaborators -->
+    <div class="row">
+      <h2 class="sub-header"><u>Colaborators</u></h2>
+      <ul>
+        {% for artist,roles in comic.get_all_artists_roles %}
+          <li><a href="{{ artist.get_absolute_url }}">{{ artist }}</a>
             ( {{ roles }} )</li>
-         {% endfor %}
-         </ul>
-       </div> <!-- Colaborators 12-->
-     </div> <!-- ROW del container -->
-   </div> <!-- container -->
+        {% endfor %}
+      </ul>
+    </div> <!-- ROW del container -->
 
 {% else %}
   <h1>Comic Unknown</h1>
