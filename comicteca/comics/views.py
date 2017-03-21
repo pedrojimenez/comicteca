@@ -294,6 +294,28 @@ def collection_remove_all_comics(request, slug):
 
 
 @login_required
+def collection_missing_comics(request, slug):
+    """Generic View for showing all missing comics of a collection."""
+    try:
+        collection = Colection.objects.get(slug=slug)
+
+        missing_list = collection.get_missing_comics()
+        message = 'Missing List added successfully: {}'.format(missing_list)
+        message_ok = 'This collection is complete'
+        if len(missing_list) != 0:
+            messages.warning(request, message)
+        else:
+            messages.success(request, message_ok)
+
+    except Colection.DoesNotExist:
+        # We get here if we didn't find the specified Comic
+        # Don't do anything - the template displays the "no comic"
+        # message for us.
+        pass
+    return redirect('colection_detail', colection_name_slug=slug)
+
+
+@login_required
 def colection(request, colection_name_slug):
     """Generic view for showing a single Collection."""
     context_dict = {}
