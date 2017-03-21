@@ -423,12 +423,22 @@ class Colection(models.Model):
         return Comic.objects.filter(colection__id=self.id)
 
     def get_pages(self, unit='euros'):
-        """Return the total of associated comics prices."""
+        """Return the total of associated comics pages."""
         col_comics = Comic.objects.filter(colection__id=self.id)
         total_pages = 0
         for comic in col_comics:
             total_pages += comic.pages
         return total_pages
+
+    def get_missing_comics(self):
+        """Return the list of missing comics."""
+        missing_list = []
+        for i in range(0, self.max_numbers):
+            try:
+                Comic.objects.get(colection=self, number=i)
+            except Comic.DoesNotExist:
+                missing_list.append(i)
+        return missing_list
 
     def update_editors(self, editor_list=[]):
         """Return the total of associated comics prices."""
