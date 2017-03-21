@@ -291,6 +291,7 @@ class Colection(models.Model):
     subname = models.CharField(max_length=50, blank=True)
     volume = models.IntegerField(default=1)
     language = CountryField(blank_label='(select country)', default='ES')
+    initial_number = models.IntegerField(default=1)
     max_numbers = models.IntegerField(default=0)
     colection_type = models.CharField('Type', max_length=15,
                                       choices=TYPE_OF_COLECTION,
