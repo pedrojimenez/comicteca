@@ -199,7 +199,7 @@ class ColectionCreateForm(forms.ModelForm):
         # Provide an association between the ModelForm and a model
         model = Colection
         fields = ('name', 'subname', 'volume', 'editors', 'distributor',
-                  'max_numbers', 'language', 'pub_date')
+                  'max_numbers', 'initial_number', 'language', 'pub_date',)
 
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
@@ -309,7 +309,7 @@ class ColectionUpdateForm(forms.ModelForm):
         model = Colection
         fields = ('name', 'subname', 'volume', 'editors', 'distributor',
                   'max_numbers', 'language', 'colection_type',
-                  'colection_format')
+                  'colection_format', 'initial_number')
 
     def clean_imageurl(self):
         """Clean method for imageurl form field."""
