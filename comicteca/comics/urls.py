@@ -85,6 +85,10 @@ urlpatterns = patterns(
         views.collection_remove_all_comics,
         name='collection_remove_all_comics'),
 
+    url(r'^colections/(?P<slug>[\w\-]+)/missing/$',
+        views.collection_missing_comics,
+        name='colection_missing'),
+
     # ---------- #
     # sagas
     # ---------- #
