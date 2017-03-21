@@ -33,6 +33,14 @@
         Add Comics
       </a>
     </center></p>
+
+    <p><center>
+      <a href="{% url 'colection_missing' colection.slug %}" class="btn btn-default" role="button">
+        <i class="glyphicon glyphicon-info-sign"></i>
+        MISSING
+      </a>
+    </center></p>
+
     <hr style="height:5px">
 
     <!-- Info -->
@@ -117,12 +125,10 @@
         </div> <!-- end div of class comic -->
       {% endfor %}
     </div>
-
   {% else %}
     <h1>Colection Unknown</h1>
-      This collection does not exist!
-      <a href="{% url 'index' %}">Back to Index</a>
-      <br/>
+    This collection does not exist!
+    <a href="{% url 'index' %}">Back to Index</a>
+    <br/>
   {% endif %}
-
 {% endblock %}
