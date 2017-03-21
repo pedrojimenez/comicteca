@@ -434,7 +434,8 @@ class Colection(models.Model):
     def get_missing_comics(self):
         """Return the list of missing comics."""
         missing_list = []
-        for i in range(0, self.max_numbers):
+        for i in range(self.initial_number,
+                       self.initial_number + self.max_numbers):
             try:
                 Comic.objects.get(colection=self, number=i)
             except Comic.DoesNotExist:
@@ -462,7 +463,8 @@ class Colection(models.Model):
         localrange = set()
         invalidrange = set()
         if not rangeset:
-            for i in range(1, self.max_numbers + 1):
+            for i in range(self.initial_number,
+                           self.initial_number + self.max_numbers):
                 localrange.add(int(i))
         else:
             localrange, invalidrange = parse_int_set(rangeset,
