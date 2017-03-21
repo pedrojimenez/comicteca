@@ -10,6 +10,7 @@ from comics.tests.common import create_artist
 from comics.tests.common import create_publisher
 from comics.tests.common import create_colection
 from comics.tests.common import create_comic
+from comics.tests.common import create_user
 
 
 # ------------------------------------------------------------------ #
@@ -55,6 +56,46 @@ class ColectionTest(TestCase):
         self.assertTrue(isinstance(c1, Colection))
         self.assertEqual(c1.language.name, 'Spain')
 
+    def test_colection_missing_comics(self):
+        """
+        Test for returning missing comics from a collection.
+
+        A collection can begin in a specific number and have max_numbers
+        So it could be:
+          - from 0..7 (8 numbers)
+          - from 1..12 (12 numbers)
+          - from 12..38 (26 numbers)
+        """
+        u1 = create_user(username='User001')
+        p1 = create_publisher(name='TestPublisher003', nationality='ES')
+
+        c1 = create_colection(
+            name='Superman', subname='The man of Steel', vol=2,
+            language='ES', distributor_id=p1, colection_type='Regular',
+            max_numbers=8, initial_number=0)
+
+        c2 = create_colection(
+            name='Flash', subname='Hyper speed', vol=1,
+            language='ES', distributor_id=p1, colection_type='Regular',
+            max_numbers=12, initial_number=1)
+
+        c3 = create_colection(
+            name='Wonder Woman', subname='Amazing', vol=1,
+            language='ES', distributor_id=p1, colection_type='Regular',
+            max_numbers=26, initial_number=12)
+
+        c1.complete_colection(user=u1)
+        c2.complete_colection(user=u1)
+        c3.complete_colection(user=u1)
+
+        missing_list_c1 = c1.get_missing_comics()
+        missing_list_c2 = c2.get_missing_comics()
+        missing_list_c3 = c3.get_missing_comics()
+
+        self.assertEqual(len(missing_list_c1), 0)
+        self.assertEqual(len(missing_list_c2), 0)
+        self.assertEqual(len(missing_list_c3), 0)
+
 
 # ------------------------------------------------------------------ #
 #
@@ -91,7 +132,7 @@ class ComicTest(TestCase):
             language='ES', distributor_id=p1, colection_type='Regular',
             max_numbers=50)
         comic = create_comic(title='Return of Colossus', number=10, pages=64,
-                             colection_id=c1)
+                             collection=c1)
 
         self.assertTrue(isinstance(p1, Publisher))
         self.assertTrue(isinstance(c1, Colection))
