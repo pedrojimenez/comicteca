@@ -7,6 +7,7 @@ from django.views.generic import ListView, DetailView
 from django.core.urlresolvers import reverse_lazy
 
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -300,10 +301,10 @@ def collection_missing_comics(request, slug):
         collection = Colection.objects.get(slug=slug)
 
         missing_list = collection.get_missing_comics()
-        message = 'Missing List added successfully: {}'.format(missing_list)
-        message_ok = 'This collection is complete'
+        message = 'Missing List: {}'.format(missing_list)
+        message_ok = 'No comic missing, this collection is complete'
         if len(missing_list) != 0:
-            messages.warning(request, message)
+            messages.info(request, message)
         else:
             messages.success(request, message_ok)
 
@@ -737,7 +738,7 @@ class ComicCreate(CreateView):
     success_url = reverse_lazy('comic_list')
 
 
-class ComicUpdate(UpdateView):
+class ComicUpdate(SuccessMessageMixin, UpdateView):
     """CBV for updating a Comic object."""
 
     def get_initial(self):
@@ -773,6 +774,7 @@ class ComicUpdate(UpdateView):
     model = Comic
     template_name = "comics/update_comic_form.html"
     form_class = ComicUpdateForm
+    success_message = 'Comic successfully saved!!!!'
 
 
 class ComicDelete(DeleteView):
