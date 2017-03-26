@@ -251,14 +251,18 @@ def collection_add_all_comics(request, slug):
                 o = Ownership()
                 o.comic = comic
                 o.user = user
-                print "INFO: User {} - Comic <{}> added to owned".format(
+                message = "INFO: User {} - Comic <{}> added to owned".format(
                     user, comic)
+                print message
                 o.save()
                 # comic.my_users.add(user)
             else:
                 # TODO: pass it to messages and/or logger
                 print "INFO: User {} already own this comic: {}".format(
                     user, comic)
+        message = "OK: added {} comics to your collection".format(
+            comic.colection.numbers)
+        messages.success(request, message)
 
     except Colection.DoesNotExist:
         # We get here if we didn't find the specified Comic
@@ -285,6 +289,9 @@ def collection_remove_all_comics(request, slug):
                 # TODO: pass it to messages and/or logger
                 print "INFO: User {} does not own this comic: {}".format(
                     user, comic)
+        message = "WARNING: removed {} comics from your collection".format(
+            comic.colection.numbers)
+        messages.warning(request, message)
 
     except Colection.DoesNotExist:
         # We get here if we didn't find the specified Comic
