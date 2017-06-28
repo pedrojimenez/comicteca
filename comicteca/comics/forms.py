@@ -250,7 +250,8 @@ class ColectionCreateForm(forms.ModelForm):
             collection.save()
             col = Colection.objects.get(
                 name=self.cleaned_data['name'],
-                volume=self.cleaned_data['volume'])
+                volume=self.cleaned_data['volume'],
+                distributor=self.cleaned_data['distributor'])
             if col:
                 # custom actions once the Colection is saved
                 # 1.) Add all related editors
