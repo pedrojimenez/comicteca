@@ -347,8 +347,9 @@ class Colection(models.Model):
         """str/unicode function of Colection class."""
         str_temp = self.name
         if self.subname:
-            str_temp = str_temp + " - " + self.subname
-        str_temp = str_temp + " - Vol " + str(self.volume)
+            str_temp += " - " + self.subname
+        str_temp += " - Vol " + str(self.volume)
+        str_temp += " - " + str(self.distributor)
         return str_temp
 
     def save(self, *args, **kwargs):
@@ -363,7 +364,8 @@ class Colection(models.Model):
 
         self.numbers = len(Comic.objects.filter(
             colection__name=self.name,
-            colection__volume=self.volume))
+            colection__volume=self.volume,
+            colection__distributor=self.distributor))
         super(Colection, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
@@ -524,7 +526,7 @@ class Colection(models.Model):
 
         # db_table = 'colections'
         verbose_name_plural = "colections"
-        unique_together = ("name", "volume")
+        unique_together = ("name", "volume", "distributor")
 
 
 # ------------------------------------------------------------------ #
