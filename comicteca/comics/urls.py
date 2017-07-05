@@ -15,7 +15,7 @@ from comics.views import ComicStatsByUserView
 from comics.views import ComicCreate, ComicUpdate, ComicDelete
 from comics.views import CollectionAddComics
 from comics.views import SagaListView, SagaUpdate, SagaCreate, SagaDelete
-from comics.views import ComicAddSaga
+from comics.views import ComicAddSaga, ComictecaSearchListView
 
 
 urlpatterns = patterns(
@@ -178,6 +178,11 @@ urlpatterns = patterns(
     # utils
     # ---------- #
     url(r'^about/$', views.about, name='about'),
+
+    url(r'^search/$',
+        login_required(ComictecaSearchListView.as_view()),
+        name='comicteca_search_list_view'),
+
 
     # ----------------- #
     # login/logout urls

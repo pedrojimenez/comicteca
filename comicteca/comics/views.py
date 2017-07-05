@@ -217,8 +217,10 @@ class ColectionListView(ListView):
         # Call the base implementation first to get a context
         context = super(ColectionListView, self).get_context_data(**kwargs)
 
-        # Add in a QuerySet of all the Artists ordered by slug name
-        context['colection_list'] = Colection.objects.order_by('slug')
+        # Add in a QuerySet of all the Collection ordered by slug name
+        # context['colection_list'] = Colection.objects.order_by('slug')
+        context['colection_list'] = Colection.objects.order_by(
+            'name', 'distributor', 'volume')
 
         # TODO: count of money for each colection ==> Annotate this count
         return context
@@ -816,6 +818,23 @@ class ComicAddSaga(UpdateView):
 def about(request):
     """About page."""
     return render(request, 'comics/about.html')
+
+
+class ComictecaSearchListView(ListView):
+    """
+    Display a Colection List page filtered by the search query.
+    """
+    # paginate_by = 100
+
+    def get_queryset(self):
+        # result = super(ComictecaSearchListView, self).get_queryset()
+        query = self.request.GET.get('q')
+        if query:
+            result = Colection.objects.filter(name__icontains=query)
+        else:
+            result = Colection.objects.all()
+
+        return result
 
 
 # ------------------------------------------------------------------ #
