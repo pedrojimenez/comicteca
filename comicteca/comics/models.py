@@ -287,8 +287,8 @@ class Colection(models.Model):
         ('Oversize', 'Oversize'),
     )
 
-    name = models.CharField(max_length=50)
-    subname = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=100)
+    subname = models.CharField(max_length=100, blank=True)
     volume = models.IntegerField(default=1)
     language = CountryField(blank_label='(select country)', default='ES')
     initial_number = models.IntegerField(default=1)
