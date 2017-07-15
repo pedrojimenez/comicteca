@@ -6,6 +6,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
+from django.utils.encoding import force_text
 
 from django_countries.fields import CountryField
 
@@ -28,7 +29,7 @@ class Saga(models.Model):
 
     def __unicode__(self):
         """str/unicode function of Profile class."""
-        return self.name
+        return force_text(self.name)
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Saga class."""
@@ -146,11 +147,11 @@ class Artist(models.Model):
 
     def __unicode__(self):
         """str/unicode function of Artists class."""
-        return self.name
+        return force_text(self.name)
 
     def save(self, *args, **kwargs):
         """Overriding of save method for Artist model."""
-        self.name = str(self.name).title()
+        self.name = force_text(self.name).title()
         self.slug = slugify(self.name)
         self.updated = timezone.now()
         super(Artist, self).save(*args, **kwargs)
@@ -256,7 +257,7 @@ class Publisher(models.Model):
 
     def __unicode__(self):
         """str/unicode function of Publisher class."""
-        return self.name
+        return force_text(self.name)
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Publisher class."""
@@ -350,7 +351,8 @@ class Colection(models.Model):
             str_temp += " - " + self.subname
         str_temp += " - Vol " + str(self.volume)
         str_temp += " - " + str(self.distributor)
-        return str_temp
+        #return str_temp.decode('utf-8', 'ignore')
+        return force_text(str_temp)
 
     def save(self, *args, **kwargs):
         """Overriding of save function in Colection class."""
@@ -476,7 +478,8 @@ class Colection(models.Model):
         for n in range(0, len(localrange)):
             number = localrange.pop()
             print "[{}] - Adding comic #{} to collection {}".format(
-                user, number, self.name)
+                user, number, self)
+                #.name.decode('utf-8', 'ignore'))
 
             try:
                 current_comic = Comic.objects.get(
@@ -781,9 +784,10 @@ class Colaborator(models.Model):
 
     def __unicode__(self):
         """str/unicode function of Comic class."""
-        return str(self.artist) + " - "\
+        tmp_string = str(self.artist) + " - "\
             + str(self.comic) + " - "\
             + str(self.role)
+        return force_text(tmp_string)
 
 
 # ------------------------------------------------------------------ #
@@ -824,9 +828,10 @@ class ComicsInSaga(models.Model):
 
     def __unicode__(self):
         """str/unicode function of Comic class."""
-        return str(self.saga) + " - "\
+        tmp_string = str(self.saga) + " - "\
             + str(self.number_in_saga) + " - "\
             + str(self.comic)
+        return force_text(tmp_string)
 
 
 # ------------------------------------------------------------------ #
@@ -853,9 +858,10 @@ class Ownership(models.Model):
 
     def __unicode__(self):
         """str/unicode function of Comic class."""
-        return str(self.comic) + " - "\
+        tmp_string = str(self.comic) + " - "\
             + str(self.user) + " - "\
             + str(self.purchase_price)
+        return force_text(tmp_string)
 
 
 # class Distributor(models.Model):
