@@ -65,7 +65,9 @@ class ColectionAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Nombre Coleccion', {'fields': ['name', 'subname', 'volume',
                                          'colection_type',
-                                         'max_numbers', 'pub_date', 'slug'
+#                                         'max_numbers', 'pub_date', 'slug'
+                                         'max_numbers', 'slug'
+
                                          ]}),
         ('Image', {'fields': ['image']}),
         ('Editoriales', {'fields': ['distributor', 'editors']}),
