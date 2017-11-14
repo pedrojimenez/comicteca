@@ -119,16 +119,20 @@ USE_L10N = True
 
 USE_TZ = True
 
-
+# ------------------------------------------------------------ #
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
+# ------------------------------------------------------------ #
 STATIC_URL = '/static/'
 
+# Your project will probably also have static assets that are not tied to a particular app.
+# In addition to using a static/ directory inside your apps, you can define a list of directories
+# (STATICFILES_DIRS) in your settings file where Django will also look for static files.
 STATIC_PATH = os.path.join(BASE_DIR, 'static')
-
 STATICFILES_DIRS = [
-    STATIC_PATH, ]
+            STATIC_PATH, ]
+
+STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
 
 # Media files
 MEDIA_URL = '/media/'
