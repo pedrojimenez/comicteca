@@ -12,6 +12,8 @@
 
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static 'lib/bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base_dashboard.css' %}" />
+
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -22,7 +24,8 @@
 
   <body>
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <!-- div class="navbar navbar-inverse navbar-fixed-top" role="navigation" -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <!-- header of navbar -->
         <div class="navbar-header">
@@ -88,13 +91,15 @@
             {% endif %} <!-- end if authenticated -->
           </ul>
 
+          <!-- Search form -->
           <form class="navbar-form navbar-right" action="{% url 'comicteca_search_list_view' %}" method="get" accept-charset="utf-8">
             <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
           </form>
 
         </div>
       </div>
-    </div>
+    <!-- /div -->
+    </nav>
 
     <div class="container-fluid">
       <div class="row">
