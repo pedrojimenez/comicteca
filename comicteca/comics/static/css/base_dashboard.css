@@ -35,7 +35,7 @@ body {
     padding: 20px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    background-color: #b16868;
+    background-color: #dadada;
     border-right: 1px solid #eee;
   }
 }
