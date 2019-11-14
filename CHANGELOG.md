@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [unreleased - master]
+- [comicteca] Added DockerCompose file
+- [comicteca] Added Nginx Dockerfile for custom configuration
+- [comicteca] Added Dockerfile and entrypiint script
 - [comicteca] Removed Vagranfile to project
 - [comicteca] Removed fixed settings in favour of env vars
 - [comicteca] Added buttons prev/next to collection comics
