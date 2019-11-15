@@ -1,1 +1,2 @@
-This is the first commit of the new comicteca repo
+# comicteca
+Self learning Django project for managing Comics collections
