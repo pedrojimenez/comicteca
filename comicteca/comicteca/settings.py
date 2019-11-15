@@ -126,7 +126,8 @@ STATIC_URL = '/static/'
 # Your project will probably also have static assets that are not tied to a particular app.
 # In addition to using a static/ directory inside your apps, you can define a list of directories
 # (STATICFILES_DIRS) in your settings file where Django will also look for static files.
-STATIC_PATH = os.path.join(BASE_DIR, 'static')
+STATIC_PATH = os.path.join(BASE_DIR, 'staticfiles')
+
 STATICFILES_DIRS = [
             STATIC_PATH, ]
 
