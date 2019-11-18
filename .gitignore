@@ -3,3 +3,4 @@
 *.sqlite3
 comicteca/media/*
 .vagrant/
+.vscode/
