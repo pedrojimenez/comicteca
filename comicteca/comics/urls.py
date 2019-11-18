@@ -1,7 +1,14 @@
 """Urls for Comics app."""
 
-from django.conf.urls import patterns, url
+# from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.views import login
+from django.contrib.auth.views import logout
+from django.contrib.auth.views import logout_then_login
+from django.contrib.auth.views import password_change
+from django.contrib.auth.views import password_change_done
 
 from comics import views
 from comics.views import ArtistCreate, ArtistUpdate, ArtistDelete
@@ -18,8 +25,9 @@ from comics.views import SagaListView, SagaUpdate, SagaCreate, SagaDelete
 from comics.views import ComicAddSaga, ComictecaSearchListView
 
 
-urlpatterns = patterns(
-    '',
+# urlpatterns = patterns(
+urlpatterns = [
+    # '',
     url(r'^$', views.index, name='index'),
     # ---------- #
     # artists
@@ -183,21 +191,23 @@ urlpatterns = patterns(
         login_required(ComictecaSearchListView.as_view()),
         name='comicteca_search_list_view'),
 
-
     # ----------------- #
     # login/logout urls
     # ----------------- #
-    url(r'^login/$',
-        'django.contrib.auth.views.login',
-        name='login'),
+    # url(r'^login/$',
+    #     'django.contrib.auth.views.login',
+    #     name='login'),
+    url(r'^login/$', login, name='login'),
 
-    url(r'^logout_simple/$',
-        'django.contrib.auth.views.logout',
-        name='logout_simple'),
+    # url(r'^logout_simple/$',
+    #     'django.contrib.auth.views.logout',
+    #     name='logout_simple'),
+    url(r'^logout_simple/$', logout, name='logout_simple'),
 
-    url(r'^logout/$',
-        'django.contrib.auth.views.logout_then_login',
-        name='logout'),
+    # url(r'^logout/$',
+    #    'django.contrib.auth.views.logout_then_login',
+    #    name='logout'),
+    url(r'^logout/$', logout_then_login, name='logout'),
 
     # ------------ #
     # profile urls
@@ -216,12 +226,20 @@ urlpatterns = patterns(
     # -------------------- #
     # change password urls
     # -------------------- #
-    url(r'^profiles/password-change/$',
-        'django.contrib.auth.views.password_change',
+    # url(r'^profiles/password-change/$',
+    #    'django.contrib.auth.views.password_change',
+    #    name='password_change'),
+
+    # url(r'^profiles/password-change/done/$',
+    #    'django.contrib.auth.views.password_change_done',
+    #    name='password_change_done'),
+
+    url(r'^profiles/password-change/$', password_change,
         name='password_change'),
 
-    url(r'^profiles/password-change/done/$',
-        'django.contrib.auth.views.password_change_done',
+    url(r'^profiles/password-change/done/$', password_change_done,
         name='password_change_done'),
 
-)
+    ]
+
+# )

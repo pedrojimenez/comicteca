@@ -6,7 +6,8 @@ import os
 class OverwriteStorage(FileSystemStorage):
     """Custom class for managing the Comicteca fs storage."""
 
-    def get_available_name(self, name):
+    # def get_available_name(self, name):
+    def get_available_name(self, name, max_length=None):
         """Override the method for returning a unique name.
 
         Returns a filename that's free on the target storage system, and
