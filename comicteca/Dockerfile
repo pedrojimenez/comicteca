@@ -3,13 +3,26 @@
 FROM python:2.7.13-alpine
 #FROM python:2.7.13-slim
 
-# RUN mkdir -p /usr/src/app
+# create directory for the app user
+RUN mkdir -p /home/app
+
+# create the app user
+RUN addgroup -S app && adduser -S app -G app
+
+# create the appropriate directories
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/comicteca
+RUN mkdir -p $APP_HOME/staticfiles && mkdir -p $APP_HOME/media
+WORKDIR $APP_HOME
+
+
+
 
 # Static and Media directories
-RUN mkdir -p /usr/src/app/staticfiles && mkdir -p /usr/src/app/media && ls -hal /usr/src/app
+###RUN mkdir -p /usr/src/app/staticfiles && mkdir -p /usr/src/app/media && ls -hal /usr/src/app
 
 # set work directory
-WORKDIR /usr/src/app
+### WORKDIR /usr/src/app
 
 # Set environment variables
 # PYTHONDONTWRITEBYTECODE: 
@@ -25,14 +38,24 @@ RUN apk update \
 
 # Install requirements
 RUN pip install --upgrade pip
-COPY ./requirements.txt /usr/src/app/requirements.txt
+#COPY ./requirements.txt /usr/src/app/requirements.txt
+COPY ./requirements.txt $APP_HOME
 RUN pip install -r requirements.txt
 
 # copy entrypoint.sh
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+#COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
+COPY ./entrypoint.sh $APP_HOME
 
 # copy project
-COPY . /usr/src/app/
+#COPY . /usr/src/app/
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R app:app $APP_HOME
+
+# change to the app user
+USER app
 
 # run entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+###ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["/home/app/comicteca/entrypoint.sh"]
