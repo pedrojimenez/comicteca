@@ -5,8 +5,8 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - media_volume:/usr/src/app/media/
-      - static_volume:/usr/src/app/staticfiles/
+      - media_volume:/home/app/comicteca/media/
+      - static_volume:/home/app/comicteca/staticfiles/
     ports:
       - 9090:80
     depends_on:
@@ -18,8 +18,8 @@ services:
     # command: python manage.py runserver 0.0.0.0:8000
     command: gunicorn comicteca.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - media_volume:/usr/src/app/media/
-      - static_volume:/usr/src/app/staticfiles/
+      - media_volume:/home/app/comicteca/media/
+      - static_volume:/home/app/comicteca/staticfiles/
     ports:
       - 8000:8000
     env_file:
